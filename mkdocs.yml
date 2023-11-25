@@ -84,7 +84,7 @@ plugins:
   - git-revision-date-localized:
       enable_creation_date: true
   - mkdocs-jupyter:
-    include_source: True
+      include_source: True
 
 markdown_extensions:
   - toc:
