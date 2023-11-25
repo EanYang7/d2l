@@ -1,0 +1,4427 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《动手学深度学习》">
+      
+      
+        <meta name="author" content="Ean Yang">
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/d2l/%E6%95%99%E7%A8%8B/01-Introduction/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../_Installation/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.jpg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.12">
+    
+    
+      
+        <title>01-介绍 - 动手学深度学习 Dive into Deep Learning#</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#01-" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="动手学深度学习 Dive into Deep Learning#" class="md-header__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../assets/logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            动手学深度学习 Dive into Deep Learning#
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              01-介绍
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../%E7%BB%83%E4%B9%A0/" class="md-tabs__link">
+          
+  
+  练习
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="动手学深度学习 Dive into Deep Learning#" class="md-nav__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../assets/logo.jpg" alt="logo">
+
+    </a>
+    动手学深度学习 Dive into Deep Learning#
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    教程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-motivating-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      A Motivating Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Models
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objective-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objective Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimization-algorithms" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimization Algorithms
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kinds-of-machine-learning-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kinds of Machine Learning Problems
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kinds of Machine Learning Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supervised-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supervised Learning
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Supervised Learning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      Regression
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classification
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tagging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search" class="md-nav__link">
+    <span class="md-ellipsis">
+      Search
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommender-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommender Systems
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sequence-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sequence Learning
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsupervised-and-self-supervised-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unsupervised and Self-Supervised Learning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interacting-with-an-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interacting with an Environment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reinforcement-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reinforcement Learning
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Roots
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-road-to-deep-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Road to Deep Learning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#success-stories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Success Stories
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-essence-of-deep-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Essence of Deep Learning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../_Installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    安装
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../_Notation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../02-preliminaries/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    02 preliminaries
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../03-linear-regression/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    03 linear regression
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../04-linear-classification/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    04 linear classification
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../05-multilayer-perceptrons/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    05 multilayer perceptrons
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../06-builders-guide/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    06 builders guide
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../07-convolutional-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    07 convolutional modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../08-convolutional-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    08 convolutional neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../09-recurrent-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    09 recurrent neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../10-recurrent-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    10 recurrent modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../11-attention-mechanisms-and-transformers/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    11 attention mechanisms and transformers
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../12-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    12 optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../13-computational-performance/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    13 computational performance
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../14-computer-vision/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    14 computer vision
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../15-natural-language-processing-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    15 natural language processing pretraining
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../16-natural-language-processing-applications/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    16 natural language processing applications
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../17-reinforcement-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    17 reinforcement learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../18-gaussian-processes/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    18 gaussian processes
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../19-hyperparameter-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    19 hyperparameter optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../20-generative-adversarial-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    20 generative adversarial networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../21-recommender-systems/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    21 recommender systems
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../22-appendix-mathematics-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    22 appendix mathematics for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../23-appendix-tools-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    23 appendix tools for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../contrib/fasttext-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Contrib
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    练习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            练习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E7%BB%83%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    动手学深度学习习题解答
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch02
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch03/ch03/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch03
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch04/ch04/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch04
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch05/ch05/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch05
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch06/ch06/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch06
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch07/ch07/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch07
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch08/ch08/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch08
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch09/ch09/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch09
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch10/ch10/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch10
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch11/ch11/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch11
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch12/ch12/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch12
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch13/ch13/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch13
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch14/ch14/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch14
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/ch15/ch15/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch15
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    
+  
+  
+    <a href="../../%E7%BB%83%E4%B9%A0/notebooks/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-motivating-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      A Motivating Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Models
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objective-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objective Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimization-algorithms" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimization Algorithms
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kinds-of-machine-learning-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kinds of Machine Learning Problems
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kinds of Machine Learning Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supervised-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supervised Learning
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Supervised Learning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      Regression
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classification
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tagging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search" class="md-nav__link">
+    <span class="md-ellipsis">
+      Search
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommender-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommender Systems
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sequence-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sequence Learning
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsupervised-and-self-supervised-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unsupervised and Self-Supervised Learning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interacting-with-an-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interacting with an Environment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reinforcement-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reinforcement Learning
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Roots
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-road-to-deep-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Road to Deep Learning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#success-stories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Success Stories
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-essence-of-deep-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Essence of Deep Learning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/01-Introduction.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/01-Introduction.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<h1 id="01-">01-介绍<a class="headerlink" href="#01-" title="Permanent link">⚓︎</a></h1>
+<p>:label:<code>chap_introduction</code></p>
+<p>Until recently, nearly every computer program
+that you might have interacted with during
+an ordinary day
+was coded up as a rigid set of rules
+specifying precisely how it should behave.
+Say that we wanted to write an application
+to manage an e-commerce platform.
+After huddling around a whiteboard
+for a few hours to ponder the problem,
+we might settle on the broad strokes
+of a working solution, for example:
+(i) users interact with the application through an interface
+running in a web browser or mobile application;
+(ii) our application interacts with a commercial-grade database engine
+to keep track of each user's state and maintain records
+of historical transactions;
+and (iii) at the heart of our application,
+the <em>business logic</em> (you might say, the <em>brains</em>) of our application
+spells out a set of rules that map every conceivable circumstance
+to the corresponding action that our program should take.</p>
+<p>To build the brains of our application,
+we might enumerate all the common events
+that our program should handle.
+For example, whenever a customer clicks
+to add an item to their shopping cart,
+our program should add an entry
+to the shopping cart database table,
+associating that user's ID
+with the requested product's ID.
+We might then attempt to step through
+every possible corner case,
+testing the appropriateness of our rules
+and making any necessary modifications.
+What happens if a user
+initiates a purchase with an empty cart?
+While few developers ever get it
+completely right the first time
+(it might take some test runs to work out the kinks),
+for the most part we can write such programs
+and confidently launch them
+<em>before</em> ever seeing a real customer.
+Our ability to manually design automated systems
+that drive functioning products and systems,
+often in novel situations,
+is a remarkable cognitive feat.
+And when you are able to devise solutions
+that work <span class="arithmatex">\(100\%\)</span> of the time,
+you typically should not be
+worrying about machine learning.</p>
+<p>Fortunately for the growing community
+of machine learning scientists,
+many tasks that we would like to automate
+do not bend so easily to human ingenuity.
+Imagine huddling around the whiteboard
+with the smartest minds you know,
+but this time you are tackling
+one of the following problems:</p>
+<ul>
+<li>Write a program that predicts tomorrow's weather given geographic information, satellite images, and a trailing window of past weather.</li>
+<li>Write a program that takes in a factoid question, expressed in free-form text, and  answers it correctly.</li>
+<li>Write a program that, given an image, identifies every person depicted in it and draws outlines around each.</li>
+<li>Write a program that presents users with products that they are likely to enjoy but unlikely, in the natural course of browsing, to encounter.</li>
+</ul>
+<p>For these problems,
+even elite programmers would struggle
+to code up solutions from scratch.
+The reasons can vary.
+Sometimes the program that we are looking for
+follows a pattern that changes over time,
+so there is no fixed right answer!
+In such cases, any successful solution
+must adapt gracefully to a changing world.
+At other times, the relationship (say between pixels,
+and abstract categories) may be too complicated,
+requiring thousands or millions of computations
+and following unknown principles.
+In the case of image recognition,
+the precise steps required to perform the task
+lie beyond our conscious understanding,
+even though our subconscious cognitive processes
+execute the task effortlessly.</p>
+<p><em>Machine learning</em> is the study of algorithms
+that can learn from experience.
+As a machine learning algorithm accumulates more experience,
+typically in the form of observational data
+or interactions with an environment,
+its performance improves.
+Contrast this with our deterministic e-commerce platform,
+which follows the same business logic,
+no matter how much experience accrues,
+until the developers themselves learn and decide
+that it is time to update the software.
+In this book, we will teach you
+the fundamentals of machine learning,
+focusing in particular on <em>deep learning</em>,
+a powerful set of techniques
+driving innovations in areas as diverse as computer vision,
+natural language processing, healthcare, and genomics.</p>
+<h2 id="a-motivating-example">A Motivating Example<a class="headerlink" href="#a-motivating-example" title="Permanent link">⚓︎</a></h2>
+<p>Before beginning writing, the authors of this book,
+like much of the work force, had to become caffeinated.
+We hopped in the car and started driving.
+Using an iPhone, Alex called out "Hey Siri",
+awakening the phone's voice recognition system.
+Then Mu commanded "directions to Blue Bottle coffee shop".
+The phone quickly displayed the transcription of his command.
+It also recognized that we were asking for directions
+and launched the Maps application (app)
+to fulfill our request.
+Once launched, the Maps app identified a number of routes.
+Next to each route, the phone displayed a predicted transit time.
+While this story was fabricated for pedagogical convenience,
+it demonstrates that in the span of just a few seconds,
+our everyday interactions with a smart phone
+can engage several machine learning models.</p>
+<p>Imagine just writing a program to respond to a <em>wake word</em>
+such as "Alexa", "OK Google", and "Hey Siri".
+Try coding it up in a room by yourself
+with nothing but a computer and a code editor,
+as illustrated in :numref:<code>fig_wake_word</code>.
+How would you write such a program from first principles?
+Think about it... the problem is hard.
+Every second, the microphone will collect roughly
+44,000 samples.
+Each sample is a measurement of the amplitude of the sound wave.
+What rule could map reliably from a snippet of raw audio to confident predictions
+<span class="arithmatex">\(\{\textrm{yes}, \textrm{no}\}\)</span>
+about whether the snippet contains the wake word?
+If you are stuck, do not worry.
+We do not know how to write such a program from scratch either.
+That is why we use machine learning.</p>
+<p><img alt="Identify a wake word." src="../img/wake-word.svg" />
+:label:<code>fig_wake_word</code></p>
+<p>Here is the trick.
+Often, even when we do not know how to tell a computer
+explicitly how to map from inputs to outputs,
+we are nonetheless capable of performing the cognitive feat ourselves.
+In other words, even if you do not know
+how to program a computer to recognize the word "Alexa",
+you yourself are able to recognize it.
+Armed with this ability, we can collect a huge <em>dataset</em>
+containing examples of audio snippets and associated labels,
+indicating which snippets contain the wake word.
+In the currently dominant approach to machine learning,
+we do not attempt to design a system
+<em>explicitly</em> to recognize wake words.
+Instead, we define a flexible program
+whose behavior is determined by a number of <em>parameters</em>.
+Then we use the dataset to determine the best possible parameter values,
+i.e., those that improve the performance of our program
+with respect to a chosen performance measure.</p>
+<p>You can think of the parameters as knobs that we can turn,
+manipulating the behavior of the program.
+Once the parameters are fixed, we call the program a <em>model</em>.
+The set of all distinct programs (input--output mappings)
+that we can produce just by manipulating the parameters
+is called a <em>family</em> of models.
+And the "meta-program" that uses our dataset
+to choose the parameters is called a <em>learning algorithm</em>.</p>
+<p>Before we can go ahead and engage the learning algorithm,
+we have to define the problem precisely,
+pinning down the exact nature of the inputs and outputs,
+and choosing an appropriate model family.
+In this case,
+our model receives a snippet of audio as <em>input</em>,
+and the model
+generates a selection among
+<span class="arithmatex">\(\{\textrm{yes}, \textrm{no}\}\)</span> as <em>output</em>.
+If all goes according to plan
+the model's guesses will
+typically be correct as to
+whether the snippet contains the wake word.</p>
+<p>If we choose the right family of models,
+there should exist one setting of the knobs
+such that the model fires "yes" every time it hears the word "Alexa".
+Because the exact choice of the wake word is arbitrary,
+we will probably need a model family sufficiently rich that,
+via another setting of the knobs, it could fire "yes"
+only upon hearing the word "Apricot".
+We expect that the same model family should be suitable
+for "Alexa" recognition and "Apricot" recognition
+because they seem, intuitively, to be similar tasks.
+However, we might need a different family of models entirely
+if we want to deal with fundamentally different inputs or outputs,
+say if we wanted to map from images to captions,
+or from English sentences to Chinese sentences.</p>
+<p>As you might guess, if we just set all of the knobs randomly,
+it is unlikely that our model will recognize "Alexa",
+"Apricot", or any other English word.
+In machine learning,
+the <em>learning</em> is the process
+by which we discover the right setting of the knobs
+for coercing the desired behavior from our model.
+In other words,
+we <em>train</em> our model with data.
+As shown in :numref:<code>fig_ml_loop</code>, the training process usually looks like the following:</p>
+<ol>
+<li>Start off with a randomly initialized model that cannot do anything useful.</li>
+<li>Grab some of your data (e.g., audio snippets and corresponding <span class="arithmatex">\(\{\textrm{yes}, \textrm{no}\}\)</span> labels).</li>
+<li>Tweak the knobs to make the model perform better as assessed on those examples.</li>
+<li>Repeat Steps 2 and 3 until the model is awesome.</li>
+</ol>
+<p><img alt="A typical training process." src="../img/ml-loop.svg" />
+:label:<code>fig_ml_loop</code></p>
+<p>To summarize, rather than code up a wake word recognizer,
+we code up a program that can <em>learn</em> to recognize wake words,
+if presented with a large labeled dataset.
+You can think of this act of determining a program's behavior
+by presenting it with a dataset as <em>programming with data</em>.
+That is to say, we can "program" a cat detector
+by providing our machine learning system
+with many examples of cats and dogs.
+This way the detector will eventually learn to emit
+a very large positive number if it is a cat,
+a very large negative number if it is a dog,
+and something closer to zero if it is not sure.
+This barely scratches the surface of what machine learning can do.
+Deep learning, which we will explain in greater detail later,
+is just one among many popular methods
+for solving machine learning problems.</p>
+<h2 id="key-components">Key Components<a class="headerlink" href="#key-components" title="Permanent link">⚓︎</a></h2>
+<p>In our wake word example, we described a dataset
+consisting of audio snippets and binary labels,
+and we gave a hand-wavy sense of how we might train
+a model to approximate a mapping from snippets to classifications.
+This sort of problem,
+where we try to predict a designated unknown label
+based on known inputs
+given a dataset consisting of examples
+for which the labels are known,
+is called <em>supervised learning</em>.
+This is just one among many kinds of machine learning problems.
+Before we explore other varieties,
+we would like to shed more light
+on some core components that will follow us around,
+no matter what kind of machine learning problem we tackle:</p>
+<ol>
+<li>The <em>data</em> that we can learn from.</li>
+<li>A <em>model</em> of how to transform the data.</li>
+<li>An <em>objective function</em> that quantifies how well (or badly) the model is doing.</li>
+<li>An <em>algorithm</em> to adjust the model's parameters to optimize the objective function.</li>
+</ol>
+<h3 id="data">Data<a class="headerlink" href="#data" title="Permanent link">⚓︎</a></h3>
+<p>It might go without saying that you cannot do data science without data.
+We could lose hundreds of pages pondering what precisely data <em>is</em>,
+but for now, we will focus on the key properties
+of the datasets that we will be concerned with.
+Generally, we are concerned with a collection of examples.
+In order to work with data usefully, we typically
+need to come up with a suitable numerical representation.
+Each <em>example</em> (or <em>data point</em>, <em>data instance</em>, <em>sample</em>)
+typically consists of a set of attributes
+called <em>features</em> (sometimes called <em>covariates</em> or <em>inputs</em>),
+based on which the model must make its predictions.
+In supervised learning problems,
+our goal is to predict the value of a special attribute,
+called the <em>label</em> (or <em>target</em>),
+that is not part of the model's input.</p>
+<p>If we were working with image data,
+each example might consist of an
+individual photograph (the features)
+and a number indicating the category
+to which the photograph belongs (the label).
+The photograph would be represented numerically
+as three grids of numerical values representing
+the brightness of red, green, and blue light
+at each pixel location.
+For example, a <span class="arithmatex">\(200\times 200\)</span> pixel color photograph
+would consist of <span class="arithmatex">\(200\times200\times3=120000\)</span> numerical values.</p>
+<p>Alternatively, we might work with electronic health record data
+and tackle the task of predicting the likelihood
+that a given patient  will survive the next 30 days.
+Here, our features might consist of a collection
+of readily available attributes
+and frequently recorded measurements,
+including age, vital signs, comorbidities,
+current medications, and recent procedures.
+The label available for training would be a binary value
+indicating whether each patient in the historical data
+survived within the 30-day window.</p>
+<p>In such cases, when every example is characterized
+by the same number of numerical features,
+we say that the inputs are fixed-length vectors
+and we call the (constant) length of the vectors
+the <em>dimensionality</em> of the data.
+As you might imagine, fixed-length inputs can be convenient,
+giving us one less complication to worry about.
+However, not all data can easily
+be represented as <em>fixed-length</em> vectors.
+While we might expect microscope images
+to come from standard equipment,
+we cannot expect images mined from the Internet
+all to have the same resolution or shape.
+For images, we might consider
+cropping them to a standard size,
+but that strategy only gets us so far.
+We risk losing information in the cropped-out portions.
+Moreover, text data resists fixed-length
+representations even more stubbornly.
+Consider the customer reviews left
+on e-commerce sites such as Amazon, IMDb, and TripAdvisor.
+Some are short: "it stinks!".
+Others ramble for pages.
+One major advantage of deep learning over traditional methods
+is the comparative grace with which modern models
+can handle <em>varying-length</em> data.</p>
+<p>Generally, the more data we have, the easier our job becomes.
+When we have more data, we can train more powerful models
+and rely less heavily on preconceived assumptions.
+The regime change from (comparatively) small to big data
+is a major contributor to the success of modern deep learning.
+To drive the point home, many of
+the most exciting models in deep learning
+do not work without large datasets.
+Some others might work in the small data regime,
+but are no better than traditional approaches.</p>
+<p>Finally, it is not enough to have lots of data
+and to process it cleverly.
+We need the <em>right</em> data.
+If the data is full of mistakes,
+or if the chosen features are not predictive
+of the target quantity of interest,
+learning is going to fail.
+The situation is captured well by the cliché:
+<em>garbage in, garbage out</em>.
+Moreover, poor predictive performance
+is not the only potential consequence.
+In sensitive applications of machine learning,
+like predictive policing, resume screening,
+and risk models used for lending,
+we must be especially alert
+to the consequences of garbage data.
+One commonly occurring failure mode concerns datasets
+where some groups of people are unrepresented
+in the training data.
+Imagine applying a skin cancer recognition system
+that had never seen black skin before.
+Failure can also occur when the data
+does not only under-represent some groups
+but reflects societal prejudices.
+For example, if past hiring decisions
+are used to train a predictive model
+that will be used to screen resumes
+then machine learning models could inadvertently
+capture and automate historical injustices.
+Note that this can all happen without the data scientist
+actively conspiring, or even being aware.</p>
+<h3 id="models">Models<a class="headerlink" href="#models" title="Permanent link">⚓︎</a></h3>
+<p>Most machine learning involves transforming the data in some sense.
+We might want to build a system that ingests photos and predicts smiley-ness.
+Alternatively,
+we might want to ingest a set of sensor readings
+and predict how normal vs. anomalous the readings are.
+By <em>model</em>, we denote the computational machinery for ingesting data
+of one type,
+and spitting out predictions of a possibly different type.
+In particular, we are interested in <em>statistical models</em>
+that can be estimated from data.
+While simple models are perfectly capable of addressing
+appropriately simple problems,
+the problems
+that we focus on in this book stretch the limits of classical methods.
+Deep learning is differentiated from classical approaches
+principally by the set of powerful models that it focuses on.
+These models consist of many successive transformations of the data
+that are chained together top to bottom, thus the name <em>deep learning</em>.
+On our way to discussing deep models,
+we will also discuss some more traditional methods.</p>
+<h3 id="objective-functions">Objective Functions<a class="headerlink" href="#objective-functions" title="Permanent link">⚓︎</a></h3>
+<p>Earlier, we introduced machine learning as learning from experience.
+By <em>learning</em> here,
+we mean improving at some task over time.
+But who is to say what constitutes an improvement?
+You might imagine that we could propose updating our model,
+and some people might disagree on whether our proposal
+constituted an improvement or not.</p>
+<p>In order to develop a formal mathematical system of learning machines,
+we need to have formal measures of how good (or bad) our models are.
+In machine learning, and optimization more generally,
+we call these <em>objective functions</em>.
+By convention, we usually define objective functions
+so that lower is better.
+This is merely a convention.
+You can take any function
+for which higher is better, and turn it into a new function
+that is qualitatively identical but for which lower is better
+by flipping the sign.
+Because we choose lower to be better, these functions are sometimes called
+<em>loss functions</em>.</p>
+<p>When trying to predict numerical values,
+the most common loss function is <em>squared error</em>,
+i.e., the square of the difference between
+the prediction and the ground truth target.
+For classification, the most common objective
+is to minimize error rate,
+i.e., the fraction of examples on which
+our predictions disagree with the ground truth.
+Some objectives (e.g., squared error) are easy to optimize,
+while others (e.g., error rate) are difficult to optimize directly,
+owing to non-differentiability or other complications.
+In these cases, it is common instead to optimize a <em>surrogate objective</em>.</p>
+<p>During optimization, we think of the loss
+as a function of the model's parameters,
+and treat the training dataset as a constant.
+We learn
+the best values of our model's parameters
+by minimizing the loss incurred on a set
+consisting of some number of examples collected for training.
+However, doing well on the training data
+does not guarantee that we will do well on unseen data.
+So we will typically want to split the available data into two partitions:
+the <em>training dataset</em> (or <em>training set</em>), for learning model parameters;
+and the <em>test dataset</em> (or <em>test set</em>), which is held out for evaluation.
+At the end of the day, we typically report
+how our models perform on both partitions.
+You could think of training performance
+as analogous to the scores that a student achieves
+on the practice exams used to prepare for some real final exam.
+Even if the results are encouraging,
+that does not guarantee success on the final exam.
+Over the course of studying, the student
+might begin to memorize the practice questions,
+appearing to master the topic but faltering
+when faced with previously unseen questions
+on the actual final exam.
+When a model performs well on the training set
+but fails to generalize to unseen data,
+we say that it is <em>overfitting</em> to the training data.</p>
+<h3 id="optimization-algorithms">Optimization Algorithms<a class="headerlink" href="#optimization-algorithms" title="Permanent link">⚓︎</a></h3>
+<p>Once we have got some data source and representation,
+a model, and a well-defined objective function,
+we need an algorithm capable of searching
+for the best possible parameters for minimizing the loss function.
+Popular optimization algorithms for deep learning
+are based on an approach called <em>gradient descent</em>.
+In brief, at each step, this method
+checks to see, for each parameter,
+how that training set loss would change
+if you perturbed that parameter by just a small amount.
+It would then update the parameter
+in the direction that lowers the loss.</p>
+<h2 id="kinds-of-machine-learning-problems">Kinds of Machine Learning Problems<a class="headerlink" href="#kinds-of-machine-learning-problems" title="Permanent link">⚓︎</a></h2>
+<p>The wake word problem in our motivating example
+is just one among many
+that machine learning can tackle.
+To motivate the reader further
+and provide us with some common language
+that will follow us throughout the book,
+we now provide a broad overview of the landscape
+of machine learning problems.</p>
+<h3 id="supervised-learning">Supervised Learning<a class="headerlink" href="#supervised-learning" title="Permanent link">⚓︎</a></h3>
+<p>Supervised learning describes tasks
+where we are given a dataset
+containing both features and labels
+and 
+asked to produce a model that predicts the labels when
+given input features.
+Each feature--label pair is called an example.
+Sometimes, when the context is clear,
+we may use the term <em>examples</em>
+to refer to a collection of inputs,
+even when the corresponding labels are unknown.
+The supervision comes into play
+because, for choosing the parameters,
+we (the supervisors) provide the model
+with a dataset consisting of labeled examples.
+In probabilistic terms, we typically are interested in estimating
+the conditional probability of a label given input features.
+While it is just one among several paradigms,
+supervised learning accounts for the majority of successful
+applications of machine learning in industry.
+Partly that is because many important tasks
+can be described crisply as estimating the probability
+of something unknown given a particular set of available data:</p>
+<ul>
+<li>Predict cancer vs. not cancer, given a computer tomography image.</li>
+<li>Predict the correct translation in French, given a sentence in English.</li>
+<li>Predict the price of a stock next month based on this month's financial reporting data.</li>
+</ul>
+<p>While all supervised learning problems
+are captured by the simple description
+"predicting the labels given input features",
+supervised learning itself can take diverse forms
+and require tons of modeling decisions,
+depending on (among other considerations)
+the type, size, and quantity of the inputs and outputs.
+For example, we use different models
+for processing sequences of arbitrary lengths
+and fixed-length vector representations.
+We will visit many of these problems
+in depth throughout this book.</p>
+<p>Informally, the learning process looks something like the following.
+First, grab a big collection of examples for which the features are known
+and select from them a random subset,
+acquiring the ground truth labels for each.
+Sometimes these labels might be available data that have already been collected
+(e.g., did a patient die within the following year?)
+and other times we might need to employ human annotators to label the data,
+(e.g., assigning images to categories).
+Together, these inputs and corresponding labels comprise the training set.
+We feed the training dataset into a supervised learning algorithm,
+a function that takes as input a dataset
+and outputs another function: the learned model.
+Finally, we can feed previously unseen inputs to the learned model,
+using its outputs as predictions of the corresponding label.
+The full process is drawn in :numref:<code>fig_supervised_learning</code>.</p>
+<p><img alt="Supervised learning." src="../img/supervised-learning.svg" />
+:label:<code>fig_supervised_learning</code></p>
+<h4 id="regression">Regression<a class="headerlink" href="#regression" title="Permanent link">⚓︎</a></h4>
+<p>Perhaps the simplest supervised learning task
+to wrap your head around is <em>regression</em>.
+Consider, for example, a set of data harvested
+from a database of home sales.
+We might construct a table,
+in which each row corresponds to a different house,
+and each column corresponds to some relevant attribute,
+such as the square footage of a house,
+the number of bedrooms, the number of bathrooms,
+and the number of minutes (walking) to the center of town.
+In this dataset, each example would be a specific house,
+and the corresponding feature vector would be one row in the table.
+If you live in New York or San Francisco,
+and you are not the CEO of Amazon, Google, Microsoft, or Facebook,
+the (sq. footage, no. of bedrooms, no. of bathrooms, walking distance)
+feature vector for your home might look something like: <span class="arithmatex">\([600, 1, 1, 60]\)</span>.
+However, if you live in Pittsburgh, it might look more like <span class="arithmatex">\([3000, 4, 3, 10]\)</span>.
+Fixed-length feature vectors like this are essential
+for most classic machine learning algorithms.</p>
+<p>What makes a problem a regression is actually
+the form of the target.
+Say that you are in the market for a new home.
+You might want to estimate the fair market value of a house,
+given some features such as above.
+The data here might consist of historical home listings
+and the labels might be the observed sales prices.
+When labels take on arbitrary numerical values
+(even within some interval),
+we call this a <em>regression</em> problem.
+The goal is to produce a model whose predictions
+closely approximate the actual label values.</p>
+<p>Lots of practical problems are easily described as regression problems.
+Predicting the rating that a user will assign to a movie
+can be thought of as a regression problem
+and if you designed a great algorithm
+to accomplish this feat in 2009,
+you might have won the <a href="https://en.wikipedia.org/wiki/Netflix_Prize">1-million-dollar Netflix prize</a>.
+Predicting the length of stay for patients in the hospital
+is also a regression problem.
+A good rule of thumb is that any <em>how much?</em> or <em>how many?</em> problem
+is likely to be regression. For example:</p>
+<ul>
+<li>How many hours will this surgery take?</li>
+<li>How much rainfall will this town have in the next six hours?</li>
+</ul>
+<p>Even if you have never worked with machine learning before,
+you have probably worked through a regression problem informally.
+Imagine, for example, that you had your drains repaired
+and that your contractor spent 3 hours
+removing gunk from your sewage pipes.
+Then they sent you a bill of 350 dollars.
+Now imagine that your friend hired the same contractor for 2 hours
+and received a bill of 250 dollars.
+If someone then asked you how much to expect
+on their upcoming gunk-removal invoice
+you might make some reasonable assumptions,
+such as more hours worked costs more dollars.
+You might also assume that there is some base charge
+and that the contractor then charges per hour.
+If these assumptions held true, then given these two data examples,
+you could already identify the contractor's pricing structure:
+100 dollars per hour plus 50 dollars to show up at your house.
+If you followed that much, then you already understand
+the high-level idea behind <em>linear</em> regression.</p>
+<p>In this case, we could produce the parameters
+that exactly matched the contractor's prices.
+Sometimes this is not possible,
+e.g., if some of the variation
+arises from factors beyond your two features.
+In these cases, we will try to learn models
+that minimize the distance between our predictions and the observed values.
+In most of our chapters, we will focus on
+minimizing the squared error loss function.
+As we will see later, this loss corresponds to the assumption
+that our data were corrupted by Gaussian noise.</p>
+<h4 id="classification">Classification<a class="headerlink" href="#classification" title="Permanent link">⚓︎</a></h4>
+<p>While regression models are great
+for addressing <em>how many?</em> questions,
+lots of problems do not fit comfortably in this template.
+Consider, for example, a bank that wants
+to develop a check scanning feature for its mobile app.
+Ideally, the customer would simply snap a photo of a check
+and the app would automatically recognize the text from the image.
+Assuming that we had some ability
+to segment out image patches
+corresponding to each handwritten character,
+then the primary remaining task would be
+to determine which character among some known set
+is depicted in each image patch.
+These kinds of <em>which one?</em> problems are called <em>classification</em>
+and require a different set of tools
+from those used for regression,
+although many techniques will carry over.</p>
+<p>In <em>classification</em>, we want our model to look at features,
+e.g., the pixel values in an image,
+and then predict to which <em>category</em>
+(sometimes called a <em>class</em>)
+among some discrete set of options,
+an example belongs.
+For handwritten digits, we might have ten classes,
+corresponding to the digits 0 through 9.
+The simplest form of classification is when there are only two classes,
+a problem which we call <em>binary classification</em>.
+For example, our dataset could consist of images of animals
+and our labels  might be the classes <span class="arithmatex">\(\textrm{\{cat, dog\}}\)</span>.
+Whereas in regression we sought a regressor to output a numerical value,
+in classification we seek a classifier,
+whose output is the predicted class assignment.</p>
+<p>For reasons that we will get into as the book gets more technical,
+it can be difficult to optimize a model that can only output
+a <em>firm</em> categorical assignment,
+e.g., either "cat" or "dog".
+In these cases, it is usually much easier to express
+our model in the language of probabilities.
+Given features of an example,
+our model assigns a probability
+to each possible class.
+Returning to our animal classification example
+where the classes are <span class="arithmatex">\(\textrm{\{cat, dog\}}\)</span>,
+a classifier might see an image and output the probability
+that the image is a cat as 0.9.
+We can interpret this number by saying that the classifier
+is 90\% sure that the image depicts a cat.
+The magnitude of the probability for the predicted class
+conveys a notion of uncertainty.
+It is not the only one available
+and we will discuss others in chapters dealing with more advanced topics.</p>
+<p>When we have more than two possible classes,
+we call the problem <em>multiclass classification</em>.
+Common examples include handwritten character recognition
+<span class="arithmatex">\(\textrm{\{0, 1, 2, ... 9, a, b, c, ...\}}\)</span>.
+While we attacked regression problems by trying
+to minimize the squared error loss function,
+the common loss function for classification problems is called <em>cross-entropy</em>,
+whose name will be demystified
+when we introduce information theory in later chapters.</p>
+<p>Note that the most likely class is not necessarily
+the one that you are going to use for your decision.
+Assume that you find a beautiful mushroom in your backyard
+as shown in :numref:<code>fig_death_cap</code>.</p>
+<p><img alt="Death cap---do not eat!" src="../img/death-cap.jpg" />
+:width:<code>200px</code>
+:label:<code>fig_death_cap</code></p>
+<p>Now, assume that you built a classifier and trained it
+to predict whether a mushroom is poisonous based on a photograph.
+Say our poison-detection classifier outputs
+that the probability that
+:numref:<code>fig_death_cap</code> shows a death cap is 0.2.
+In other words, the classifier is 80\% sure
+that our mushroom is not a death cap.
+Still, you would have to be a fool to eat it.
+That is because the certain benefit of a delicious dinner
+is not worth a 20\% risk of dying from it.
+In other words, the effect of the uncertain risk
+outweighs the benefit by far.
+Thus, in order to make a decision about whether to eat the mushroom,
+we need to compute the expected detriment
+associated with each action
+which depends both on the likely outcomes
+and the benefits or harms associated with each.
+In this case, the detriment incurred
+by eating the mushroom
+might be <span class="arithmatex">\(0.2 \times \infty + 0.8 \times 0 = \infty\)</span>,
+whereas the loss of discarding it
+is <span class="arithmatex">\(0.2 \times 0 + 0.8 \times 1 = 0.8\)</span>.
+Our caution was justified:
+as any mycologist would tell us,
+the mushroom in :numref:<code>fig_death_cap</code>
+is actually a death cap.</p>
+<p>Classification can get much more complicated than just
+binary or multiclass classification.
+For instance, there are some variants of classification
+addressing hierarchically structured classes.
+In such cases not all errors are equal---if
+we must err, we might prefer to misclassify
+to a related class rather than a distant class.
+Usually, this is referred to as <em>hierarchical classification</em>.
+For inspiration, you might think of <a href="https://en.wikipedia.org/wiki/Carl_Linnaeus">Linnaeus</a>,
+who organized fauna in a hierarchy.</p>
+<p>In the case of animal classification,
+it might not be so bad to mistake
+a poodle for a schnauzer,
+but our model would pay a huge penalty
+if it confused a poodle with a dinosaur.
+Which hierarchy is relevant might depend
+on how you plan to use the model.
+For example, rattlesnakes and garter snakes
+might be close on the phylogenetic tree,
+but mistaking a rattler for a garter could have fatal consequences.</p>
+<h4 id="tagging">Tagging<a class="headerlink" href="#tagging" title="Permanent link">⚓︎</a></h4>
+<p>Some classification problems fit neatly
+into the binary or multiclass classification setups.
+For example, we could train a normal binary classifier
+to distinguish cats from dogs.
+Given the current state of computer vision,
+we can do this easily, with off-the-shelf tools.
+Nonetheless, no matter how accurate our model gets,
+we might find ourselves in trouble when the classifier
+encounters an image of the <em>Town Musicians of Bremen</em>,
+a popular German fairy tale featuring four animals
+(:numref:<code>fig_stackedanimals</code>).</p>
+<p><img alt="A donkey, a dog, a cat, and a rooster." src="../img/stackedanimals.png" />
+:width:<code>300px</code>
+:label:<code>fig_stackedanimals</code></p>
+<p>As you can see, the photo features a cat,
+a rooster, a dog, and a donkey,
+with some trees in the background.
+If we anticipate encountering such images,
+multiclass classification might not be
+the right problem formulation.
+Instead, we might want to give the model the option of
+saying the image depicts a cat, a dog, a donkey,
+<em>and</em> a rooster.</p>
+<p>The problem of learning to predict classes that are
+not mutually exclusive is called <em>multi-label classification</em>.
+Auto-tagging problems are typically best described
+in terms of multi-label classification.
+Think of the tags people might apply
+to posts on a technical blog,
+e.g., "machine learning", "technology", "gadgets",
+"programming languages", "Linux", "cloud computing", "AWS".
+A typical article might have 5--10 tags applied.
+Typically, tags will exhibit some correlation structure.
+Posts about "cloud computing" are likely to mention "AWS"
+and posts about "machine learning" are likely to mention "GPUs".</p>
+<p>Sometimes such tagging problems
+draw on enormous label sets.
+The National Library of Medicine
+employs many professional annotators
+who associate each article to be indexed in PubMed
+with a set of tags drawn from the
+Medical Subject Headings (MeSH) ontology,
+a collection of roughly 28,000 tags.
+Correctly tagging articles is important
+because it allows researchers to conduct
+exhaustive reviews of the literature.
+This is a time-consuming process and typically there is a one-year lag between archiving and tagging.
+Machine learning can provide provisional tags
+until each article has a proper manual review.
+Indeed, for several years, the BioASQ organization
+has <a href="http://bioasq.org/">hosted competitions</a>
+for this task.</p>
+<h4 id="search">Search<a class="headerlink" href="#search" title="Permanent link">⚓︎</a></h4>
+<p>In the field of information retrieval,
+we often impose ranks on sets of items.
+Take web search for example.
+The goal is less to determine <em>whether</em>
+a particular page is relevant for a query, 
+but rather which, among a set of relevant results,
+should be shown most prominently
+to a particular user.
+One way of doing this might be
+to first assign a score
+to every element in the set
+and then to retrieve the top-rated elements.
+<a href="https://en.wikipedia.org/wiki/PageRank">PageRank</a>,
+the original secret sauce behind the Google search engine,
+was an early example of such a scoring system.
+Weirdly, the scoring provided by PageRank
+did not depend on the actual query.
+Instead, they relied on a simple relevance filter
+to identify the set of relevant candidates
+and then used PageRank to prioritize
+the more authoritative pages.
+Nowadays, search engines use machine learning and behavioral models
+to obtain query-dependent relevance scores.
+There are entire academic conferences devoted to this subject.</p>
+<h4 id="recommender-systems">Recommender Systems<a class="headerlink" href="#recommender-systems" title="Permanent link">⚓︎</a></h4>
+<p>:label:<code>subsec_recommender_systems</code></p>
+<p>Recommender systems are another problem setting
+that is related to search and ranking.
+The problems are similar insofar as the goal
+is to display a set of items relevant to the user.
+The main difference is the emphasis on <em>personalization</em>
+to specific users in the context of recommender systems.
+For instance, for movie recommendations,
+the results page for a science fiction fan
+and the results page
+for a connoisseur of Peter Sellers comedies
+might differ significantly.
+Similar problems pop up in other recommendation settings,
+e.g., for retail products, music, and news recommendation.</p>
+<p>In some cases, customers provide explicit feedback,
+communicating how much they liked a particular product
+(e.g., the product ratings and reviews
+on Amazon, IMDb, or Goodreads).
+In other cases, they provide implicit feedback,
+e.g., by skipping titles on a playlist,
+which might indicate 
+dissatisfaction or maybe just
+indicate
+that the song was inappropriate in context.
+In the simplest formulations,
+these systems are trained
+to estimate some score,
+such as an expected star rating
+or the probability that a given user
+will purchase a particular item.</p>
+<p>Given such a model, for any given user,
+we could retrieve the set of objects with the largest scores,
+which could then be recommended to the user.
+Production systems are considerably more advanced
+and take detailed user activity and item characteristics
+into account when computing such scores.
+:numref:<code>fig_deeplearning_amazon</code> displays the deep learning books
+recommended by Amazon based on personalization algorithms
+tuned to capture Aston's preferences.</p>
+<p><img alt="Deep learning books recommended by Amazon." src="../img/deeplearning-amazon.jpg" />
+:label:<code>fig_deeplearning_amazon</code></p>
+<p>Despite their tremendous economic value,
+recommender systems
+naively built on top of predictive models
+suffer some serious conceptual flaws.
+To start, we only observe <em>censored feedback</em>:
+users preferentially rate movies
+that they feel strongly about.
+For example, on a five-point scale,
+you might notice that items receive
+many one- and five-star ratings
+but that there are conspicuously few three-star ratings.
+Moreover, current purchase habits are often a result
+of the recommendation algorithm currently in place,
+but learning algorithms do not always take this detail into account.
+Thus it is possible for feedback loops to form
+where a recommender system preferentially pushes an item
+that is then taken to be better (due to greater purchases)
+and in turn is recommended even more frequently.
+Many of these problems---about
+how to deal with censoring,
+incentives, and feedback loops---are important open research questions.</p>
+<h4 id="sequence-learning">Sequence Learning<a class="headerlink" href="#sequence-learning" title="Permanent link">⚓︎</a></h4>
+<p>So far, we have looked at problems where we have
+some fixed number of inputs and produce a fixed number of outputs.
+For example, we considered predicting house prices
+given a fixed set of features:
+square footage, number of bedrooms,
+number of bathrooms, and the transit time to downtown.
+We also discussed mapping from an image (of fixed dimension)
+to the predicted probabilities that it belongs
+to each among a fixed number of classes
+and predicting star ratings associated with purchases
+based on the user ID and product ID alone.
+In these cases, once our model is trained,
+after each test example is fed into our model,
+it is immediately forgotten.
+We assumed that successive observations were independent
+and thus there was no need to hold on to this context.</p>
+<p>But how should we deal with video snippets?
+In this case, each snippet might consist of a different number of frames.
+And our guess of what is going on in each frame might be much stronger
+if we take into account the previous or succeeding frames.
+The same goes for language.
+For example, one popular deep learning problem is machine translation:
+the task of ingesting sentences in some source language
+and predicting their translations in another language.</p>
+<p>Such problems also occur in medicine.
+We might want a model to monitor patients in the intensive care unit
+and to fire off alerts whenever their risk of dying in the next 24 hours
+exceeds some threshold.
+Here, we would not throw away everything
+that we know about the patient history every hour,
+because we might not want to make predictions based only
+on the most recent measurements.</p>
+<p>Questions like these are among the most
+exciting applications of machine learning
+and they are instances of <em>sequence learning</em>.
+They require a model either to ingest sequences of inputs
+or to emit sequences of outputs (or both).
+Specifically, <em>sequence-to-sequence learning</em> considers problems
+where both inputs and outputs consist of variable-length sequences.
+Examples include machine translation
+and speech-to-text transcription.
+While it is impossible to consider
+all types of sequence transformations,
+the following special cases are worth mentioning.</p>
+<p><strong>Tagging and Parsing</strong>.
+This involves annotating a text sequence with attributes.
+Here, the inputs and outputs are <em>aligned</em>,
+i.e., they are of the same number
+and occur in a corresponding order.
+For instance, in <em>part-of-speech (PoS) tagging</em>,
+we annotate every word in a sentence
+with the corresponding part of speech,
+i.e., "noun" or "direct object".
+Alternatively, we might want to know
+which groups of contiguous words refer to named entities,
+like <em>people</em>, <em>places</em>, or <em>organizations</em>.
+In the cartoonishly simple example below,
+we might just want to indicate whether or not any word in the sentence is part of a named entity (tagged as "Ent").</p>
+<div class="highlight"><pre><span></span><code>Tom has dinner in Washington with Sally
+Ent  -    -    -     Ent      -    Ent
+</code></pre></div>
+<p><strong>Automatic Speech Recognition</strong>.
+With speech recognition, the input sequence
+is an audio recording of a speaker (:numref:<code>fig_speech</code>),
+and the output is a transcript of what the speaker said.
+The challenge is that there are many more audio frames
+(sound is typically sampled at 8kHz or 16kHz)
+than text, i.e., there is no 1:1 correspondence between audio and text,
+since thousands of samples may
+correspond to a single spoken word.
+These are sequence-to-sequence learning problems,
+where the output is much shorter than the input.
+While humans are remarkably good at recognizing speech,
+even from low-quality audio,
+getting computers to perform the same feat
+is a formidable challenge.</p>
+<p><img alt="-D-e-e-p- L-ea-r-ni-ng- in an audio recording." src="../img/speech.png" />
+:width:<code>700px</code>
+:label:<code>fig_speech</code></p>
+<p><strong>Text to Speech</strong>.
+This is the inverse of automatic speech recognition.
+Here, the input is text and the output is an audio file.
+In this case, the output is much longer than the input.</p>
+<p><strong>Machine Translation</strong>.
+Unlike the case of speech recognition,
+where corresponding inputs and outputs
+occur in the same order,
+in machine translation,
+unaligned data poses a new challenge.
+Here the input and output sequences
+can have different lengths,
+and the corresponding regions
+of the respective sequences
+may appear in a different order.
+Consider the following illustrative example
+of the peculiar tendency of Germans
+to place the verbs at the end of sentences:</p>
+<div class="highlight"><pre><span></span><code>German:           Haben Sie sich schon dieses grossartige Lehrwerk angeschaut?
+English:          Have you already looked at this excellent textbook?
+Wrong alignment:  Have you yourself already this excellent textbook looked at?
+</code></pre></div>
+<p>Many related problems pop up in other learning tasks.
+For instance, determining the order in which a user
+reads a webpage is a two-dimensional layout analysis problem.
+Dialogue problems exhibit all kinds of additional complications,
+where determining what to say next requires taking into account
+real-world knowledge and the prior state of the conversation
+across long temporal distances.
+Such topics are active areas of research.</p>
+<h3 id="unsupervised-and-self-supervised-learning">Unsupervised and Self-Supervised Learning<a class="headerlink" href="#unsupervised-and-self-supervised-learning" title="Permanent link">⚓︎</a></h3>
+<p>The previous examples focused on supervised learning,
+where we feed the model a giant dataset
+containing both the features and corresponding label values.
+You could think of the supervised learner as having
+an extremely specialized job and an extremely dictatorial boss.
+The boss stands over the learner's shoulder and tells them exactly what to do
+in every situation until they learn to map from situations to actions.
+Working for such a boss sounds pretty lame.
+On the other hand, pleasing such a boss is pretty easy.
+You just recognize the pattern as quickly as possible
+and imitate the boss's actions.</p>
+<p>Considering the opposite situation,
+it could be frustrating to work for a boss
+who has no idea what they want you to do.
+However, if you plan to be a data scientist,
+you had better get used to it.
+The boss might just hand you a giant dump of data
+and tell you to <em>do some data science with it!</em>
+This sounds vague because it is vague.
+We call this class of problems <em>unsupervised learning</em>,
+and the type and number of questions we can ask
+is limited only by our creativity.
+We will address unsupervised learning techniques
+in later chapters.
+To whet your appetite for now,
+we describe a few of the following questions you might ask.</p>
+<ul>
+<li>Can we find a small number of prototypes
+that accurately summarize the data?
+Given a set of photos, can we group them into landscape photos,
+pictures of dogs, babies, cats, and mountain peaks?
+Likewise, given a collection of users' browsing activities,
+can we group them into users with similar behavior?
+This problem is typically known as <em>clustering</em>.</li>
+<li>Can we find a small number of parameters
+that accurately capture the relevant properties of the data?
+The trajectories of a ball are well described
+by velocity, diameter, and mass of the ball.
+Tailors have developed a small number of parameters
+that describe human body shape fairly accurately
+for the purpose of fitting clothes.
+These problems are referred to as <em>subspace estimation</em>.
+If the dependence is linear, it is called <em>principal component analysis</em>.</li>
+<li>Is there a representation of (arbitrarily structured) objects
+in Euclidean space
+such that symbolic properties can be well matched?
+This can be used to describe entities and their relations,
+such as "Rome" <span class="arithmatex">\(-\)</span> "Italy" <span class="arithmatex">\(+\)</span> "France" <span class="arithmatex">\(=\)</span> "Paris".</li>
+<li>Is there a description of the root causes
+of much of the data that we observe?
+For instance, if we have demographic data
+about house prices, pollution, crime, location,
+education, and salaries, can we discover
+how they are related simply based on empirical data?
+The fields concerned with <em>causality</em> and
+<em>probabilistic graphical models</em> tackle such questions.</li>
+<li>Another important and exciting recent development in unsupervised learning
+is the advent of <em>deep generative models</em>.
+These models estimate the density of the data,
+either explicitly or <em>implicitly</em>.
+Once trained, we can use a generative model
+either to score examples according to how likely they are,
+or to sample synthetic examples from the learned distribution.
+Early deep learning breakthroughs in generative modeling
+came with the invention of <em>variational autoencoders</em> :cite:<code>Kingma.Welling.2014,rezende2014stochastic</code>
+and continued with the development of <em>generative adversarial networks</em> :cite:<code>Goodfellow.Pouget-Abadie.Mirza.ea.2014</code>.
+More recent advances include normalizing flows :cite:<code>dinh2014nice,dinh2017density</code> and
+diffusion models :cite:<code>sohl2015deep,song2019generative,ho2020denoising,song2021score</code>.</li>
+</ul>
+<p>A further development in unsupervised learning
+has been the rise of <em>self-supervised learning</em>,
+techniques that leverage some aspect of the unlabeled data
+to provide supervision.
+For text, we can train models
+to "fill in the blanks"
+by predicting randomly masked words
+using their surrounding words (contexts)
+in big corpora without any labeling effort :cite:<code>Devlin.Chang.Lee.ea.2018</code>!
+For images, we may train models
+to tell the relative position
+between two cropped regions
+of the same image :cite:<code>Doersch.Gupta.Efros.2015</code>,
+to predict an occluded part of an image
+based on the remaining portions of the image,
+or to predict whether two examples
+are perturbed versions of the same underlying image.
+Self-supervised models often learn representations
+that are subsequently leveraged
+by fine-tuning the resulting models
+on some downstream task of interest.</p>
+<h3 id="interacting-with-an-environment">Interacting with an Environment<a class="headerlink" href="#interacting-with-an-environment" title="Permanent link">⚓︎</a></h3>
+<p>So far, we have not discussed where data actually comes from,
+or what actually happens when a machine learning model generates an output.
+That is because supervised learning and unsupervised learning
+do not address these issues in a very sophisticated way.
+In each case, we grab a big pile of data upfront,
+then set our pattern recognition machines in motion
+without ever interacting with the environment again.
+Because all the learning takes place
+after the algorithm is disconnected from the environment,
+this is sometimes called <em>offline learning</em>.
+For example, supervised learning assumes
+the simple interaction pattern
+depicted in :numref:<code>fig_data_collection</code>.</p>
+<p><img alt="Collecting data for supervised learning from an environment." src="../img/data-collection.svg" />
+:label:<code>fig_data_collection</code></p>
+<p>This simplicity of offline learning has its charms.
+The upside is that we can worry
+about pattern recognition in isolation,
+with no concern about complications arising
+from interactions with a dynamic environment.
+But this problem formulation is limiting.
+If you grew up reading Asimov's Robot novels,
+then you probably picture artificially intelligent agents
+capable not only of making predictions,
+but also of taking actions in the world.
+We want to think about intelligent <em>agents</em>,
+not just predictive models.
+This means that we need to think about choosing <em>actions</em>,
+not just making predictions.
+In contrast to mere predictions,
+actions actually impact the environment.
+If we want to train an intelligent agent,
+we must account for the way its actions might
+impact the future observations of the agent, and so offline learning is inappropriate.</p>
+<p>Considering the interaction with an environment
+opens a whole set of new modeling questions.
+The following are just a few examples.</p>
+<ul>
+<li>Does the environment remember what we did previously?</li>
+<li>Does the environment want to help us, e.g., a user reading text into a speech recognizer?</li>
+<li>Does the environment want to beat us, e.g., spammers adapting their emails to evade spam filters?</li>
+<li>Does the environment have shifting dynamics? For example, would future data always resemble the past or would the patterns change over time, either naturally or in response to our automated tools?</li>
+</ul>
+<p>These questions raise the problem of <em>distribution shift</em>,
+where training and test data are different.
+An example of this, that many of us may have met, is when taking exams written by a lecturer,
+while the homework was composed by their teaching assistants.
+Next, we briefly describe reinforcement learning,
+a rich framework for posing learning problems in which
+an agent interacts with an environment.</p>
+<h3 id="reinforcement-learning">Reinforcement Learning<a class="headerlink" href="#reinforcement-learning" title="Permanent link">⚓︎</a></h3>
+<p>If you are interested in using machine learning
+to develop an agent that interacts with an environment
+and takes actions, then you are probably going to wind up
+focusing on <em>reinforcement learning</em>.
+This might include applications to robotics,
+to dialogue systems,
+and even to developing artificial intelligence (AI)
+for video games.
+<em>Deep reinforcement learning</em>, which applies
+deep learning to reinforcement learning problems,
+has surged in popularity.
+The breakthrough deep Q-network, that beat humans
+at Atari games using only the visual input :cite:<code>mnih2015human</code>,
+and the AlphaGo program, which dethroned the world champion
+at the board game Go :cite:<code>Silver.Huang.Maddison.ea.2016</code>,
+are two prominent examples.</p>
+<p>Reinforcement learning gives a very general statement of a problem
+in which an agent interacts with an environment over a series of time steps.
+At each time step, the agent receives some <em>observation</em>
+from the environment and must choose an <em>action</em>
+that is subsequently transmitted back to the environment
+via some mechanism (sometimes called an <em>actuator</em>), when, after each loop, 
+the agent receives a reward from the environment.
+This process is illustrated in :numref:<code>fig_rl-environment</code>.
+The agent then receives a subsequent observation,
+and chooses a subsequent action, and so on.
+The behavior of a reinforcement learning agent is governed by a <em>policy</em>.
+In brief, a <em>policy</em> is just a function that maps
+from observations of the environment to actions.
+The goal of reinforcement learning is to produce good policies.</p>
+<p><img alt="The interaction between reinforcement learning and an environment." src="../img/rl-environment.svg" />
+:label:<code>fig_rl-environment</code></p>
+<p>It is hard to overstate the generality
+of the reinforcement learning framework.
+For example, supervised learning
+can be recast as reinforcement learning.
+Say we had a classification problem.
+We could create a reinforcement learning agent
+with one action corresponding to each class.
+We could then create an environment which gave a reward
+that was exactly equal to the loss function
+from the original supervised learning problem.</p>
+<p>Further, reinforcement learning
+can also address many problems
+that supervised learning cannot.
+For example, in supervised learning,
+we always expect that the training input
+comes associated with the correct label.
+But in reinforcement learning,
+we do not assume that, for each observation
+the environment tells us the optimal action.
+In general, we just get some reward.
+Moreover, the environment may not even tell us
+which actions led to the reward.</p>
+<p>Consider the game of chess.
+The only real reward signal comes at the end of the game
+when we either win, earning a reward of, say, <span class="arithmatex">\(1\)</span>,
+or when we lose, receiving a reward of, say, <span class="arithmatex">\(-1\)</span>.
+So reinforcement learners must deal
+with the <em>credit assignment</em> problem:
+determining which actions to credit or blame for an outcome.
+The same goes for an employee
+who gets a promotion on October 11.
+That promotion likely reflects a number
+of well-chosen actions over the previous year.
+Getting promoted in the future requires figuring out
+which actions along the way led to the earlier promotions.</p>
+<p>Reinforcement learners may also have to deal
+with the problem of partial observability.
+That is, the current observation might not
+tell you everything about your current state.
+Say your cleaning robot found itself trapped
+in one of many identical closets in your house.
+Rescuing the robot involves inferring
+its precise location which might require considering earlier observations prior to it entering the closet.</p>
+<p>Finally, at any given point, reinforcement learners
+might know of one good policy,
+but there might be many other better policies
+that the agent has never tried.
+The reinforcement learner must constantly choose
+whether to <em>exploit</em> the best (currently) known strategy as a policy,
+or to <em>explore</em> the space of strategies,
+potentially giving up some short-term reward
+in exchange for knowledge.</p>
+<p>The general reinforcement learning problem
+has a very general setting.
+Actions affect subsequent observations.
+Rewards are only observed when they correspond to the chosen actions.
+The environment may be either fully or partially observed.
+Accounting for all this complexity at once may be asking too much.
+Moreover, not every practical problem exhibits all this complexity.
+As a result, researchers have studied a number of
+special cases of reinforcement learning problems.</p>
+<p>When the environment is fully observed,
+we call the reinforcement learning problem a <em>Markov decision process</em>.
+When the state does not depend on the previous actions,
+we call it a <em>contextual bandit problem</em>.
+When there is no state, just a set of available actions
+with initially unknown rewards, we have the classic <em>multi-armed bandit problem</em>.</p>
+<h2 id="roots">Roots<a class="headerlink" href="#roots" title="Permanent link">⚓︎</a></h2>
+<p>We have just reviewed a small subset of problems
+that machine learning can address.
+For a diverse set of machine learning problems,
+deep learning provides powerful tools for their solution.
+Although many deep learning methods are recent inventions,
+the core ideas behind learning from data
+have been studied for centuries.
+In fact, humans have held the desire to analyze data
+and to predict future outcomes for 
+ages, and it is this desire that is at the root of much of natural science and mathematics.
+Two examples are the Bernoulli distribution, named after
+<a href="https://en.wikipedia.org/wiki/Jacob_Bernoulli">Jacob Bernoulli (1655--1705)</a>,
+and the Gaussian distribution discovered
+by <a href="https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss">Carl Friedrich Gauss (1777--1855)</a>.
+Gauss invented, for instance, the least mean squares algorithm,
+which is still used today for a multitude of problems
+from insurance calculations to medical diagnostics.
+Such tools enhanced the experimental approach
+in the natural sciences---for instance, Ohm's law
+relating current and voltage in a resistor
+is perfectly described by a linear model.</p>
+<p>Even in the middle ages, mathematicians
+had a keen intuition of estimates.
+For instance, the geometry book of <a href="https://www.maa.org/press/periodicals/convergence/mathematical-treasures-jacob-kobels-geometry">Jacob Köbel (1460--1533)</a>
+illustrates averaging the length of 16 adult men's feet
+to estimate the typical foot length in the population (:numref:<code>fig_koebel</code>).</p>
+<p><img alt="Estimating the length of a foot." src="../img/koebel.jpg" />
+:width:<code>500px</code>
+:label:<code>fig_koebel</code></p>
+<p>As a group of individuals exited a church,
+16 adult men were asked to line up in a row
+and have their feet measured.
+The sum of these measurements was then divided by 16
+to obtain an estimate for what now is called one foot.
+This "algorithm" was later improved
+to deal with misshapen feet;
+The two men with the shortest and longest feet were sent away,
+averaging only over the remainder.
+This is among the earliest examples
+of a trimmed mean estimate.</p>
+<p>Statistics really took off with the availability and collection of data.
+One of its pioneers, <a href="https://en.wikipedia.org/wiki/Ronald_Fisher">Ronald Fisher (1890--1962)</a>,
+contributed significantly to its theory
+and also its applications in genetics.
+Many of his algorithms (such as linear discriminant analysis)
+and concepts (such as the Fisher information matrix)
+still hold a prominent place
+in the foundations of modern statistics.
+Even his data resources had a lasting impact.
+The Iris dataset that Fisher released in 1936
+is still sometimes used to demonstrate
+machine learning algorithms.
+Fisher was also a proponent of eugenics,
+which should remind us that the morally dubious use of data science
+has as long and enduring a history as its productive use
+in industry and the natural sciences.</p>
+<p>Other influences for machine learning
+came from the information theory of
+<a href="https://en.wikipedia.org/wiki/Claude_Shannon">Claude Shannon (1916--2001)</a>
+and the theory of computation proposed by
+<a href="https://en.wikipedia.org/wiki/Alan_Turing">Alan Turing (1912--1954)</a>.
+Turing posed the question "can machines think?”
+in his famous paper <em>Computing Machinery and Intelligence</em> :cite:<code>Turing.1950</code>.
+Describing what is now known as the Turing test, he proposed that a machine
+can be considered <em>intelligent</em> if it is difficult
+for a human evaluator to distinguish between the replies
+from a machine and those of a human, based purely on textual interactions.</p>
+<p>Further influences came from neuroscience and psychology.
+After all, humans clearly exhibit intelligent behavior.
+Many scholars have asked whether one could explain
+and possibly reverse engineer this capacity.
+One of the first biologically inspired algorithms
+was formulated by <a href="https://en.wikipedia.org/wiki/Donald_O._Hebb">Donald Hebb (1904--1985)</a>.
+In his groundbreaking book <em>The Organization of Behavior</em> :cite:<code>Hebb.1949</code>,
+he posited that neurons learn by positive reinforcement.
+This became known as the Hebbian learning rule.
+These ideas inspired later work, such as
+Rosenblatt's perceptron learning algorithm,
+and laid the foundations of many stochastic gradient descent algorithms
+that underpin deep learning today:
+reinforce desirable behavior and diminish undesirable behavior
+to obtain good settings of the parameters in a neural network.</p>
+<p>Biological inspiration is what gave <em>neural networks</em> their name.
+For over a century (dating back to the models of Alexander Bain, 1873,
+and James Sherrington, 1890), researchers have tried to assemble
+computational circuits that resemble networks of interacting neurons.
+Over time, the interpretation of biology has become less literal,
+but the name stuck. At its heart lie a few key principles
+that can be found in most networks today:</p>
+<ul>
+<li>The alternation of linear and nonlinear processing units, often referred to as <em>layers</em>.</li>
+<li>The use of the chain rule (also known as <em>backpropagation</em>) for adjusting parameters in the entire network at once.</li>
+</ul>
+<p>After initial rapid progress, research in neural networks
+languished from around 1995 until 2005.
+This was mainly due to two reasons.
+First, training a network is computationally very expensive.
+While random-access memory was plentiful at the end of the past century,
+computational power was scarce.
+Second, datasets were relatively small.
+In fact, Fisher's Iris dataset from 1936
+was still a popular tool for testing the efficacy of algorithms.
+The MNIST dataset with its 60,000 handwritten digits was considered huge.</p>
+<p>Given the scarcity of data and computation,
+strong statistical tools such as kernel methods,
+decision trees, and graphical models
+proved empirically superior in many applications.
+Moreover, unlike neural networks,
+they did not require weeks to train
+and provided predictable results
+with strong theoretical guarantees.</p>
+<h2 id="the-road-to-deep-learning">The Road to Deep Learning<a class="headerlink" href="#the-road-to-deep-learning" title="Permanent link">⚓︎</a></h2>
+<p>Much of this changed with the availability
+of massive amounts of data,
+thanks to the World Wide Web,
+the advent of companies serving
+hundreds of millions of users online,
+a dissemination of low-cost, high-quality sensors,
+inexpensive data storage (Kryder's law),
+and cheap computation (Moore's law).
+In particular, the landscape of computation in deep learning
+was revolutionized by advances in GPUs that were originally engineered for computer gaming.
+Suddenly algorithms and models
+that seemed computationally infeasible
+were within reach.
+This is best illustrated in :numref:<code>tab_intro_decade</code>.</p>
+<p>:Dataset vs. computer memory and computational power
+:label:<code>tab_intro_decade</code></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Decade</th>
+<th style="text-align: left;">Dataset</th>
+<th style="text-align: left;">Memory</th>
+<th style="text-align: left;">Floating point calculations per second</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1970</td>
+<td style="text-align: left;">100 (Iris)</td>
+<td style="text-align: left;">1 KB</td>
+<td style="text-align: left;">100 KF (Intel 8080)</td>
+</tr>
+<tr>
+<td style="text-align: left;">1980</td>
+<td style="text-align: left;">1 K (house prices in Boston)</td>
+<td style="text-align: left;">100 KB</td>
+<td style="text-align: left;">1 MF (Intel 80186)</td>
+</tr>
+<tr>
+<td style="text-align: left;">1990</td>
+<td style="text-align: left;">10 K (optical character recognition)</td>
+<td style="text-align: left;">10 MB</td>
+<td style="text-align: left;">10 MF (Intel 80486)</td>
+</tr>
+<tr>
+<td style="text-align: left;">2000</td>
+<td style="text-align: left;">10 M (web pages)</td>
+<td style="text-align: left;">100 MB</td>
+<td style="text-align: left;">1 GF (Intel Core)</td>
+</tr>
+<tr>
+<td style="text-align: left;">2010</td>
+<td style="text-align: left;">10 G (advertising)</td>
+<td style="text-align: left;">1 GB</td>
+<td style="text-align: left;">1 TF (NVIDIA C2050)</td>
+</tr>
+<tr>
+<td style="text-align: left;">2020</td>
+<td style="text-align: left;">1 T (social network)</td>
+<td style="text-align: left;">100 GB</td>
+<td style="text-align: left;">1 PF (NVIDIA DGX-2)</td>
+</tr>
+</tbody>
+</table>
+<p>Note that random-access memory has not kept pace with the growth in data.
+At the same time, increases in computational power
+have outpaced the growth in datasets.
+This means that statistical models
+need to become more memory efficient,
+and so they are free to spend more computer cycles
+optimizing parameters, thanks to
+the increased compute budget.
+Consequently, the sweet spot in machine learning and statistics
+moved from (generalized) linear models and kernel methods
+to deep neural networks.
+This is also one of the reasons why many of the mainstays
+of deep learning, such as multilayer perceptrons
+:cite:<code>McCulloch.Pitts.1943</code>, convolutional neural networks
+:cite:<code>LeCun.Bottou.Bengio.ea.1998</code>, long short-term memory
+:cite:<code>Hochreiter.Schmidhuber.1997</code>,
+and Q-Learning :cite:<code>Watkins.Dayan.1992</code>,
+were essentially "rediscovered" in the past decade,
+after lying comparatively dormant for considerable time.</p>
+<p>The recent progress in statistical models, applications, and algorithms
+has sometimes been likened to the Cambrian explosion:
+a moment of rapid progress in the evolution of species.
+Indeed, the state of the art is not just a mere consequence
+of available resources applied to decades-old algorithms.
+Note that the list of ideas below barely scratches the surface
+of what has helped researchers achieve tremendous progress
+over the past decade.</p>
+<ul>
+<li>Novel methods for capacity control, such as <em>dropout</em>
+  :cite:<code>Srivastava.Hinton.Krizhevsky.ea.2014</code>,
+  have helped to mitigate overfitting.
+  Here, noise is injected :cite:<code>Bishop.1995</code>
+  throughout the neural network during training.</li>
+<li><em>Attention mechanisms</em> solved a second problem
+  that had plagued statistics for over a century:
+  how to increase the memory and complexity of a system without
+  increasing the number of learnable parameters.
+  Researchers found an elegant solution
+  by using what can only be viewed as
+  a <em>learnable pointer structure</em> :cite:<code>Bahdanau.Cho.Bengio.2014</code>.
+  Rather than having to remember an entire text sequence, e.g.,
+  for machine translation in a fixed-dimensional representation,
+  all that needed to be stored was a pointer to the intermediate state
+  of the translation process. This allowed for significantly
+  increased accuracy for long sequences, since the model
+  no longer needed to remember the entire sequence before
+  commencing the generation of a new one.</li>
+<li>Built solely on attention mechanisms,
+  the <em>Transformer</em> architecture :cite:<code>Vaswani.Shazeer.Parmar.ea.2017</code> has demonstrated superior <em>scaling</em> behavior: it performs better with an increase in dataset size, model size, and amount of training compute :cite:<code>kaplan2020scaling</code>. This architecture has demonstrated compelling success in a wide range of areas,
+  such as natural language processing :cite:<code>Devlin.Chang.Lee.ea.2018,brown2020language</code>, computer vision :cite:<code>Dosovitskiy.Beyer.Kolesnikov.ea.2021,liu2021swin</code>, speech recognition :cite:<code>gulati2020conformer</code>, reinforcement learning :cite:<code>chen2021decision</code>, and graph neural networks :cite:<code>dwivedi2020generalization</code>. For example, a single Transformer pretrained on modalities
+  as diverse as text, images, joint torques, and button presses
+  can play Atari, caption images, chat,
+  and control a robot :cite:<code>reed2022generalist</code>.</li>
+<li>Modeling probabilities of text sequences, <em>language models</em> can predict text given other text. Scaling up the data, model, and compute has unlocked a growing number of capabilities of language models to perform desired tasks via human-like text generation based on input text :cite:<code>brown2020language,rae2021scaling,hoffmann2022training,chowdhery2022palm,openai2023gpt4,anil2023palm,touvron2023llama,touvron2023llama2</code>. For instance, aligning language models with human intent :cite:<code>ouyang2022training</code>, OpenAI's <a href="https://chat.openai.com/">ChatGPT</a> allows users to interact with it in a conversational way to solve problems, such as code debugging and creative writing.</li>
+<li>Multi-stage designs, e.g., via the memory networks
+  :cite:<code>Sukhbaatar.Weston.Fergus.ea.2015</code>
+  and the neural programmer-interpreter :cite:<code>Reed.De-Freitas.2015</code>
+  permitted statistical modelers to describe iterative approaches to reasoning.
+  These tools allow for an internal state of the deep neural network
+  to be modified repeatedly,
+  thus carrying out subsequent steps
+  in a chain of reasoning, just as a processor
+  can modify memory for a computation.</li>
+<li>A key development in <em>deep generative modeling</em> was the invention
+  of <em>generative adversarial networks</em>
+  :cite:<code>Goodfellow.Pouget-Abadie.Mirza.ea.2014</code>.
+  Traditionally, statistical methods for density estimation
+  and generative models focused on finding proper probability distributions
+  and (often approximate) algorithms for sampling from them.
+  As a result, these algorithms were largely limited by the lack of
+  flexibility inherent in the statistical models.
+  The crucial innovation in generative adversarial networks was to replace the sampler
+  by an arbitrary algorithm with differentiable parameters.
+  These are then adjusted in such a way that the discriminator
+  (effectively a two-sample test) cannot distinguish fake from real data.
+  Through the ability to use arbitrary algorithms to generate data,
+  density estimation was opened up to a wide variety of techniques.
+  Examples of galloping zebras :cite:<code>Zhu.Park.Isola.ea.2017</code>
+  and of fake celebrity faces :cite:<code>Karras.Aila.Laine.ea.2017</code>
+  are each testimony to this progress.
+  Even amateur doodlers can produce
+  photorealistic images just based on sketches describing the layout of a scene :cite:<code>Park.Liu.Wang.ea.2019</code>. </li>
+<li>Furthermore, while the diffusion process gradually adds random noise to data samples, <em>diffusion models</em> :cite:<code>sohl2015deep,ho2020denoising</code> learn the denoising process to gradually construct data samples from random noise, reversing the diffusion process. They have started to replace generative adversarial networks in more recent deep generative models, such as in DALL-E 2 :cite:<code>ramesh2022hierarchical</code> and Imagen :cite:<code>saharia2022photorealistic</code> for creative art and image generation based on text descriptions.</li>
+<li>In many cases, a single GPU is insufficient for processing the large amounts of data available for training.
+  Over the past decade the ability to build parallel and
+  distributed training algorithms has improved significantly.
+  One of the key challenges in designing scalable algorithms
+  is that the workhorse of deep learning optimization,
+  stochastic gradient descent, relies on relatively
+  small minibatches of data to be processed.
+  At the same time, small batches limit the efficiency of GPUs.
+  Hence, training on 1,024 GPUs with a minibatch size of,
+  say, 32 images per batch amounts to an aggregate minibatch
+  of about 32,000 images. Work, first by :citet:<code>Li.2017</code>
+  and subsequently by :citet:<code>You.Gitman.Ginsburg.2017</code>
+  and :citet:<code>Jia.Song.He.ea.2018</code> pushed the size up to 64,000 observations,
+  reducing training time for the ResNet-50 model
+  on the ImageNet dataset to less than 7 minutes.
+  By comparison, training times were initially of the order of days.</li>
+<li>The ability to parallelize computation
+  has also contributed to progress in <em>reinforcement learning</em>.
+  This has led to significant progress in computers achieving
+  superhuman performance on tasks like Go, Atari games,
+  Starcraft, and in physics simulations (e.g., using MuJoCo)
+  where environment simulators are available.
+  See, e.g., :citet:<code>Silver.Huang.Maddison.ea.2016</code> for a description
+  of such achievements in AlphaGo. In a nutshell,
+  reinforcement learning works best
+  if plenty of (state, action, reward) tuples are available.
+  Simulation provides such an avenue.</li>
+<li>Deep learning frameworks have played a crucial role
+  in disseminating ideas.
+  The first generation of open-source frameworks
+  for neural network modeling consisted of
+  <a href="https://github.com/BVLC/caffe">Caffe</a>,
+  <a href="https://github.com/torch">Torch</a>, and
+  <a href="https://github.com/Theano/Theano">Theano</a>.
+  Many seminal papers were written using these tools.
+  These have now been superseded by
+  <a href="https://github.com/tensorflow/tensorflow">TensorFlow</a> (often used via its high-level API <a href="https://github.com/keras-team/keras">Keras</a>), <a href="https://github.com/Microsoft/CNTK">CNTK</a>, <a href="https://github.com/caffe2/caffe2">Caffe 2</a>, and <a href="https://github.com/apache/incubator-mxnet">Apache MXNet</a>.
+  The third generation of frameworks consists
+  of so-called <em>imperative</em> tools for deep learning,
+  a trend that was arguably ignited by <a href="https://github.com/chainer/chainer">Chainer</a>,
+  which used a syntax similar to Python NumPy to describe models.
+  This idea was adopted by both <a href="https://github.com/pytorch/pytorch">PyTorch</a>,
+  the <a href="https://github.com/apache/incubator-mxnet">Gluon API</a> of MXNet,
+  and <a href="https://github.com/google/jax">JAX</a>.</li>
+</ul>
+<p>The division of labor between system researchers building better tools
+and statistical modelers building better neural networks
+has greatly simplified things. For instance,
+training a linear logistic regression model
+used to be a nontrivial homework problem,
+worthy to give to new machine learning
+Ph.D. students at Carnegie Mellon University in 2014.
+By now, this task can be accomplished
+with under 10 lines of code,
+putting it firmly within the reach of any programmer.</p>
+<h2 id="success-stories">Success Stories<a class="headerlink" href="#success-stories" title="Permanent link">⚓︎</a></h2>
+<p>Artificial intelligence has a long history of delivering results
+that would be difficult to accomplish otherwise.
+For instance, mail sorting systems
+using optical character recognition
+have been deployed since the 1990s.
+This is, after all, the source
+of the famous MNIST dataset
+of handwritten digits.
+The same applies to reading checks for bank deposits and scoring
+creditworthiness of applicants.
+Financial transactions are checked for fraud automatically.
+This forms the backbone of many e-commerce payment systems,
+such as PayPal, Stripe, AliPay, WeChat, Apple, Visa, and MasterCard.
+Computer programs for chess have been competitive for decades.
+Machine learning feeds search, recommendation, personalization,
+and ranking on the Internet.
+In other words, machine learning is pervasive, albeit often hidden from sight.</p>
+<p>It is only recently that AI
+has been in the limelight, mostly due to
+solutions to problems
+that were considered intractable previously
+and that are directly related to consumers.
+Many of such advances are attributed to deep learning.</p>
+<ul>
+<li>Intelligent assistants, such as Apple's Siri,
+  Amazon's Alexa, and Google's assistant,
+  are able to respond to spoken requests
+  with a reasonable degree of accuracy.
+  This includes menial jobs, like turning on light switches,
+  and more complex tasks, such as arranging barber's appointments
+  and offering phone support dialog.
+  This is likely the most noticeable sign
+  that AI is affecting our lives.</li>
+<li>A key ingredient in digital assistants
+  is their ability to recognize speech accurately.
+  The accuracy of such systems has gradually
+  increased to the point
+  of achieving parity with humans
+  for certain applications :cite:<code>Xiong.Wu.Alleva.ea.2018</code>.</li>
+<li>Object recognition has likewise come a long way.
+  Identifying the object in a picture
+  was a fairly challenging task in 2010.
+  On the ImageNet benchmark researchers from NEC Labs
+  and University of Illinois at Urbana-Champaign
+  achieved a top-five error rate of 28% :cite:<code>Lin.Lv.Zhu.ea.2010</code>.
+  By 2017, this error rate was reduced to 2.25% :cite:<code>Hu.Shen.Sun.2018</code>.
+  Similarly, stunning results have been achieved
+  for identifying birdsong and for diagnosing skin cancer.</li>
+<li>Prowess in games used to provide
+  a measuring stick for human ability.
+  Starting from TD-Gammon, a program for playing backgammon
+  using temporal difference reinforcement learning,
+  algorithmic and computational progress
+  has led to algorithms for a wide range of applications.
+  Compared with backgammon, chess has
+  a much more complex state space and set of actions.
+  DeepBlue beat Garry Kasparov using massive parallelism,
+  special-purpose hardware and efficient search
+  through the game tree :cite:<code>Campbell.Hoane-Jr.Hsu.2002</code>.
+  Go is more difficult still, due to its huge state space.
+  AlphaGo reached human parity in 2015,
+  using deep learning combined with Monte Carlo tree sampling :cite:<code>Silver.Huang.Maddison.ea.2016</code>.
+  The challenge in Poker was that the state space is large
+  and only partially observed
+  (we do not know the opponents' cards).
+  Libratus exceeded human performance in Poker
+  using efficiently structured strategies :cite:<code>Brown.Sandholm.2017</code>.</li>
+<li>Another indication of progress in AI
+  is the advent of self-driving vehicles.
+  While full autonomy is not yet within reach,
+  excellent progress has been made in this direction,
+  with companies such as Tesla, NVIDIA,
+  and Waymo shipping products
+  that enable partial autonomy.
+  What makes full autonomy so challenging
+  is that proper driving requires
+  the ability to perceive, to reason
+  and to incorporate rules into a system.
+  At present, deep learning is used primarily
+  in the visual aspect of these problems.
+  The rest is heavily tuned by engineers.</li>
+</ul>
+<p>This barely scratches the surface
+of significant applications of machine learning.
+For instance, robotics, logistics, computational biology,
+particle physics, and astronomy
+owe some of their most impressive recent advances
+at least in parts to machine learning, which is thus becoming
+a ubiquitous tool for engineers and scientists.</p>
+<p>Frequently, questions about a coming AI apocalypse
+and the plausibility of a <em>singularity</em>
+have been raised in non-technical articles.
+The fear is that somehow machine learning systems
+will become sentient and make decisions,
+independently of their programmers,
+that directly impact the lives of humans.
+To some extent, AI already affects
+the livelihood of humans in direct ways:
+creditworthiness is assessed automatically,
+autopilots mostly navigate vehicles, decisions about
+whether to grant bail use statistical data as input.
+More frivolously, we can ask Alexa to switch on the coffee machine.</p>
+<p>Fortunately, we are far from a sentient AI system
+that could deliberately manipulate its human creators.
+First, AI systems are engineered,
+trained, and deployed
+in a specific, goal-oriented manner.
+While their behavior might give the illusion
+of general intelligence, it is a combination of rules, heuristics
+and statistical models that underlie the design.
+Second, at present, there are simply no tools for <em>artificial general intelligence</em>
+that are able to improve themselves,
+reason about themselves, and that are able to modify,
+extend, and improve their own architecture
+while trying to solve general tasks.</p>
+<p>A much more pressing concern is how AI is being used in our daily lives.
+It is likely that many routine tasks, currently fulfilled by humans, can and will be automated.
+Farm robots will likely reduce the costs for organic farmers
+but they will also automate harvesting operations.
+This phase of the industrial revolution
+may have profound consequences for large swaths of society,
+since menial jobs provide much employment 
+in many countries.
+Furthermore, statistical models, when applied without care,
+can lead to racial, gender, or age bias and raise
+reasonable concerns about procedural fairness
+if automated to drive consequential decisions.
+It is important to ensure that these algorithms are used with care.
+With what we know today, this strikes us as a much more pressing concern
+than the potential of malevolent superintelligence for destroying humanity.</p>
+<h2 id="the-essence-of-deep-learning">The Essence of Deep Learning<a class="headerlink" href="#the-essence-of-deep-learning" title="Permanent link">⚓︎</a></h2>
+<p>Thus far, we have talked in broad terms about machine learning.
+Deep learning is the subset of machine learning
+concerned with models based on many-layered neural networks.
+It is <em>deep</em> in precisely the sense that its models
+learn many <em>layers</em> of transformations.
+While this might sound narrow,
+deep learning has given rise
+to a dizzying array of models, techniques,
+problem formulations, and applications.
+Many intuitions have been developed
+to explain the benefits of depth.
+Arguably, all machine learning
+has many layers of computation,
+the first consisting of feature processing steps.
+What differentiates deep learning is that
+the operations learned at each of the many layers
+of representations are learned jointly from data.</p>
+<p>The problems that we have discussed so far,
+such as learning from the raw audio signal,
+the raw pixel values of images,
+or mapping between sentences of arbitrary lengths and
+their counterparts in foreign languages,
+are those where deep learning excels
+and traditional methods falter.
+It turns out that these many-layered models
+are capable of addressing low-level perceptual data
+in a way that previous tools could not.
+Arguably the most significant commonality
+in deep learning methods is <em>end-to-end training</em>.
+That is, rather than assembling a system
+based on components that are individually tuned,
+one builds the system and then tunes their performance jointly.
+For instance, in computer vision scientists
+used to separate the process of <em>feature engineering</em>
+from the process of building machine learning models.
+The Canny edge detector :cite:<code>Canny.1987</code>
+and Lowe's SIFT feature extractor :cite:<code>Lowe.2004</code>
+reigned supreme for over a decade as algorithms
+for mapping images into feature vectors.
+In bygone days, the crucial part of applying machine learning to these problems
+consisted of coming up with manually-engineered ways
+of transforming the data into some form amenable to shallow models.
+Unfortunately, there is only so much that humans can accomplish
+by ingenuity in comparison with a consistent evaluation
+over millions of choices carried out automatically by an algorithm.
+When deep learning took over,
+these feature extractors were replaced
+by automatically tuned filters that yielded superior accuracy.</p>
+<p>Thus, one key advantage of deep learning is that it replaces
+not only the shallow models at the end of traditional learning pipelines,
+but also the labor-intensive process of feature engineering.
+Moreover, by replacing much of the domain-specific preprocessing,
+deep learning has eliminated many of the boundaries
+that previously separated computer vision, speech recognition,
+natural language processing, medical informatics, and other application areas,
+thereby offering a unified set of tools for tackling diverse problems.</p>
+<p>Beyond end-to-end training, we are experiencing a transition
+from parametric statistical descriptions to fully nonparametric models.
+When data is scarce, one needs to rely on simplifying assumptions about reality
+in order to obtain useful models.
+When data is abundant, these can be replaced
+by nonparametric models that better fit the data.
+To some extent, this mirrors the progress
+that physics experienced in the middle of the previous century
+with the availability of computers.
+Rather than solving by hand parametric approximations of how electrons behave,
+one can now resort to numerical simulations of the associated partial differential equations.
+This has led to much more accurate models,
+albeit often at the expense of interpretation.</p>
+<p>Another difference from previous work is the acceptance of suboptimal solutions,
+dealing with nonconvex nonlinear optimization problems,
+and the willingness to try things before proving them.
+This new-found empiricism in dealing with statistical problems,
+combined with a rapid influx of talent has led
+to rapid progress in the development of practical algorithms,
+albeit in many cases at the expense of modifying
+and re-inventing tools that existed for decades.</p>
+<p>In the end, the deep learning community prides itself
+on sharing tools across academic and corporate boundaries,
+releasing many excellent libraries, statistical models,
+and trained networks as open source.
+It is in this spirit that the notebooks forming this book
+are freely available for distribution and use.
+We have worked hard to lower the barriers of access
+for anyone wishing to learn about deep learning
+and we hope that our readers will benefit from this.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">⚓︎</a></h2>
+<p>Machine learning studies how computer systems
+can leverage experience (often data)
+to improve performance at specific tasks.
+It combines ideas from statistics, data mining, and optimization.
+Often, it is used as a means of implementing AI solutions.
+As a class of machine learning, representational learning
+focuses on how to automatically find
+the appropriate way to represent data.
+Considered as multi-level representation learning
+through learning many layers of transformations,
+deep learning replaces not only the shallow models
+at the end of traditional machine learning pipelines,
+but also the labor-intensive process of feature engineering.
+Much of the recent progress in deep learning
+has been triggered by an abundance of data
+arising from cheap sensors and Internet-scale applications,
+and by significant progress in computation, mostly through GPUs.
+Furthermore, the availability of efficient deep learning frameworks
+has made design and implementation of whole system optimization significantly easier,
+and this is a key component in obtaining high performance.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>Which parts of code that you are currently writing could be "learned",
+   i.e., improved by learning and automatically determining design choices
+   that are made in your code?
+   Does your code include heuristic design choices?
+   What data might you need to learn the desired behavior?</li>
+<li>Which problems that you encounter have many examples for their solution,
+   yet no specific way for automating them?
+   These may be prime candidates for using deep learning.</li>
+<li>Describe the relationships between algorithms, data, and computation. How do characteristics of the data and the current available computational resources influence the appropriateness of various algorithms?</li>
+<li>Name some settings where end-to-end training is not currently the default approach but where it might be useful.</li>
+</ol>
+<p><a href="https://discuss.d2l.ai/t/22">Discussions</a></p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="上一页: 前言">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                前言
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../_Installation/" class="md-footer__link md-footer__link--next" aria-label="下一页: 安装">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                安装
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Ean Yang
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/YQisme" target="_blank" rel="noopener" title="github主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://space.bilibili.com/244185393?spm_id_from=333.788.0.0" target="_blank" rel="noopener" title="b站主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M488.6 104.1c16.7 18.1 24.4 39.7 23.3 65.7v202.4c-.4 26.4-9.2 48.1-26.5 65.1-17.2 17-39.1 25.9-65.5 26.7H92.02c-26.45-.8-48.21-9.8-65.28-27.2C9.682 419.4.767 396.5 0 368.2V169.8c.767-26 9.682-47.6 26.74-65.7C43.81 87.75 65.57 78.77 92.02 78h29.38L96.05 52.19c-5.75-5.73-8.63-13-8.63-21.79 0-8.8 2.88-16.06 8.63-21.797C101.8 2.868 109.1 0 117.9 0s16.1 2.868 21.9 8.603L213.1 78h88l74.5-69.397C381.7 2.868 389.2 0 398 0c8.8 0 16.1 2.868 21.9 8.603 5.7 5.737 8.6 12.997 8.6 21.797 0 8.79-2.9 16.06-8.6 21.79L394.6 78h29.3c26.4.77 48 9.75 64.7 26.1zm-38.8 69.7c-.4-9.6-3.7-17.4-10.7-23.5-5.2-6.1-14-9.4-22.7-9.8H96.05c-9.59.4-17.45 3.7-23.58 9.8-6.14 6.1-9.4 13.9-9.78 23.5v194.4c0 9.2 3.26 17 9.78 23.5s14.38 9.8 23.58 9.8H416.4c9.2 0 17-3.3 23.3-9.8 6.3-6.5 9.7-14.3 10.1-23.5V173.8zm-264.3 42.7c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.2 6.3-14 9.5-23.6 9.5-9.6 0-17.5-3.2-23.6-9.5-6.1-6.3-9.4-14-9.8-23.2v-33.3c.4-9.1 3.8-16.9 10.1-23.2 6.3-6.3 13.2-9.6 23.3-10 9.2.4 17 3.7 23.3 10zm191.5 0c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.1 6.3-14 9.5-23.6 9.5-9.6 0-17.4-3.2-23.6-9.5-7-6.3-9.4-14-9.7-23.2v-33.3c.3-9.1 3.7-16.9 10-23.2 6.3-6.3 14.1-9.6 23.3-10 9.2.4 17 3.7 23.3 10z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://eanyang7.com" target="_blank" rel="noopener" title="个人主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm40 304v128c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9l-28.6 47.6c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352h-16z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.prune", "navigation.top", "toc.follow", "header.autohide", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.6c14ae12.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2829 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《动手学深度学习》">
+      
+      
+        <meta name="author" content="Ean Yang">
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/d2l/%E6%95%99%E7%A8%8B/05-multilayer-perceptrons/generalization-deep/">
+      
+      
+        <link rel="prev" href="../dropout/">
+      
+      
+        <link rel="next" href="../kaggle-house-price/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.jpg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.12">
+    
+    
+      
+        <title>Generalization in Deep Learning - 动手学深度学习 Dive into Deep Learning#</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#generalization-in-deep-learning" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-header__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            动手学深度学习 Dive into Deep Learning#
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Generalization in Deep Learning
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-tabs__link">
+          
+  
+  练习
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-nav__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    动手学深度学习 Dive into Deep Learning#
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    教程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-Introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    安装
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Notation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../02-preliminaries/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    02 preliminaries
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../03-linear-regression/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    03 linear regression
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../04-linear-classification/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    04 linear classification
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    05 multilayer perceptrons
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            05 multilayer perceptrons
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Multilayer Perceptrons
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backprop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Forward Propagation, Backward Propagation, and Computational Graphs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dropout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dropout
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Generalization in Deep Learning
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Generalization in Deep Learning
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#revisiting-overfitting-and-regularization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Revisiting Overfitting and Regularization
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspiration-from-nonparametrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspiration from Nonparametrics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#early-stopping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Early Stopping
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classical-regularization-methods-for-deep-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classical Regularization Methods for Deep Networks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kaggle-house-price/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kaggle house price
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlp-implementation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mlp implementation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mlp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../numerical-stability-and-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Numerical stability and init
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../06-builders-guide/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    06 builders guide
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../07-convolutional-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    07 convolutional modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../08-convolutional-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    08 convolutional neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../09-recurrent-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    09 recurrent neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../10-recurrent-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    10 recurrent modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../11-attention-mechanisms-and-transformers/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    11 attention mechanisms and transformers
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../12-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    12 optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../13-computational-performance/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    13 computational performance
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../14-computer-vision/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    14 computer vision
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../15-natural-language-processing-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    15 natural language processing pretraining
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../16-natural-language-processing-applications/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    16 natural language processing applications
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../17-reinforcement-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    17 reinforcement learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../18-gaussian-processes/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    18 gaussian processes
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../19-hyperparameter-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    19 hyperparameter optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../20-generative-adversarial-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    20 generative adversarial networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../21-recommender-systems/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    21 recommender systems
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../22-appendix-mathematics-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    22 appendix mathematics for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../23-appendix-tools-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    23 appendix tools for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../contrib/fasttext-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Contrib
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    练习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            练习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    动手学深度学习习题解答
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch02
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch03/ch03/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch03
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch04/ch04/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch04
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch05/ch05/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch05
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch06/ch06/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch06
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch07/ch07/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch07
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch08/ch08/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch08
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch09/ch09/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch09
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch10/ch10/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch10
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch11/ch11/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch11
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch12/ch12/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch12
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch13/ch13/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch13
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch14/ch14/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch14
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch15/ch15/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch15
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/notebooks/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#revisiting-overfitting-and-regularization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Revisiting Overfitting and Regularization
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspiration-from-nonparametrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspiration from Nonparametrics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#early-stopping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Early Stopping
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classical-regularization-methods-for-deep-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classical Regularization Methods for Deep Networks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/05-multilayer-perceptrons/generalization-deep.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/05-multilayer-perceptrons/generalization-deep.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<h1 id="generalization-in-deep-learning">Generalization in Deep Learning<a class="headerlink" href="#generalization-in-deep-learning" title="Permanent link">⚓︎</a></h1>
+<p>In :numref:<code>chap_regression</code> and :numref:<code>chap_classification</code>,
+we tackled regression and classification problems
+by fitting linear models to training data.
+In both cases, we provided practical algorithms
+for finding the parameters that maximized
+the likelihood of the observed training labels.
+And then, towards the end of each chapter,
+we recalled that fitting the training data
+was only an intermediate goal.
+Our real quest all along was to discover <em>general patterns</em>
+on the basis of which we can make accurate predictions
+even on new examples drawn from the same underlying population.
+Machine learning researchers are <em>consumers</em> of optimization algorithms.
+Sometimes, we must even develop new optimization algorithms.
+But at the end of the day, optimization is merely a means to an end.
+At its core, machine learning is a statistical discipline
+and we wish to optimize training loss only insofar
+as some statistical principle (known or unknown)
+leads the resulting models to generalize beyond the training set.</p>
+<p>On the bright side, it turns out that deep neural networks
+trained by stochastic gradient descent generalize remarkably well
+across myriad prediction problems, spanning computer vision;
+natural language processing; time series data; recommender systems;
+electronic health records; protein folding;
+value function approximation in video games
+and board games; and numerous other domains.
+On the downside, if you were looking
+for a straightforward account
+of either the optimization story
+(why we can fit them to training data)
+or the generalization story
+(why the resulting models generalize to unseen examples),
+then you might want to pour yourself a drink.
+While our procedures for optimizing linear models
+and the statistical properties of the solutions
+are both described well by a comprehensive body of theory,
+our understanding of deep learning
+still resembles the wild west on both fronts.</p>
+<p>Both the theory and practice of deep learning
+are rapidly evolving,
+with theorists adopting new strategies
+to explain what's going on,
+even as practitioners continue
+to innovate at a blistering pace,
+building arsenals of heuristics for training deep networks
+and a body of intuitions and folk knowledge
+that provide guidance for deciding
+which techniques to apply in which situations.</p>
+<p>The summary of the present moment is that the theory of deep learning
+has produced promising lines of attack and scattered fascinating results,
+but still appears far from a comprehensive account
+of both (i) why we are able to optimize neural networks
+and (ii) how models learned by gradient descent
+manage to generalize so well, even on high-dimensional tasks.
+However, in practice, (i) is seldom a problem
+(we can always find parameters that will fit all of our training data)
+and thus understanding generalization is far the bigger problem.
+On the other hand, even absent the comfort of a coherent scientific theory,
+practitioners have developed a large collection of techniques
+that may help you to produce models that generalize well in practice.
+While no pithy summary can possibly do justice
+to the vast topic of generalization in deep learning,
+and while the overall state of research is far from resolved,
+we hope, in this section, to present a broad overview
+of the state of research and practice.</p>
+<h2 id="revisiting-overfitting-and-regularization">Revisiting Overfitting and Regularization<a class="headerlink" href="#revisiting-overfitting-and-regularization" title="Permanent link">⚓︎</a></h2>
+<p>According to the "no free lunch" theorem of :citet:<code>wolpert1995no</code>,
+any learning algorithm generalizes better on data with certain distributions, and worse with other distributions.
+Thus, given a finite training set,
+a model relies on certain assumptions: 
+to achieve human-level performance
+it may be useful to identify <em>inductive biases</em> 
+that reflect how humans think about the world.
+Such inductive biases show preferences 
+for solutions with certain properties.
+For example,
+a deep MLP has an inductive bias
+towards building up a complicated function by the composition of simpler functions.</p>
+<p>With machine learning models encoding inductive biases,
+our approach to training them
+typically consists of two phases: (i) fit the training data;
+and (ii) estimate the <em>generalization error</em>
+(the true error on the underlying population)
+by evaluating the model on holdout data.
+The difference between our fit on the training data
+and our fit on the test data is called the <em>generalization gap</em> and when this is large,
+we say that our models <em>overfit</em> to the training data.
+In extreme cases of overfitting,
+we might exactly fit the training data,
+even when the test error remains significant.
+And in the classical view,
+the interpretation is that our models are too complex,
+requiring that we either shrink the number of features,
+the number of nonzero parameters learned,
+or the size of the parameters as quantified.
+Recall the plot of model complexity compared with loss
+(:numref:<code>fig_capacity_vs_error</code>)
+from :numref:<code>sec_generalization_basics</code>.</p>
+<p>However deep learning complicates this picture in counterintuitive ways.
+First, for classification problems,
+our models are typically expressive enough
+to perfectly fit every training example,
+even in datasets consisting of millions
+:cite:<code>zhang2021understanding</code>.
+In the classical picture, we might think
+that this setting lies on the far right extreme
+of the model complexity axis,
+and that any improvements in generalization error
+must come by way of regularization,
+either by reducing the complexity of the model class,
+or by applying a penalty, severely constraining
+the set of values that our parameters might take.
+But that is where things start to get weird.</p>
+<p>Strangely, for many deep learning tasks
+(e.g., image recognition and text classification)
+we are typically choosing among model architectures,
+all of which can achieve arbitrarily low training loss
+(and zero training error).
+Because all models under consideration achieve zero training error,
+<em>the only avenue for further gains is to reduce overfitting</em>.
+Even stranger, it is often the case that
+despite fitting the training data perfectly,
+we can actually <em>reduce the generalization error</em>
+further by making the model <em>even more expressive</em>,
+e.g., adding layers, nodes, or training
+for a larger number of epochs.
+Stranger yet, the pattern relating the generalization gap
+to the <em>complexity</em> of the model (as captured, for example, in the depth or width of the networks)
+can be non-monotonic,
+with greater complexity hurting at first
+but subsequently helping in a so-called "double-descent" pattern
+:cite:<code>nakkiran2021deep</code>.
+Thus the deep learning practitioner possesses a bag of tricks,
+some of which seemingly restrict the model in some fashion
+and others that seemingly make it even more expressive,
+and all of which, in some sense, are applied to mitigate overfitting.</p>
+<p>Complicating things even further,
+while the guarantees provided by classical learning theory
+can be conservative even for classical models,
+they appear powerless to explain why it is
+that deep neural networks generalize in the first place.
+Because deep neural networks are capable of fitting
+arbitrary labels even for large datasets,
+and despite the use of familiar methods such as <span class="arithmatex">\(\ell_2\)</span> regularization,
+traditional complexity-based generalization bounds,
+e.g., those based on the VC dimension
+or Rademacher complexity of a hypothesis class
+cannot explain why neural networks generalize.</p>
+<h2 id="inspiration-from-nonparametrics">Inspiration from Nonparametrics<a class="headerlink" href="#inspiration-from-nonparametrics" title="Permanent link">⚓︎</a></h2>
+<p>Approaching deep learning for the first time,
+it is tempting to think of them as parametric models.
+After all, the models <em>do</em> have millions of parameters.
+When we update the models, we update their parameters.
+When we save the models, we write their parameters to disk.
+However, mathematics and computer science are riddled
+with counterintuitive changes of perspective,
+and surprising isomorphisms between seemingly different problems.
+While neural networks clearly <em>have</em> parameters,
+in some ways it can be more fruitful
+to think of them as behaving like nonparametric models.
+So what precisely makes a model nonparametric?
+While the name covers a diverse set of approaches,
+one common theme is that nonparametric methods
+tend to have a level of complexity that grows
+as the amount of available data grows.</p>
+<p>Perhaps the simplest example of a nonparametric model
+is the <span class="arithmatex">\(k\)</span>-nearest neighbor algorithm (we will cover more nonparametric models later, for example in :numref:<code>sec_attention-pooling</code>).
+Here, at training time,
+the learner simply memorizes the dataset.
+Then, at prediction time,
+when confronted with a new point <span class="arithmatex">\(\mathbf{x}\)</span>,
+the learner looks up the <span class="arithmatex">\(k\)</span> nearest neighbors
+(the <span class="arithmatex">\(k\)</span> points <span class="arithmatex">\(\mathbf{x}_i'\)</span> that minimize
+some distance <span class="arithmatex">\(d(\mathbf{x}, \mathbf{x}_i')\)</span>).
+When <span class="arithmatex">\(k=1\)</span>, this algorithm is called <span class="arithmatex">\(1\)</span>-nearest neighbors,
+and the algorithm will always achieve a training error of zero.
+That however, does not mean that the algorithm will not generalize.
+In fact, it turns out that under some mild conditions,
+the 1-nearest neighbor algorithm is consistent
+(eventually converging to the optimal predictor).</p>
+<p>Note that <span class="arithmatex">\(1\)</span>-nearest neighbor requires that we specify
+some distance function <span class="arithmatex">\(d\)</span>, or equivalently,
+that we specify some vector-valued basis function <span class="arithmatex">\(\phi(\mathbf{x})\)</span>
+for featurizing our data.
+For any choice of the distance metric,
+we will achieve zero training error
+and eventually reach an optimal predictor,
+but different distance metrics <span class="arithmatex">\(d\)</span>
+encode different inductive biases
+and with a finite amount of available data
+will yield different predictors.
+Different choices of the distance metric <span class="arithmatex">\(d\)</span>
+represent different assumptions about the underlying patterns
+and the performance of the different predictors
+will depend on how compatible the assumptions
+are with the observed data.</p>
+<p>In a sense, because neural networks are over-parametrized,
+possessing many more parameters than are needed to fit the training data,
+they tend to <em>interpolate</em> the training data (fitting it perfectly)
+and thus behave, in some ways, more like nonparametric models.
+More recent theoretical research has established
+deep connection between large neural networks
+and nonparametric methods, notably kernel methods.
+In particular, :citet:<code>Jacot.Grabriel.Hongler.2018</code>
+demonstrated that in the limit, as multilayer perceptrons
+with randomly initialized weights grow infinitely wide,
+they become equivalent to (nonparametric) kernel methods
+for a specific choice of the kernel function
+(essentially, a distance function),
+which they call the neural tangent kernel.
+While current neural tangent kernel models may not fully explain
+the behavior of modern deep networks,
+their success as an analytical tool
+underscores the usefulness of nonparametric modeling
+for understanding the behavior of over-parametrized deep networks.</p>
+<h2 id="early-stopping">Early Stopping<a class="headerlink" href="#early-stopping" title="Permanent link">⚓︎</a></h2>
+<p>While deep neural networks are capable of fitting arbitrary labels,
+even when labels are assigned incorrectly or randomly
+:cite:<code>zhang2021understanding</code>,
+this capability only emerges over many iterations of training.
+A new line of work :cite:<code>Rolnick.Veit.Belongie.Shavit.2017</code>
+has revealed that in the setting of label noise,
+neural networks tend to fit cleanly labeled data first
+and only subsequently to interpolate the mislabeled data.
+Moreover, it has been established that this phenomenon
+translates directly into a guarantee on generalization:
+whenever a model has fitted the cleanly labeled data
+but not randomly labeled examples included in the training set,
+it has in fact generalized :cite:<code>Garg.Balakrishnan.Kolter.Lipton.2021</code>.</p>
+<p>Together these findings help to motivate <em>early stopping</em>,
+a classic technique for regularizing deep neural networks.
+Here, rather than directly constraining the values of the weights,
+one constrains the number of epochs of training.
+The most common way to determine the stopping criterion
+is to monitor validation error throughout training
+(typically by checking once after each epoch)
+and to cut off training when the validation error
+has not decreased by more than some small amount <span class="arithmatex">\(\epsilon\)</span>
+for some number of epochs.
+This is sometimes called a <em>patience criterion</em>.
+As well as the potential to lead to better generalization
+in the setting of noisy labels,
+another benefit of early stopping is the time saved.
+Once the patience criterion is met, one can terminate training.
+For large models that might require days of training
+simultaneously across eight or more GPUs,
+well-tuned early stopping can save researchers days of time
+and can save their employers many thousands of dollars.</p>
+<p>Notably, when there is no label noise and datasets are <em>realizable</em>
+(the classes are truly separable, e.g., distinguishing cats from dogs),
+early stopping tends not to lead to significant improvements in generalization.
+On the other hand, when there is label noise,
+or intrinsic variability in the label
+(e.g., predicting mortality among patients),
+early stopping is crucial.
+Training models until they interpolate noisy data is typically a bad idea.</p>
+<h2 id="classical-regularization-methods-for-deep-networks">Classical Regularization Methods for Deep Networks<a class="headerlink" href="#classical-regularization-methods-for-deep-networks" title="Permanent link">⚓︎</a></h2>
+<p>In :numref:<code>chap_regression</code>, we described
+several  classical regularization techniques
+for constraining the complexity of our models.
+In particular, :numref:<code>sec_weight_decay</code>
+introduced a method called weight decay,
+which consists of adding a regularization term to the loss function
+in order to penalize large values of the weights.
+Depending on which weight norm is penalized
+this technique is known either as ridge regularization (for <span class="arithmatex">\(\ell_2\)</span> penalty)
+or lasso regularization (for an <span class="arithmatex">\(\ell_1\)</span> penalty).
+In the classical analysis of these regularizers,
+they are considered as sufficiently restrictive on the values
+that the weights can take to prevent the model from fitting arbitrary labels.</p>
+<p>In deep learning implementations,
+weight decay remains a popular tool.
+However, researchers have noted
+that typical strengths of <span class="arithmatex">\(\ell_2\)</span> regularization
+are insufficient to prevent the networks
+from interpolating the data :cite:<code>zhang2021understanding</code> and thus the benefits if interpreted
+as regularization might only make sense
+in combination with the early stopping criterion.
+Absent early stopping, it is possible
+that just like the number of layers
+or number of nodes (in deep learning)
+or the distance metric (in 1-nearest neighbor),
+these methods may lead to better generalization
+not because they meaningfully constrain
+the power of the neural network
+but rather because they somehow encode inductive biases
+that are better compatible with the patterns
+found in datasets of interests.
+Thus, classical regularizers remain popular
+in deep learning implementations,
+even if the theoretical rationale
+for their efficacy may be radically different.</p>
+<p>Notably, deep learning researchers have also built
+on techniques first popularized
+in classical regularization contexts,
+such as adding noise to model inputs.
+In the next section we will introduce
+the famous dropout technique
+(invented by :citet:<code>Srivastava.Hinton.Krizhevsky.ea.2014</code>),
+which has become a mainstay of deep learning,
+even as the theoretical basis for its efficacy
+remains similarly mysterious.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">⚓︎</a></h2>
+<p>Unlike classical linear models,
+which tend to have fewer parameters than examples,
+deep networks tend to be over-parametrized,
+and for most tasks are capable
+of perfectly fitting the training set.
+This <em>interpolation regime</em> challenges
+many hard fast-held intuitions.
+Functionally, neural networks look like parametric models.
+But thinking of them as nonparametric models
+can sometimes be a more reliable source of intuition.
+Because it is often the case that all deep networks under consideration
+are capable of fitting all of the training labels,
+nearly all gains must come by mitigating overfitting
+(closing the <em>generalization gap</em>).
+Paradoxically, the interventions
+that reduce the generalization gap
+sometimes appear to increase model complexity
+and at other times appear to decrease complexity.
+However, these methods seldom decrease complexity
+sufficiently for classical theory
+to explain the generalization of deep networks,
+and <em>why certain choices lead to improved generalization</em>
+remains for the most part a massive open question
+despite the concerted efforts of many brilliant researchers.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>In what sense do traditional complexity-based measures fail to account for generalization of deep neural networks?</li>
+<li>Why might <em>early stopping</em> be considered a regularization technique?</li>
+<li>How do researchers typically determine the stopping criterion?</li>
+<li>What important factor seems to differentiate cases when early stopping leads to big improvements in generalization?</li>
+<li>Beyond generalization, describe another benefit of early stopping.</li>
+</ol>
+<p><a href="https://discuss.d2l.ai/t/7473">Discussions</a></p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../dropout/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Dropout">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Dropout
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../kaggle-house-price/" class="md-footer__link md-footer__link--next" aria-label="下一页: Kaggle house price">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Kaggle house price
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Ean Yang
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/YQisme" target="_blank" rel="noopener" title="github主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://space.bilibili.com/244185393?spm_id_from=333.788.0.0" target="_blank" rel="noopener" title="b站主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M488.6 104.1c16.7 18.1 24.4 39.7 23.3 65.7v202.4c-.4 26.4-9.2 48.1-26.5 65.1-17.2 17-39.1 25.9-65.5 26.7H92.02c-26.45-.8-48.21-9.8-65.28-27.2C9.682 419.4.767 396.5 0 368.2V169.8c.767-26 9.682-47.6 26.74-65.7C43.81 87.75 65.57 78.77 92.02 78h29.38L96.05 52.19c-5.75-5.73-8.63-13-8.63-21.79 0-8.8 2.88-16.06 8.63-21.797C101.8 2.868 109.1 0 117.9 0s16.1 2.868 21.9 8.603L213.1 78h88l74.5-69.397C381.7 2.868 389.2 0 398 0c8.8 0 16.1 2.868 21.9 8.603 5.7 5.737 8.6 12.997 8.6 21.797 0 8.79-2.9 16.06-8.6 21.79L394.6 78h29.3c26.4.77 48 9.75 64.7 26.1zm-38.8 69.7c-.4-9.6-3.7-17.4-10.7-23.5-5.2-6.1-14-9.4-22.7-9.8H96.05c-9.59.4-17.45 3.7-23.58 9.8-6.14 6.1-9.4 13.9-9.78 23.5v194.4c0 9.2 3.26 17 9.78 23.5s14.38 9.8 23.58 9.8H416.4c9.2 0 17-3.3 23.3-9.8 6.3-6.5 9.7-14.3 10.1-23.5V173.8zm-264.3 42.7c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.2 6.3-14 9.5-23.6 9.5-9.6 0-17.5-3.2-23.6-9.5-6.1-6.3-9.4-14-9.8-23.2v-33.3c.4-9.1 3.8-16.9 10.1-23.2 6.3-6.3 13.2-9.6 23.3-10 9.2.4 17 3.7 23.3 10zm191.5 0c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.1 6.3-14 9.5-23.6 9.5-9.6 0-17.4-3.2-23.6-9.5-7-6.3-9.4-14-9.7-23.2v-33.3c.3-9.1 3.7-16.9 10-23.2 6.3-6.3 14.1-9.6 23.3-10 9.2.4 17 3.7 23.3 10z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://eanyang7.com" target="_blank" rel="noopener" title="个人主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm40 304v128c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9l-28.6 47.6c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352h-16z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.prune", "navigation.top", "toc.follow", "header.autohide", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.6c14ae12.min.js"></script>
+      
+    
+  </body>
+</html>

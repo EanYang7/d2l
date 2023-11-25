@@ -1,0 +1,3431 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《动手学深度学习》">
+      
+      
+        <meta name="author" content="Ean Yang">
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/d2l/%E6%95%99%E7%A8%8B/04-linear-classification/environment-and-distribution-shift/">
+      
+      
+        <link rel="prev" href="../classification/">
+      
+      
+        <link rel="next" href="../generalization-classification/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.jpg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.12">
+    
+    
+      
+        <title>Environment and Distribution Shift - 动手学深度学习 Dive into Deep Learning#</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#environment-and-distribution-shift" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-header__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            动手学深度学习 Dive into Deep Learning#
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Environment and Distribution Shift
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-tabs__link">
+          
+  
+  练习
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-nav__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    动手学深度学习 Dive into Deep Learning#
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    教程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-Introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    安装
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Notation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../02-preliminaries/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    02 preliminaries
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../03-linear-regression/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    03 linear regression
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    04 linear classification
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            04 linear classification
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linear Neural Networks for Classification
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Classification
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Environment and Distribution Shift
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Environment and Distribution Shift
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#types-of-distribution-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Types of Distribution Shift
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Types of Distribution Shift">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#covariate-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Covariate Shift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Label Shift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concept-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concept Shift
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples-of-distribution-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples of Distribution Shift
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples of Distribution Shift">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#medical-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Medical Diagnostics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#self-driving-cars" class="md-nav__link">
+    <span class="md-ellipsis">
+      Self-Driving Cars
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nonstationary-distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nonstationary Distributions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#more-anecdotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      More Anecdotes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#correction-of-distribution-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Correction of Distribution Shift
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Correction of Distribution Shift">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#empirical-risk-and-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Empirical Risk and  Risk
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#covariate-shift-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Covariate Shift Correction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label-shift-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Label Shift Correction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concept-shift-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concept Shift Correction
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-taxonomy-of-learning-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      A Taxonomy of Learning Problems
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="A Taxonomy of Learning Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#batch-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Batch Learning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#online-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Online Learning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bandits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control" class="md-nav__link">
+    <span class="md-ellipsis">
+      Control
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reinforcement-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reinforcement Learning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#considering-the-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Considering the Environment
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fairness-accountability-and-transparency-in-machine-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fairness, Accountability, and Transparency in Machine Learning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generalization-classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generalization in Classification
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../image-classification-dataset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Image classification dataset
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../softmax-regression-concise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Softmax regression concise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../softmax-regression-scratch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Softmax regression scratch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../softmax-regression/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Softmax Regression
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../05-multilayer-perceptrons/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    05 multilayer perceptrons
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../06-builders-guide/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    06 builders guide
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../07-convolutional-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    07 convolutional modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../08-convolutional-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    08 convolutional neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../09-recurrent-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    09 recurrent neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../10-recurrent-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    10 recurrent modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../11-attention-mechanisms-and-transformers/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    11 attention mechanisms and transformers
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../12-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    12 optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../13-computational-performance/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    13 computational performance
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../14-computer-vision/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    14 computer vision
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../15-natural-language-processing-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    15 natural language processing pretraining
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../16-natural-language-processing-applications/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    16 natural language processing applications
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../17-reinforcement-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    17 reinforcement learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../18-gaussian-processes/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    18 gaussian processes
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../19-hyperparameter-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    19 hyperparameter optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../20-generative-adversarial-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    20 generative adversarial networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../21-recommender-systems/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    21 recommender systems
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../22-appendix-mathematics-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    22 appendix mathematics for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../23-appendix-tools-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    23 appendix tools for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../contrib/fasttext-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Contrib
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    练习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            练习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    动手学深度学习习题解答
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch02
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch03/ch03/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch03
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch04/ch04/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch04
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch05/ch05/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch05
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch06/ch06/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch06
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch07/ch07/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch07
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch08/ch08/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch08
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch09/ch09/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch09
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch10/ch10/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch10
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch11/ch11/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch11
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch12/ch12/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch12
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch13/ch13/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch13
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch14/ch14/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch14
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch15/ch15/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch15
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/notebooks/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#types-of-distribution-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Types of Distribution Shift
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Types of Distribution Shift">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#covariate-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Covariate Shift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Label Shift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concept-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concept Shift
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples-of-distribution-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples of Distribution Shift
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples of Distribution Shift">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#medical-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Medical Diagnostics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#self-driving-cars" class="md-nav__link">
+    <span class="md-ellipsis">
+      Self-Driving Cars
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nonstationary-distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nonstationary Distributions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#more-anecdotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      More Anecdotes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#correction-of-distribution-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Correction of Distribution Shift
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Correction of Distribution Shift">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#empirical-risk-and-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Empirical Risk and  Risk
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#covariate-shift-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Covariate Shift Correction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label-shift-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Label Shift Correction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concept-shift-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concept Shift Correction
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-taxonomy-of-learning-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      A Taxonomy of Learning Problems
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="A Taxonomy of Learning Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#batch-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Batch Learning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#online-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Online Learning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bandits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control" class="md-nav__link">
+    <span class="md-ellipsis">
+      Control
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reinforcement-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reinforcement Learning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#considering-the-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Considering the Environment
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fairness-accountability-and-transparency-in-machine-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fairness, Accountability, and Transparency in Machine Learning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/04-linear-classification/environment-and-distribution-shift.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/04-linear-classification/environment-and-distribution-shift.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<h1 id="environment-and-distribution-shift">Environment and Distribution Shift<a class="headerlink" href="#environment-and-distribution-shift" title="Permanent link">⚓︎</a></h1>
+<p>:label:<code>sec_environment-and-distribution-shift</code></p>
+<p>In the previous sections, we worked through
+a number of hands-on applications of machine learning,
+fitting models to a variety of datasets.
+And yet, we never stopped to contemplate
+either where data came from in the first place
+or what we ultimately plan to do
+with the outputs from our models.
+Too often, machine learning developers
+in possession of data rush to develop models
+without pausing to consider these fundamental issues.</p>
+<p>Many failed machine learning deployments
+can be traced back to this failure.
+Sometimes models appear to perform marvelously
+as measured by test set accuracy
+but fail catastrophically in deployment
+when the distribution of data suddenly shifts.
+More insidiously, sometimes the very deployment of a model
+can be the catalyst that perturbs the data distribution.
+Say, for example, that we trained a model
+to predict who will repay rather than default on a loan,
+finding that an applicant's choice of footwear
+was associated with the risk of default
+(Oxfords indicate repayment, sneakers indicate default).
+We might be inclined 
+thereafter to grant a loan
+to any applicant wearing Oxfords
+and to deny all applicants wearing sneakers.</p>
+<p>In this case, our ill-considered leap from
+pattern recognition to decision-making
+and our failure to critically consider the environment
+might have disastrous consequences.
+For starters, as soon as we began
+making decisions based on footwear,
+customers would catch on and change their behavior.
+Before long, all applicants would be wearing Oxfords,
+without any coincident improvement in credit-worthiness.
+Take a minute to digest this because similar issues abound
+in many applications of machine learning:
+by introducing our model-based decisions to the environment,
+we might break the model.</p>
+<p>While we cannot possibly give these topics
+a complete treatment in one section,
+we aim here to expose some common concerns,
+and to stimulate the critical thinking
+required to detect such situations early,
+mitigate damage, and use machine learning responsibly.
+Some of the solutions are simple
+(ask for the "right" data),
+some are technically difficult
+(implement a reinforcement learning system),
+and others require that we step outside the realm of
+statistical prediction altogether and
+grapple with difficult philosophical questions
+concerning the ethical application of algorithms.</p>
+<h2 id="types-of-distribution-shift">Types of Distribution Shift<a class="headerlink" href="#types-of-distribution-shift" title="Permanent link">⚓︎</a></h2>
+<p>To begin, we stick with the passive prediction setting
+considering the various ways that data distributions might shift
+and what might be done to salvage model performance.
+In one classic setup, we assume that our training data
+was sampled from some distribution <span class="arithmatex">\(p_S(\mathbf{x},y)\)</span>
+but that our test data will consist
+of unlabeled examples drawn from
+some different distribution <span class="arithmatex">\(p_T(\mathbf{x},y)\)</span>.
+Already, we must confront a sobering reality.
+Absent any assumptions on how <span class="arithmatex">\(p_S\)</span>
+and <span class="arithmatex">\(p_T\)</span> relate to each other,
+learning a robust classifier is impossible.</p>
+<p>Consider a binary classification problem,
+where we wish to distinguish between dogs and cats.
+If the distribution can shift in arbitrary ways,
+then our setup permits the pathological case
+in which the distribution over inputs remains
+constant: <span class="arithmatex">\(p_S(\mathbf{x}) = p_T(\mathbf{x})\)</span>,
+but the labels are all flipped:
+<span class="arithmatex">\(p_S(y \mid \mathbf{x}) = 1 - p_T(y \mid \mathbf{x})\)</span>.
+In other words, if God can suddenly decide
+that in the future all "cats" are now dogs
+and what we previously called "dogs" are now cats---without
+any change in the distribution of inputs <span class="arithmatex">\(p(\mathbf{x})\)</span>,
+then we cannot possibly distinguish this setting
+from one in which the distribution did not change at all.</p>
+<p>Fortunately, under some restricted assumptions
+on the ways our data might change in the future,
+principled algorithms can detect shift
+and sometimes even adapt on the fly,
+improving on the accuracy of the original classifier.</p>
+<h3 id="covariate-shift">Covariate Shift<a class="headerlink" href="#covariate-shift" title="Permanent link">⚓︎</a></h3>
+<p>Among categories of distribution shift,
+covariate shift may be the most widely studied.
+Here, we assume that while the distribution of inputs
+may change over time, the labeling function,
+i.e., the conditional distribution
+<span class="arithmatex">\(P(y \mid \mathbf{x})\)</span> does not change.
+Statisticians call this <em>covariate shift</em>
+because the problem arises due to a
+shift in the distribution of the covariates (features).
+While we can sometimes reason about distribution shift
+without invoking causality, we note that covariate shift
+is the natural assumption to invoke in settings
+where we believe that <span class="arithmatex">\(\mathbf{x}\)</span> causes <span class="arithmatex">\(y\)</span>.</p>
+<p>Consider the challenge of distinguishing cats and dogs.
+Our training data might consist of images of the kind in :numref:<code>fig_cat-dog-train</code>.</p>
+<p><img alt="Training data for distinguishing cats and dogs (illustrations: Lafeez Hossain / 500px / Getty Images; ilkermetinkursova / iStock / Getty Images Plus; GlobalP / iStock / Getty Images Plus; Musthafa Aboobakuru / 500px / Getty Images)." src="../../img/cat-dog-train.png" />
+:label:<code>fig_cat-dog-train</code></p>
+<p>At test time we are asked to classify the images in :numref:<code>fig_cat-dog-test</code>.</p>
+<p><img alt="Test data for distinguishing cats and dogs (illustrations: SIBAS_minich / iStock / Getty Images Plus; Ghrzuzudu / iStock / Getty Images Plus; id-work / DigitalVision Vectors / Getty Images; Yime / iStock / Getty Images Plus)." src="../../img/cat-dog-test.png" />
+:label:<code>fig_cat-dog-test</code></p>
+<p>The training set consists of photos,
+while the test set contains only cartoons.
+Training on a dataset with substantially different
+characteristics from the test set
+can spell trouble absent a coherent plan
+for how to adapt to the new domain.</p>
+<h3 id="label-shift">Label Shift<a class="headerlink" href="#label-shift" title="Permanent link">⚓︎</a></h3>
+<p><em>Label shift</em> describes the converse problem.
+Here, we assume that the label marginal <span class="arithmatex">\(P(y)\)</span>
+can change
+but the class-conditional distribution
+<span class="arithmatex">\(P(\mathbf{x} \mid y)\)</span> remains fixed across domains.
+Label shift is a reasonable assumption to make
+when we believe that <span class="arithmatex">\(y\)</span> causes <span class="arithmatex">\(\mathbf{x}\)</span>.
+For example, we may want to predict diagnoses
+given their symptoms (or other manifestations),
+even as the relative prevalence of diagnoses
+are changing over time.
+Label shift is the appropriate assumption here
+because diseases cause symptoms.
+In some degenerate cases the label shift
+and covariate shift assumptions can hold simultaneously.
+For example, when the label is deterministic,
+the covariate shift assumption will be satisfied,
+even when <span class="arithmatex">\(y\)</span> causes <span class="arithmatex">\(\mathbf{x}\)</span>.
+Interestingly, in these cases,
+it is often advantageous to work with methods
+that flow from the label shift assumption.
+That is because these methods tend
+to involve manipulating objects that look like labels (often low-dimensional),
+as opposed to objects that look like inputs,
+which tend to be high-dimensional in deep learning.</p>
+<h3 id="concept-shift">Concept Shift<a class="headerlink" href="#concept-shift" title="Permanent link">⚓︎</a></h3>
+<p>We may also encounter the related problem of <em>concept shift</em>,
+which arises when the very definitions of labels can change.
+This sounds weird---a <em>cat</em> is a <em>cat</em>, no?
+However, other categories are subject to changes in usage over time.
+Diagnostic criteria for mental illness,
+what passes for fashionable, and job titles,
+are all subject to considerable
+amounts of concept shift.
+It turns out that if we navigate around the United States,
+shifting the source of our data by geography,
+we will find considerable concept shift regarding
+the distribution of names for <em>soft drinks</em>
+as shown in :numref:<code>fig_popvssoda</code>.</p>
+<p><img alt="Concept shift for soft drink names in the United States (CC-BY: Alan McConchie, PopVsSoda.com)." src="../../img/popvssoda.png" />
+:width:<code>400px</code>
+:label:<code>fig_popvssoda</code></p>
+<p>If we were to build a machine translation system,
+the distribution <span class="arithmatex">\(P(y \mid \mathbf{x})\)</span> might be different
+depending on our location.
+This problem can be tricky to spot.
+We might hope to exploit knowledge
+that shift only takes place gradually
+either in a temporal or geographic sense.</p>
+<h2 id="examples-of-distribution-shift">Examples of Distribution Shift<a class="headerlink" href="#examples-of-distribution-shift" title="Permanent link">⚓︎</a></h2>
+<p>Before delving into formalism and algorithms,
+we can discuss some concrete situations
+where covariate or concept shift might not be obvious.</p>
+<h3 id="medical-diagnostics">Medical Diagnostics<a class="headerlink" href="#medical-diagnostics" title="Permanent link">⚓︎</a></h3>
+<p>Imagine that you want to design an algorithm to detect cancer.
+You collect data from healthy and sick people
+and you train your algorithm.
+It works fine, giving you high accuracy
+and you conclude that you are ready
+for a successful career in medical diagnostics.
+<em>Not so fast.</em></p>
+<p>The distributions that gave rise to the training data
+and those you will encounter in the wild might differ considerably.
+This happened to an unfortunate startup
+that some of we authors worked with years ago.
+They were developing a blood test for a disease
+that predominantly affects older men
+and hoped to study it using blood samples
+that they had collected from patients.
+However, it is considerably more difficult
+to obtain blood samples from healthy men
+than from sick patients already in the system.
+To compensate, the startup solicited
+blood donations from students on a university campus
+to serve as healthy controls in developing their test.
+Then they asked whether we could help them
+to build a classifier for detecting the disease.</p>
+<p>As we explained to them,
+it would indeed be easy to distinguish
+between the healthy and sick cohorts
+with near-perfect accuracy.
+However, that is because the test subjects
+differed in age, hormone levels,
+physical activity, diet, alcohol consumption,
+and many more factors unrelated to the disease.
+This was unlikely to be the case with real patients.
+Due to their sampling procedure,
+we could expect to encounter extreme covariate shift.
+Moreover, this case was unlikely to be
+correctable via conventional methods.
+In short, they wasted a significant sum of money.</p>
+<h3 id="self-driving-cars">Self-Driving Cars<a class="headerlink" href="#self-driving-cars" title="Permanent link">⚓︎</a></h3>
+<p>Say a company wanted to leverage machine learning
+for developing self-driving cars.
+One key component here is a roadside detector.
+Since real annotated data is expensive to get,
+they had the (smart and questionable) idea
+to use synthetic data from a game rendering engine
+as additional training data.
+This worked really well on "test data"
+drawn from the rendering engine.
+Alas, inside a real car it was a disaster.
+As it turned out, the roadside had been rendered
+with a very simplistic texture.
+More importantly, <em>all</em> the roadside had been rendered
+with the <em>same</em> texture and the roadside detector
+learned about this "feature" very quickly.</p>
+<p>A similar thing happened to the US Army
+when they first tried to detect tanks in the forest.
+They took aerial photographs of the forest without tanks,
+then drove the tanks into the forest
+and took another set of pictures.
+The classifier appeared to work <em>perfectly</em>.
+Unfortunately, it had merely learned
+how to distinguish trees with shadows
+from trees without shadows---the first set
+of pictures was taken in the early morning,
+the second set at noon.</p>
+<h3 id="nonstationary-distributions">Nonstationary Distributions<a class="headerlink" href="#nonstationary-distributions" title="Permanent link">⚓︎</a></h3>
+<p>A much more subtle situation arises
+when the distribution changes slowly
+(also known as <em>nonstationary distribution</em>)
+and the model is not updated adequately.
+Below are some typical cases.</p>
+<ul>
+<li>We train a computational advertising model and then fail to update it frequently (e.g., we forget to incorporate that an obscure new device called an iPad was just launched).</li>
+<li>We build a spam filter. It works well at detecting all spam that we have seen so far. But then the spammers wise up and craft new messages that look unlike anything we have seen before.</li>
+<li>We build a product recommendation system. It works throughout the winter but then continues to recommend Santa hats long after Christmas.</li>
+</ul>
+<h3 id="more-anecdotes">More Anecdotes<a class="headerlink" href="#more-anecdotes" title="Permanent link">⚓︎</a></h3>
+<ul>
+<li>We build a face detector. It works well on all benchmarks. Unfortunately it fails on test data---the offending examples are close-ups where the face fills the entire image (no such data was in the training set).</li>
+<li>We build a web search engine for the US market and want to deploy it in the UK.</li>
+<li>We train an image classifier by compiling a large dataset where each among a large set of classes is equally represented in the dataset, say 1000 categories, represented by 1000 images each. Then we deploy the system in the real world, where the actual label distribution of photographs is decidedly non-uniform.</li>
+</ul>
+<h2 id="correction-of-distribution-shift">Correction of Distribution Shift<a class="headerlink" href="#correction-of-distribution-shift" title="Permanent link">⚓︎</a></h2>
+<p>As we have discussed, there are many cases
+where training and test distributions
+<span class="arithmatex">\(P(\mathbf{x}, y)\)</span> are different.
+In some cases, we get lucky and the models work
+despite covariate, label, or concept shift.
+In other cases, we can do better by employing
+principled strategies to cope with the shift.
+The remainder of this section grows considerably more technical.
+The impatient reader could continue on to the next section
+as this material is not prerequisite to subsequent concepts.</p>
+<h3 id="empirical-risk-and-risk">Empirical Risk and  Risk<a class="headerlink" href="#empirical-risk-and-risk" title="Permanent link">⚓︎</a></h3>
+<p>:label:<code>subsec_empirical-risk-and-risk</code></p>
+<p>Let's first reflect on what exactly
+is happening during model training:
+we iterate over features and associated labels
+of training data
+<span class="arithmatex">\(\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}\)</span>
+and update the parameters of a model <span class="arithmatex">\(f\)</span> after every minibatch.
+For simplicity we do not consider regularization,
+so we largely minimize the loss on the training:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\mathop{\mathrm{minimize}}_f \frac{1}{n} \sum_{i=1}^n l(f(\mathbf{x}_i), y_i),\)</span>\)</span>
+:eqlabel:<code>eq_empirical-risk-min</code></p>
+<p>where <span class="arithmatex">\(l\)</span> is the loss function
+measuring "how bad" the prediction <span class="arithmatex">\(f(\mathbf{x}_i)\)</span> is given the associated label <span class="arithmatex">\(y_i\)</span>.
+Statisticians call the term in :eqref:<code>eq_empirical-risk-min</code> <em>empirical risk</em>.
+The <em>empirical risk</em> is an average loss over the training data
+for approximating the <em>risk</em>,
+which is the
+expectation of the loss over the entire population of data drawn from their true distribution
+<span class="arithmatex">\(p(\mathbf{x},y)\)</span>:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(E_{p(\mathbf{x}, y)} [l(f(\mathbf{x}), y)] = \int\int l(f(\mathbf{x}), y) p(\mathbf{x}, y) \;d\mathbf{x}dy.\)</span>\)</span>
+:eqlabel:<code>eq_true-risk</code></p>
+<p>However, in practice we typically cannot obtain the entire population of data.
+Thus, <em>empirical risk minimization</em>,
+which is minimizing the empirical risk in :eqref:<code>eq_empirical-risk-min</code>,
+is a practical strategy for machine learning,
+with the hope of approximately
+minimizing the risk.</p>
+<h3 id="covariate-shift-correction">Covariate Shift Correction<a class="headerlink" href="#covariate-shift-correction" title="Permanent link">⚓︎</a></h3>
+<p>:label:<code>subsec_covariate-shift-correction</code></p>
+<p>Assume that we want to estimate
+some dependency <span class="arithmatex">\(P(y \mid \mathbf{x})\)</span>
+for which we have labeled data <span class="arithmatex">\((\mathbf{x}_i, y_i)\)</span>.
+Unfortunately, the observations <span class="arithmatex">\(\mathbf{x}_i\)</span> are drawn
+from some <em>source distribution</em> <span class="arithmatex">\(q(\mathbf{x})\)</span>
+rather than the <em>target distribution</em> <span class="arithmatex">\(p(\mathbf{x})\)</span>.
+Fortunately,
+the dependency assumption means
+that the conditional distribution does not change: <span class="arithmatex">\(p(y \mid \mathbf{x}) = q(y \mid \mathbf{x})\)</span>.
+If the source distribution <span class="arithmatex">\(q(\mathbf{x})\)</span> is "wrong",
+we can correct for that by using the following simple identity in the risk:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\int\int l(f(\mathbf{x}), y) p(y \mid \mathbf{x})p(\mathbf{x}) \;d\mathbf{x}dy =
+\int\int l(f(\mathbf{x}), y) q(y \mid \mathbf{x})q(\mathbf{x})\frac{p(\mathbf{x})}{q(\mathbf{x})} \;d\mathbf{x}dy.
+\end{aligned}
+\]</div>
+<p>In other words, we need to reweigh each data example
+by the ratio of the
+probability
+that it would have been drawn from the correct distribution to that from the wrong one:</p>
+<div class="arithmatex">\[\beta_i \stackrel{\textrm{def}}{=} \frac{p(\mathbf{x}_i)}{q(\mathbf{x}_i)}.\]</div>
+<p>Plugging in the weight <span class="arithmatex">\(\beta_i\)</span> for
+each data example <span class="arithmatex">\((\mathbf{x}_i, y_i)\)</span>
+we can train our model using
+<em>weighted empirical risk minimization</em>:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\mathop{\mathrm{minimize}}_f \frac{1}{n} \sum_{i=1}^n \beta_i l(f(\mathbf{x}_i), y_i).\)</span>\)</span>
+:eqlabel:<code>eq_weighted-empirical-risk-min</code></p>
+<p>Alas, we do not know that ratio,
+so before we can do anything useful we need to estimate it.
+Many methods are available,
+including some fancy operator-theoretic approaches
+that attempt to recalibrate the expectation operator directly
+using a minimum-norm or a maximum entropy principle.
+Note that for any such approach, we need samples
+drawn from both distributions---the "true" <span class="arithmatex">\(p\)</span>, e.g.,
+by access to test data, and the one used
+for generating the training set <span class="arithmatex">\(q\)</span> (the latter is trivially available).
+Note however, that we only need features <span class="arithmatex">\(\mathbf{x} \sim p(\mathbf{x})\)</span>;
+we do not need to access labels <span class="arithmatex">\(y \sim p(y)\)</span>.</p>
+<p>In this case, there exists a very effective approach
+that will give almost as good results as the original: namely, logistic regression,
+which is a special case of softmax regression (see :numref:<code>sec_softmax</code>)
+for binary classification.
+This is all that is needed to compute estimated probability ratios.
+We learn a classifier to distinguish
+between data drawn from <span class="arithmatex">\(p(\mathbf{x})\)</span>
+and data drawn from <span class="arithmatex">\(q(\mathbf{x})\)</span>.
+If it is impossible to distinguish
+between the two distributions
+then it means that the associated instances
+are equally likely to come from
+either one of those two distributions.
+On the other hand, any instances
+that can be well discriminated
+should be significantly overweighted
+or underweighted accordingly.</p>
+<p>For simplicity's sake assume that we have
+an equal number of instances from both distributions
+<span class="arithmatex">\(p(\mathbf{x})\)</span>
+and <span class="arithmatex">\(q(\mathbf{x})\)</span>, respectively.
+Now denote by <span class="arithmatex">\(z\)</span> labels that are <span class="arithmatex">\(1\)</span>
+for data drawn from <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(-1\)</span> for data drawn from <span class="arithmatex">\(q\)</span>.
+Then the probability in a mixed dataset is given by</p>
+<div class="arithmatex">\[P(z=1 \mid \mathbf{x}) = \frac{p(\mathbf{x})}{p(\mathbf{x})+q(\mathbf{x})} \textrm{ and hence } \frac{P(z=1 \mid \mathbf{x})}{P(z=-1 \mid \mathbf{x})} = \frac{p(\mathbf{x})}{q(\mathbf{x})}.\]</div>
+<p>Thus, if we use a logistic regression approach,
+where <span class="arithmatex">\(P(z=1 \mid \mathbf{x})=\frac{1}{1+\exp(-h(\mathbf{x}))}\)</span> (<span class="arithmatex">\(h\)</span> is a parametrized function),
+it follows that</p>
+<div class="arithmatex">\[
+\beta_i = \frac{1/(1 + \exp(-h(\mathbf{x}_i)))}{\exp(-h(\mathbf{x}_i))/(1 + \exp(-h(\mathbf{x}_i)))} = \exp(h(\mathbf{x}_i)).
+\]</div>
+<p>As a result, we need to solve two problems:
+the first, to distinguish between
+data drawn from both distributions,
+and then a weighted empirical risk minimization problem
+in :eqref:<code>eq_weighted-empirical-risk-min</code>
+where we weigh terms by <span class="arithmatex">\(\beta_i\)</span>.</p>
+<p>Now we are ready to describe a correction algorithm.
+Suppose that we have a training set <span class="arithmatex">\(\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}\)</span> and an unlabeled test set <span class="arithmatex">\(\{\mathbf{u}_1, \ldots, \mathbf{u}_m\}\)</span>.
+For covariate shift,
+we assume that <span class="arithmatex">\(\mathbf{x}_i\)</span> for all <span class="arithmatex">\(1 \leq i \leq n\)</span> are drawn from some source distribution
+and <span class="arithmatex">\(\mathbf{u}_i\)</span> for all <span class="arithmatex">\(1 \leq i \leq m\)</span>
+are drawn from the target distribution.
+Here is a prototypical algorithm
+for correcting covariate shift:</p>
+<ol>
+<li>Create a binary-classification training set: <span class="arithmatex">\(\{(\mathbf{x}_1, -1), \ldots, (\mathbf{x}_n, -1), (\mathbf{u}_1, 1), \ldots, (\mathbf{u}_m, 1)\}\)</span>.</li>
+<li>Train a binary classifier using logistic regression to get the function <span class="arithmatex">\(h\)</span>.</li>
+<li>Weigh training data using <span class="arithmatex">\(\beta_i = \exp(h(\mathbf{x}_i))\)</span> or better <span class="arithmatex">\(\beta_i = \min(\exp(h(\mathbf{x}_i)), c)\)</span> for some constant <span class="arithmatex">\(c\)</span>.</li>
+<li>Use weights <span class="arithmatex">\(\beta_i\)</span> for training on <span class="arithmatex">\(\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}\)</span> in :eqref:<code>eq_weighted-empirical-risk-min</code>.</li>
+</ol>
+<p>Note that the above algorithm relies on a crucial assumption.
+For this scheme to work, we need that each data example
+in the target (e.g., test time) distribution
+had nonzero probability of occurring at training time.
+If we find a point where <span class="arithmatex">\(p(\mathbf{x}) &gt; 0\)</span> but <span class="arithmatex">\(q(\mathbf{x}) = 0\)</span>,
+then the corresponding importance weight should be infinity.</p>
+<h3 id="label-shift-correction">Label Shift Correction<a class="headerlink" href="#label-shift-correction" title="Permanent link">⚓︎</a></h3>
+<p>Assume that we are dealing with a
+classification task with <span class="arithmatex">\(k\)</span> categories.
+Using the same notation in :numref:<code>subsec_covariate-shift-correction</code>,
+<span class="arithmatex">\(q\)</span> and <span class="arithmatex">\(p\)</span> are the source distribution (e.g., training time) and target distribution (e.g., test time), respectively.
+Assume that the distribution of labels shifts over time:
+<span class="arithmatex">\(q(y) \neq p(y)\)</span>, but the class-conditional distribution
+stays the same: <span class="arithmatex">\(q(\mathbf{x} \mid y)=p(\mathbf{x} \mid y)\)</span>.
+If the source distribution <span class="arithmatex">\(q(y)\)</span> is "wrong",
+we can correct for that
+according to
+the following identity in the risk
+as defined in
+:eqref:<code>eq_true-risk</code>:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\int\int l(f(\mathbf{x}), y) p(\mathbf{x} \mid y)p(y) \;d\mathbf{x}dy =
+\int\int l(f(\mathbf{x}), y) q(\mathbf{x} \mid y)q(y)\frac{p(y)}{q(y)} \;d\mathbf{x}dy.
+\end{aligned}
+\]</div>
+<p>Here, our importance weights will correspond to the
+label likelihood ratios:</p>
+<div class="arithmatex">\[\beta_i \stackrel{\textrm{def}}{=} \frac{p(y_i)}{q(y_i)}.\]</div>
+<p>One nice thing about label shift is that
+if we have a reasonably good model
+on the source distribution,
+then we can get consistent estimates of these weights
+without ever having to deal with the ambient dimension.
+In deep learning, the inputs tend
+to be high-dimensional objects like images,
+while the labels are often simpler objects like categories.</p>
+<p>To estimate the target label distribution,
+we first take our reasonably good off-the-shelf classifier
+(typically trained on the training data)
+and compute its "confusion" matrix using the validation set
+(also from the training distribution).
+The <em>confusion matrix</em>, <span class="arithmatex">\(\mathbf{C}\)</span>, is simply a <span class="arithmatex">\(k \times k\)</span> matrix,
+where each column corresponds to the label category (ground truth)
+and each row corresponds to our model's predicted category.
+Each cell's value <span class="arithmatex">\(c_{ij}\)</span> is the fraction of total predictions on the validation set
+where the true label was <span class="arithmatex">\(j\)</span> and our model predicted <span class="arithmatex">\(i\)</span>.</p>
+<p>Now, we cannot calculate the confusion matrix
+on the target data directly
+because we do not get to see the labels for the examples
+that we see in the wild,
+unless we invest in a complex real-time annotation pipeline.
+What we can do, however, is average all of our model's predictions
+at test time together, yielding the mean model outputs <span class="arithmatex">\(\mu(\hat{\mathbf{y}}) \in \mathbb{R}^k\)</span>,
+where the <span class="arithmatex">\(i^\textrm{th}\)</span> element <span class="arithmatex">\(\mu(\hat{y}_i)\)</span>
+is the fraction of the total predictions on the test set
+where our model predicted <span class="arithmatex">\(i\)</span>.</p>
+<p>It turns out that under some mild conditions---if
+our classifier was reasonably accurate in the first place,
+and if the target data contains only categories
+that we have seen before,
+and if the label shift assumption holds in the first place
+(the strongest assumption here)---we can estimate the test set label distribution
+by solving a simple linear system</p>
+<div class="arithmatex">\[\mathbf{C} p(\mathbf{y}) = \mu(\hat{\mathbf{y}}),\]</div>
+<p>because as an estimate <span class="arithmatex">\(\sum_{j=1}^k c_{ij} p(y_j) = \mu(\hat{y}_i)\)</span> holds for all <span class="arithmatex">\(1 \leq i \leq k\)</span>,
+where <span class="arithmatex">\(p(y_j)\)</span> is the <span class="arithmatex">\(j^\textrm{th}\)</span> element of the <span class="arithmatex">\(k\)</span>-dimensional label distribution vector <span class="arithmatex">\(p(\mathbf{y})\)</span>.
+If our classifier is sufficiently accurate to begin with,
+then the confusion matrix <span class="arithmatex">\(\mathbf{C}\)</span> will be invertible,
+and we get a solution <span class="arithmatex">\(p(\mathbf{y}) = \mathbf{C}^{-1} \mu(\hat{\mathbf{y}})\)</span>.</p>
+<p>Because we observe the labels on the source data,
+it is easy to estimate the distribution <span class="arithmatex">\(q(y)\)</span>.
+Then, for any training example <span class="arithmatex">\(i\)</span> with label <span class="arithmatex">\(y_i\)</span>,
+we can take the ratio of our estimated <span class="arithmatex">\(p(y_i)/q(y_i)\)</span>
+to calculate the weight <span class="arithmatex">\(\beta_i\)</span>,
+and plug this into weighted empirical risk minimization
+in :eqref:<code>eq_weighted-empirical-risk-min</code>.</p>
+<h3 id="concept-shift-correction">Concept Shift Correction<a class="headerlink" href="#concept-shift-correction" title="Permanent link">⚓︎</a></h3>
+<p>Concept shift is much harder to fix in a principled manner.
+For instance, in a situation where suddenly the problem changes
+from distinguishing cats from dogs to one of
+distinguishing white from black animals,
+it will be unreasonable to assume
+that we can do much better than just collecting new labels
+and training from scratch.
+Fortunately, in practice, such extreme shifts are rare.
+Instead, what usually happens is that the task keeps on changing slowly.
+To make things more concrete, here are some examples:</p>
+<ul>
+<li>In computational advertising, new products are launched,
+old products become less popular. This means that the distribution over ads and their popularity changes gradually and any click-through rate predictor needs to change gradually with it.</li>
+<li>Traffic camera lenses degrade gradually due to environmental wear, affecting image quality progressively.</li>
+<li>News content changes gradually (i.e., most of the news remains unchanged but new stories appear).</li>
+</ul>
+<p>In such cases, we can use the same approach that we used for training networks to make them adapt to the change in the data. In other words, we use the existing network weights and simply perform a few update steps with the new data rather than training from scratch.</p>
+<h2 id="a-taxonomy-of-learning-problems">A Taxonomy of Learning Problems<a class="headerlink" href="#a-taxonomy-of-learning-problems" title="Permanent link">⚓︎</a></h2>
+<p>Armed with knowledge about how to deal with changes in distributions, we can now consider some other aspects of machine learning problem formulation.</p>
+<h3 id="batch-learning">Batch Learning<a class="headerlink" href="#batch-learning" title="Permanent link">⚓︎</a></h3>
+<p>In <em>batch learning</em>, we have access to training features and labels <span class="arithmatex">\(\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}\)</span>, which we use to train a model <span class="arithmatex">\(f(\mathbf{x})\)</span>. Later on, we deploy this model to score new data <span class="arithmatex">\((\mathbf{x}, y)\)</span> drawn from the same distribution. This is the default assumption for any of the problems that we discuss here. For instance, we might train a cat detector based on lots of pictures of cats and dogs. Once we have trained it, we ship it as part of a smart catdoor computer vision system that lets only cats in. This is then installed in a customer's home and is never updated again (barring extreme circumstances).</p>
+<h3 id="online-learning">Online Learning<a class="headerlink" href="#online-learning" title="Permanent link">⚓︎</a></h3>
+<p>Now imagine that the data <span class="arithmatex">\((\mathbf{x}_i, y_i)\)</span> arrives one sample at a time. More specifically, assume that we first observe <span class="arithmatex">\(\mathbf{x}_i\)</span>, then we need to come up with an estimate <span class="arithmatex">\(f(\mathbf{x}_i)\)</span>. Only once we have done this do we observe <span class="arithmatex">\(y_i\)</span> and so receive a reward or incur a loss, given our decision.
+Many real problems fall into this category. For example, we need to predict tomorrow's stock price, which allows us to trade based on that estimate and at the end of the day we find out whether our estimate made us a profit. In other words, in <em>online learning</em>, we have the following cycle where we are continuously improving our model given new observations:</p>
+<div class="arithmatex">\[\begin{aligned}&amp;\textrm{model } f_t \longrightarrow \textrm{data }  \mathbf{x}_t \longrightarrow \textrm{estimate } f_t(\mathbf{x}_t) \longrightarrow\\ \textrm{obs}&amp;\textrm{ervation } y_t \longrightarrow \textrm{loss } l(y_t, f_t(\mathbf{x}_t)) \longrightarrow \textrm{model } f_{t+1}\end{aligned}\]</div>
+<h3 id="bandits">Bandits<a class="headerlink" href="#bandits" title="Permanent link">⚓︎</a></h3>
+<p><em>Bandits</em> are a special case of the problem above. While in most learning problems we have a continuously parametrized function <span class="arithmatex">\(f\)</span> where we want to learn its parameters (e.g., a deep network), in a <em>bandit</em> problem we only have a finite number of arms that we can pull, i.e., a finite number of actions that we can take. It is not very surprising that for this simpler problem stronger theoretical guarantees in terms of optimality can be obtained. We list it mainly since this problem is often (confusingly) treated as if it were a distinct learning setting.</p>
+<h3 id="control">Control<a class="headerlink" href="#control" title="Permanent link">⚓︎</a></h3>
+<p>In many cases the environment remembers what we did. Not necessarily in an adversarial manner but it will just remember and the response will depend on what happened before. For instance, a coffee boiler controller will observe different temperatures depending on whether it was heating the boiler previously. PID (proportional-integral-derivative) controller algorithms are a popular choice there.
+Likewise, a user's behavior on a news site will depend on what we showed them previously (e.g., they will read most news only once). Many such algorithms form a model of the environment in which they act so as to make their decisions appear less random.
+Recently,
+control theory (e.g., PID variants) has also been used
+to automatically tune hyperparameters
+to achieve better disentangling and reconstruction quality,
+and improve the diversity of generated text and the reconstruction quality of generated images :cite:<code>Shao.Yao.Sun.ea.2020</code>.</p>
+<h3 id="reinforcement-learning">Reinforcement Learning<a class="headerlink" href="#reinforcement-learning" title="Permanent link">⚓︎</a></h3>
+<p>In the more general case of an environment with memory, we may encounter situations where the environment is trying to cooperate with us (cooperative games, in particular for non-zero-sum games), or others where the environment will try to win. Chess, Go, Backgammon, or StarCraft are some of the cases in <em>reinforcement learning</em>. Likewise, we might want to build a good controller for autonomous cars. Other cars are likely to respond to the autonomous car's driving style in nontrivial ways, e.g., trying to avoid it, trying to cause an accident, or trying to cooperate with it.</p>
+<h3 id="considering-the-environment">Considering the Environment<a class="headerlink" href="#considering-the-environment" title="Permanent link">⚓︎</a></h3>
+<p>One key distinction between the different situations above is that a strategy that might have worked throughout in the case of a stationary environment, might not work throughout in an environment that can adapt. For instance, an arbitrage opportunity discovered by a trader is likely to disappear once it is exploited. The speed and manner at which the environment changes determines to a large extent the type of algorithms that we can bring to bear. For instance, if we know that things may only change slowly, we can force any estimate to change only slowly, too. If we know that the environment might change instantaneously, but only very infrequently, we can make allowances for that. These types of knowledge are crucial for the aspiring data scientist in dealing with concept shift, i.e., when the problem that is being solved can change over time.</p>
+<h2 id="fairness-accountability-and-transparency-in-machine-learning">Fairness, Accountability, and Transparency in Machine Learning<a class="headerlink" href="#fairness-accountability-and-transparency-in-machine-learning" title="Permanent link">⚓︎</a></h2>
+<p>Finally, it is important to remember
+that when you deploy machine learning systems
+you are not merely optimizing a predictive model---you
+are typically providing a tool that will
+be used to (partially or fully) automate decisions.
+These technical systems can impact the lives
+of individuals who are subject to the resulting decisions.
+The leap from considering predictions to making decisions
+raises not only new technical questions,
+but also a slew of ethical questions
+that must be carefully considered.
+If we are deploying a medical diagnostic system,
+we need to know for which populations
+it may work and for which it may not.
+Overlooking foreseeable risks to the welfare of
+a subpopulation could cause us to administer inferior care.
+Moreover, once we contemplate decision-making systems,
+we must step back and reconsider how we evaluate our technology.
+Among other consequences of this change of scope,
+we will find that <em>accuracy</em> is seldom the right measure.
+For instance, when translating predictions into actions,
+we will often want to take into account
+the potential cost sensitivity of erring in various ways.
+If one way of misclassifying an image
+could be perceived as a racial sleight of hand,
+while misclassification to a different category
+would be harmless, then we might want to adjust
+our thresholds accordingly, accounting for societal values
+in designing the decision-making protocol.
+We also want to be careful about
+how prediction systems can lead to feedback loops.
+For example, consider predictive policing systems,
+which allocate patrol officers
+to areas with high forecasted crime.
+It is easy to see how a worrying pattern can emerge:</p>
+<ol>
+<li>Neighborhoods with more crime get more patrols.</li>
+<li>Consequently, more crimes are discovered in these neighborhoods, entering the training data available for future iterations.</li>
+<li>Exposed to more positives, the model predicts yet more crime in these neighborhoods.</li>
+<li>In the next iteration, the updated model targets the same neighborhood even more heavily leading to yet more crimes discovered, etc.</li>
+</ol>
+<p>Often, the various mechanisms by which
+a model's predictions become coupled to its training data
+are unaccounted for in the modeling process.
+This can lead to what researchers call <em>runaway feedback loops</em>.
+Additionally, we want to be careful about
+whether we are addressing the right problem in the first place.
+Predictive algorithms now play an outsize role
+in mediating the dissemination of information.
+Should the news that an individual encounters
+be determined by the set of Facebook pages they have <em>Liked</em>?
+These are just a few among the many pressing ethical dilemmas
+that you might encounter in a career in machine learning.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">⚓︎</a></h2>
+<p>In many cases training and test sets do not come from the same distribution. This is called distribution shift.
+The risk is the expectation of the loss over the entire population of data drawn from their true distribution. However, this entire population is usually unavailable. Empirical risk is an average loss over the training data to approximate the risk. In practice, we perform empirical risk minimization.</p>
+<p>Under the corresponding assumptions, covariate and label shift can be detected and corrected for at test time. Failure to account for this bias can become problematic at test time.
+In some cases, the environment may remember automated actions and respond in surprising ways. We must account for this possibility when building models and continue to monitor live systems, open to the possibility that our models and the environment will become entangled in unanticipated ways.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>What could happen when we change the behavior of a search engine? What might the users do? What about the advertisers?</li>
+<li>Implement a covariate shift detector. Hint: build a classifier.</li>
+<li>Implement a covariate shift corrector.</li>
+<li>Besides distribution shift, what else could affect how the empirical risk approximates the risk?</li>
+</ol>
+<p><a href="https://discuss.d2l.ai/t/105">Discussions</a></p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../classification/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Classification">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Classification
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../generalization-classification/" class="md-footer__link md-footer__link--next" aria-label="下一页: Generalization in Classification">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Generalization in Classification
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Ean Yang
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/YQisme" target="_blank" rel="noopener" title="github主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://space.bilibili.com/244185393?spm_id_from=333.788.0.0" target="_blank" rel="noopener" title="b站主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M488.6 104.1c16.7 18.1 24.4 39.7 23.3 65.7v202.4c-.4 26.4-9.2 48.1-26.5 65.1-17.2 17-39.1 25.9-65.5 26.7H92.02c-26.45-.8-48.21-9.8-65.28-27.2C9.682 419.4.767 396.5 0 368.2V169.8c.767-26 9.682-47.6 26.74-65.7C43.81 87.75 65.57 78.77 92.02 78h29.38L96.05 52.19c-5.75-5.73-8.63-13-8.63-21.79 0-8.8 2.88-16.06 8.63-21.797C101.8 2.868 109.1 0 117.9 0s16.1 2.868 21.9 8.603L213.1 78h88l74.5-69.397C381.7 2.868 389.2 0 398 0c8.8 0 16.1 2.868 21.9 8.603 5.7 5.737 8.6 12.997 8.6 21.797 0 8.79-2.9 16.06-8.6 21.79L394.6 78h29.3c26.4.77 48 9.75 64.7 26.1zm-38.8 69.7c-.4-9.6-3.7-17.4-10.7-23.5-5.2-6.1-14-9.4-22.7-9.8H96.05c-9.59.4-17.45 3.7-23.58 9.8-6.14 6.1-9.4 13.9-9.78 23.5v194.4c0 9.2 3.26 17 9.78 23.5s14.38 9.8 23.58 9.8H416.4c9.2 0 17-3.3 23.3-9.8 6.3-6.5 9.7-14.3 10.1-23.5V173.8zm-264.3 42.7c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.2 6.3-14 9.5-23.6 9.5-9.6 0-17.5-3.2-23.6-9.5-6.1-6.3-9.4-14-9.8-23.2v-33.3c.4-9.1 3.8-16.9 10.1-23.2 6.3-6.3 13.2-9.6 23.3-10 9.2.4 17 3.7 23.3 10zm191.5 0c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.1 6.3-14 9.5-23.6 9.5-9.6 0-17.4-3.2-23.6-9.5-7-6.3-9.4-14-9.7-23.2v-33.3c.3-9.1 3.7-16.9 10-23.2 6.3-6.3 14.1-9.6 23.3-10 9.2.4 17 3.7 23.3 10z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://eanyang7.com" target="_blank" rel="noopener" title="个人主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm40 304v128c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9l-28.6 47.6c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352h-16z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.prune", "navigation.top", "toc.follow", "header.autohide", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.6c14ae12.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,3497 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《动手学深度学习》">
+      
+      
+        <meta name="author" content="Ean Yang">
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/d2l/%E6%95%99%E7%A8%8B/02-preliminaries/linear-algebra/">
+      
+      
+        <link rel="prev" href="../calculus/">
+      
+      
+        <link rel="next" href="../lookup-api/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.jpg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.12">
+    
+    
+      
+        <title>Linear algebra - 动手学深度学习 Dive into Deep Learning#</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#linear-algebra" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-header__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            动手学深度学习 Dive into Deep Learning#
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Linear algebra
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-tabs__link">
+          
+  
+  练习
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-nav__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    动手学深度学习 Dive into Deep Learning#
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    教程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-Introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    安装
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Notation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    02 preliminaries
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            02 preliminaries
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preliminaries
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../autograd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Autograd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../calculus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Calculus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Linear algebra
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Linear algebra
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#scalars" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scalars
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vectors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matrices
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tensors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tensors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-properties-of-tensor-arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Properties of Tensor Arithmetic
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#non-reduction-sum" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-Reduction Sum
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dot-products" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dot Products
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-vector-products" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matrix--Vector Products
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-matrix-multiplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matrix--Matrix Multiplication
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#norms" class="md-nav__link">
+    <span class="md-ellipsis">
+      Norms
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Discussion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lookup-api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lookup api
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ndarray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ndarray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pandas
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../probability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Probability
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../03-linear-regression/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    03 linear regression
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../04-linear-classification/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    04 linear classification
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../05-multilayer-perceptrons/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    05 multilayer perceptrons
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../06-builders-guide/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    06 builders guide
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../07-convolutional-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    07 convolutional modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../08-convolutional-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    08 convolutional neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../09-recurrent-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    09 recurrent neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../10-recurrent-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    10 recurrent modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../11-attention-mechanisms-and-transformers/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    11 attention mechanisms and transformers
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../12-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    12 optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../13-computational-performance/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    13 computational performance
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../14-computer-vision/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    14 computer vision
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../15-natural-language-processing-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    15 natural language processing pretraining
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../16-natural-language-processing-applications/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    16 natural language processing applications
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../17-reinforcement-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    17 reinforcement learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../18-gaussian-processes/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    18 gaussian processes
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../19-hyperparameter-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    19 hyperparameter optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../20-generative-adversarial-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    20 generative adversarial networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../21-recommender-systems/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    21 recommender systems
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../22-appendix-mathematics-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    22 appendix mathematics for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../23-appendix-tools-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    23 appendix tools for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../contrib/fasttext-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Contrib
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    练习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            练习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    动手学深度学习习题解答
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch02
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch03/ch03/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch03
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch04/ch04/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch04
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch05/ch05/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch05
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch06/ch06/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch06
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch07/ch07/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch07
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch08/ch08/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch08
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch09/ch09/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch09
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch10/ch10/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch10
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch11/ch11/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch11
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch12/ch12/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch12
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch13/ch13/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch13
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch14/ch14/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch14
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch15/ch15/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch15
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/notebooks/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#scalars" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scalars
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vectors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matrices
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tensors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tensors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-properties-of-tensor-arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Properties of Tensor Arithmetic
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#non-reduction-sum" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-Reduction Sum
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dot-products" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dot Products
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-vector-products" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matrix--Vector Products
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-matrix-multiplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matrix--Matrix Multiplication
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#norms" class="md-nav__link">
+    <span class="md-ellipsis">
+      Norms
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Discussion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/02-preliminaries/linear-algebra.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/02-preliminaries/linear-algebra.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<div class="input highlight"><pre><span></span><code><span class="o">%</span><span class="n">load_ext</span> <span class="n">d2lbook</span><span class="o">.</span><span class="n">tab</span>
+<span class="n">tab</span><span class="o">.</span><span class="n">interact_select</span><span class="p">([</span><span class="s1">&#39;mxnet&#39;</span><span class="p">,</span> <span class="s1">&#39;pytorch&#39;</span><span class="p">,</span> <span class="s1">&#39;tensorflow&#39;</span><span class="p">,</span> <span class="s1">&#39;jax&#39;</span><span class="p">])</span>
+</code></pre></div>
+<h1 id="linear-algebra">Linear Algebra<a class="headerlink" href="#linear-algebra" title="Permanent link">⚓︎</a></h1>
+<p>:label:<code>sec_linear-algebra</code></p>
+<p>By now, we can load datasets into tensors
+and manipulate these tensors
+with basic mathematical operations.
+To start building sophisticated models,
+we will also need a few tools from linear algebra.
+This section offers a gentle introduction
+to the most essential concepts,
+starting from scalar arithmetic
+and ramping up to matrix multiplication.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
+</code></pre></div>
+<h2 id="scalars">Scalars<a class="headerlink" href="#scalars" title="Permanent link">⚓︎</a></h2>
+<p>Most everyday mathematics
+consists of manipulating
+numbers one at a time.
+Formally, we call these values <em>scalars</em>.
+For example, the temperature in Palo Alto
+is a balmy <span class="arithmatex">\(72\)</span> degrees Fahrenheit.
+If you wanted to convert the temperature to Celsius
+you would evaluate the expression
+<span class="arithmatex">\(c = \frac{5}{9}(f - 32)\)</span>, setting <span class="arithmatex">\(f\)</span> to <span class="arithmatex">\(72\)</span>.
+In this equation, the values
+<span class="arithmatex">\(5\)</span>, <span class="arithmatex">\(9\)</span>, and <span class="arithmatex">\(32\)</span> are constant scalars.
+The variables <span class="arithmatex">\(c\)</span> and <span class="arithmatex">\(f\)</span>
+in general represent unknown scalars.</p>
+<p>We denote scalars
+by ordinary lower-cased letters
+(e.g., <span class="arithmatex">\(x\)</span>, <span class="arithmatex">\(y\)</span>, and <span class="arithmatex">\(z\)</span>)
+and the space of all (continuous)
+<em>real-valued</em> scalars by <span class="arithmatex">\(\mathbb{R}\)</span>.
+For expedience, we will skip past
+rigorous definitions of <em>spaces</em>:
+just remember that the expression <span class="arithmatex">\(x \in \mathbb{R}\)</span>
+is a formal way to say that <span class="arithmatex">\(x\)</span> is a real-valued scalar.
+The symbol <span class="arithmatex">\(\in\)</span> (pronounced "in")
+denotes membership in a set.
+For example, <span class="arithmatex">\(x, y \in \{0, 1\}\)</span>
+indicates that <span class="arithmatex">\(x\)</span> and <span class="arithmatex">\(y\)</span> are variables
+that can only take values <span class="arithmatex">\(0\)</span> or <span class="arithmatex">\(1\)</span>.</p>
+<p>(<strong>Scalars are implemented as tensors
+that contain only one element.</strong>)
+Below, we assign two scalars
+and perform the familiar addition, multiplication,
+division, and exponentiation operations.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">**</span> <span class="n">y</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="n">y</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="n">y</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="n">y</span>
+</code></pre></div>
+<h2 id="vectors">Vectors<a class="headerlink" href="#vectors" title="Permanent link">⚓︎</a></h2>
+<p>For current purposes, [<strong>you can think of a vector as a fixed-length array of scalars.</strong>]
+As with their code counterparts,
+we call these scalars the <em>elements</em> of the vector
+(synonyms include <em>entries</em> and <em>components</em>).
+When vectors represent examples from real-world datasets,
+their values hold some real-world significance.
+For example, if we were training a model to predict
+the risk of a loan defaulting,
+we might associate each applicant with a vector
+whose components correspond to quantities
+like their income, length of employment,
+or number of previous defaults.
+If we were studying the risk of heart attack,
+each vector might represent a patient
+and its components might correspond to
+their most recent vital signs, cholesterol levels,
+minutes of exercise per day, etc.
+We denote vectors by bold lowercase letters,
+(e.g., <span class="arithmatex">\(\mathbf{x}\)</span>, <span class="arithmatex">\(\mathbf{y}\)</span>, and <span class="arithmatex">\(\mathbf{z}\)</span>).</p>
+<p>Vectors are implemented as <span class="arithmatex">\(1^{\textrm{st}}\)</span>-order tensors.
+In general, such tensors can have arbitrary lengths,
+subject to memory limitations. Caution: in Python, as in most programming languages, vector indices start at <span class="arithmatex">\(0\)</span>, also known as <em>zero-based indexing</em>, whereas in linear algebra subscripts begin at <span class="arithmatex">\(1\)</span> (one-based indexing).</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span>
+</code></pre></div>
+<p>We can refer to an element of a vector by using a subscript.
+For example, <span class="arithmatex">\(x_2\)</span> denotes the second element of <span class="arithmatex">\(\mathbf{x}\)</span>.
+Since <span class="arithmatex">\(x_2\)</span> is a scalar, we do not bold it.
+By default, we visualize vectors
+by stacking their elements vertically:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\mathbf{x} =\begin{bmatrix}x_{1}  \\ \vdots  \\x_{n}\end{bmatrix}.\)</span>\)</span>
+:eqlabel:<code>eq_vec_def</code></p>
+<p>Here <span class="arithmatex">\(x_1, \ldots, x_n\)</span> are elements of the vector.
+Later on, we will distinguish between such <em>column vectors</em>
+and <em>row vectors</em> whose elements are stacked horizontally.
+Recall that [<strong>we access a tensor's elements via indexing.</strong>]</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</code></pre></div>
+<p>To indicate that a vector contains <span class="arithmatex">\(n\)</span> elements,
+we write <span class="arithmatex">\(\mathbf{x} \in \mathbb{R}^n\)</span>.
+Formally, we call <span class="arithmatex">\(n\)</span> the <em>dimensionality</em> of the vector.
+[<strong>In code, this corresponds to the tensor's length</strong>],
+accessible via Python's built-in <code>len</code> function.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+<p>We can also access the length via the <code>shape</code> attribute.
+The shape is a tuple that indicates a tensor's length along each axis.
+(<strong>Tensors with just one axis have shapes with just one element.</strong>)</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<p>Oftentimes, the word "dimension" gets overloaded
+to mean both the number of axes
+and the length along a particular axis.
+To avoid this confusion,
+we use <em>order</em> to refer to the number of axes
+and <em>dimensionality</em> exclusively to refer
+to the number of components.</p>
+<h2 id="matrices">Matrices<a class="headerlink" href="#matrices" title="Permanent link">⚓︎</a></h2>
+<p>Just as scalars are <span class="arithmatex">\(0^{\textrm{th}}\)</span>-order tensors
+and vectors are <span class="arithmatex">\(1^{\textrm{st}}\)</span>-order tensors,
+matrices are <span class="arithmatex">\(2^{\textrm{nd}}\)</span>-order tensors.
+We denote matrices by bold capital letters
+(e.g., <span class="arithmatex">\(\mathbf{X}\)</span>, <span class="arithmatex">\(\mathbf{Y}\)</span>, and <span class="arithmatex">\(\mathbf{Z}\)</span>),
+and represent them in code by tensors with two axes.
+The expression <span class="arithmatex">\(\mathbf{A} \in \mathbb{R}^{m \times n}\)</span>
+indicates that a matrix <span class="arithmatex">\(\mathbf{A}\)</span>
+contains <span class="arithmatex">\(m \times n\)</span> real-valued scalars,
+arranged as <span class="arithmatex">\(m\)</span> rows and <span class="arithmatex">\(n\)</span> columns.
+When <span class="arithmatex">\(m = n\)</span>, we say that a matrix is <em>square</em>.
+Visually, we can illustrate any matrix as a table.
+To refer to an individual element,
+we subscript both the row and column indices, e.g.,
+<span class="arithmatex">\(a_{ij}\)</span> is the value that belongs to <span class="arithmatex">\(\mathbf{A}\)</span>'s
+<span class="arithmatex">\(i^{\textrm{th}}\)</span> row and <span class="arithmatex">\(j^{\textrm{th}}\)</span> column:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\mathbf{A}=\begin{bmatrix} a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1n} \\ a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2n} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ a_{m1} &amp; a_{m2} &amp; \cdots &amp; a_{mn} \\ \end{bmatrix}.\)</span>\)</span>
+:eqlabel:<code>eq_matrix_def</code></p>
+<p>In code, we represent a matrix <span class="arithmatex">\(\mathbf{A} \in \mathbb{R}^{m \times n}\)</span>
+by a <span class="arithmatex">\(2^{\textrm{nd}}\)</span>-order tensor with shape (<span class="arithmatex">\(m\)</span>, <span class="arithmatex">\(n\)</span>).
+[<strong>We can convert any appropriately sized <span class="arithmatex">\(m \times n\)</span> tensor
+into an <span class="arithmatex">\(m \times n\)</span> matrix</strong>]
+by passing the desired shape to <code>reshape</code>:</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">A</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">A</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">A</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">A</span>
+</code></pre></div>
+<p>Sometimes we want to flip the axes.
+When we exchange a matrix's rows and columns,
+the result is called its <em>transpose</em>.
+Formally, we signify a matrix <span class="arithmatex">\(\mathbf{A}\)</span>'s transpose
+by <span class="arithmatex">\(\mathbf{A}^\top\)</span> and if <span class="arithmatex">\(\mathbf{B} = \mathbf{A}^\top\)</span>,
+then <span class="arithmatex">\(b_{ij} = a_{ji}\)</span> for all <span class="arithmatex">\(i\)</span> and <span class="arithmatex">\(j\)</span>.
+Thus, the transpose of an <span class="arithmatex">\(m \times n\)</span> matrix
+is an <span class="arithmatex">\(n \times m\)</span> matrix:</p>
+<div class="arithmatex">\[
+\mathbf{A}^\top =
+\begin{bmatrix}
+    a_{11} &amp; a_{21} &amp; \dots  &amp; a_{m1} \\
+    a_{12} &amp; a_{22} &amp; \dots  &amp; a_{m2} \\
+    \vdots &amp; \vdots &amp; \ddots  &amp; \vdots \\
+    a_{1n} &amp; a_{2n} &amp; \dots  &amp; a_{mn}
+\end{bmatrix}.
+\]</div>
+<p>In code, we can access any (<strong>matrix's transpose</strong>) as follows:</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">T</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</code></pre></div>
+<p>[<strong>Symmetric matrices are the subset of square matrices
+that are equal to their own transposes:
+<span class="arithmatex">\(\mathbf{A} = \mathbf{A}^\top\)</span>.</strong>]
+The following matrix is symmetric:</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<span class="n">A</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<span class="n">A</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<span class="n">A</span> <span class="o">==</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<span class="n">A</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span>
+</code></pre></div>
+<p>Matrices are useful for representing datasets.
+Typically, rows correspond to individual records
+and columns correspond to distinct attributes.</p>
+<h2 id="tensors">Tensors<a class="headerlink" href="#tensors" title="Permanent link">⚓︎</a></h2>
+<p>While you can go far in your machine learning journey
+with only scalars, vectors, and matrices,
+eventually you may need to work with
+higher-order [<strong>tensors</strong>].
+Tensors (<strong>give us a generic way of describing
+extensions to <span class="arithmatex">\(n^{\textrm{th}}\)</span>-order arrays.</strong>)
+We call software objects of the <em>tensor class</em> "tensors"
+precisely because they too can have arbitrary numbers of axes.
+While it may be confusing to use the word
+<em>tensor</em> for both the mathematical object
+and its realization in code,
+our meaning should usually be clear from context.
+We denote general tensors by capital letters
+with a special font face
+(e.g., <span class="arithmatex">\(\mathsf{X}\)</span>, <span class="arithmatex">\(\mathsf{Y}\)</span>, and <span class="arithmatex">\(\mathsf{Z}\)</span>)
+and their indexing mechanism
+(e.g., <span class="arithmatex">\(x_{ijk}\)</span> and <span class="arithmatex">\([\mathsf{X}]_{1, 2i-1, 3}\)</span>)
+follows naturally from that of matrices.</p>
+<p>Tensors will become more important
+when we start working with images.
+Each image arrives as a <span class="arithmatex">\(3^{\textrm{rd}}\)</span>-order tensor
+with axes corresponding to the height, width, and <em>channel</em>.
+At each spatial location, the intensities
+of each color (red, green, and blue)
+are stacked along the channel.
+Furthermore, a collection of images is represented
+in code by a <span class="arithmatex">\(4^{\textrm{th}}\)</span>-order tensor,
+where distinct images are indexed
+along the first axis.
+Higher-order tensors are constructed, as were vectors and matrices,
+by growing the number of shape components.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="basic-properties-of-tensor-arithmetic">Basic Properties of Tensor Arithmetic<a class="headerlink" href="#basic-properties-of-tensor-arithmetic" title="Permanent link">⚓︎</a></h2>
+<p>Scalars, vectors, matrices,
+and higher-order tensors
+all have some handy properties.
+For example, elementwise operations
+produce outputs that have the
+same shape as their operands.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># Assign a copy of A to B by allocating new memory</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>  <span class="c1"># Assign a copy of A to B by allocating new memory</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span>  <span class="c1"># No cloning of A to B by allocating new memory</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span>
+</code></pre></div>
+<p>The [<strong>elementwise product of two matrices
+is called their <em>Hadamard product</em></strong>] (denoted <span class="arithmatex">\(\odot\)</span>).
+We can spell out the entries
+of the Hadamard product of two matrices
+<span class="arithmatex">\(\mathbf{A}, \mathbf{B} \in \mathbb{R}^{m \times n}\)</span>:</p>
+<div class="arithmatex">\[
+\mathbf{A} \odot \mathbf{B} =
+\begin{bmatrix}
+    a_{11}  b_{11} &amp; a_{12}  b_{12} &amp; \dots  &amp; a_{1n}  b_{1n} \\
+    a_{21}  b_{21} &amp; a_{22}  b_{22} &amp; \dots  &amp; a_{2n}  b_{2n} \\
+    \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+    a_{m1}  b_{m1} &amp; a_{m2}  b_{m2} &amp; \dots  &amp; a_{mn}  b_{mn}
+\end{bmatrix}.
+\]</div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="n">A</span> <span class="o">*</span> <span class="n">B</span>
+</code></pre></div>
+<p>[<strong>Adding or multiplying a scalar and a tensor</strong>] produces a result
+with the same shape as the original tensor.
+Here, each element of the tensor is added to (or multiplied by) the scalar.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">+</span> <span class="n">X</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">+</span> <span class="n">X</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">a</span> <span class="o">+</span> <span class="n">X</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">+</span> <span class="n">X</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<h2 id="reduction">Reduction<a class="headerlink" href="#reduction" title="Permanent link">⚓︎</a></h2>
+<p>:label:<code>subsec_lin-alg-reduction</code></p>
+<p>Often, we wish to calculate [<strong>the sum of a tensor's elements.</strong>]
+To express the sum of the elements in a vector <span class="arithmatex">\(\mathbf{x}\)</span> of length <span class="arithmatex">\(n\)</span>,
+we write <span class="arithmatex">\(\sum_{i=1}^n x_i\)</span>. There is a simple function for it:</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<p>To express [<strong>sums over the elements of tensors of arbitrary shape</strong>],
+we simply sum over all its axes.
+For example, the sum of the elements
+of an <span class="arithmatex">\(m \times n\)</span> matrix <span class="arithmatex">\(\mathbf{A}\)</span>
+could be written <span class="arithmatex">\(\sum_{i=1}^{m} \sum_{j=1}^{n} a_{ij}\)</span>.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</code></pre></div>
+<p>By default, invoking the sum function
+<em>reduces</em> a tensor along all of its axes,
+eventually producing a scalar.
+Our libraries also allow us to [<strong>specify the axes
+along which the tensor should be reduced.</strong>]
+To sum over all elements along the rows (axis 0),
+we specify <code>axis=0</code> in <code>sum</code>.
+Since the input matrix reduces along axis 0
+to generate the output vector,
+this axis is missing from the shape of the output.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<p>Specifying <code>axis=1</code> will reduce the column dimension (axis 1) by summing up elements of all the columns.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<p>Reducing a matrix along both rows and columns via summation
+is equivalent to summing up all the elements of the matrix.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>  <span class="c1"># Same as A.sum()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>  <span class="c1"># Same as tf.reduce_sum(A)</span>
+</code></pre></div>
+<p>[<strong>A related quantity is the <em>mean</em>, also called the <em>average</em>.</strong>]
+We calculate the mean by dividing the sum
+by the total number of elements.
+Because computing the mean is so common,
+it gets a dedicated library function
+that works analogously to <code>sum</code>.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">size</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">A</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</code></pre></div>
+<p>Likewise, the function for calculating the mean
+can also reduce a tensor along specific axes.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+<h2 id="non-reduction-sum">Non-Reduction Sum<a class="headerlink" href="#non-reduction-sum" title="Permanent link">⚓︎</a></h2>
+<p>:label:<code>subsec_lin-alg-non-reduction</code></p>
+<p>Sometimes it can be useful to [<strong>keep the number of axes unchanged</strong>]
+when invoking the function for calculating the sum or mean.
+This matters when we want to use the broadcast mechanism.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">sum_A</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sum_A</span><span class="p">,</span> <span class="n">sum_A</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">sum_A</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sum_A</span><span class="p">,</span> <span class="n">sum_A</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<p>For instance, since <code>sum_A</code> keeps its two axes after summing each row,
+we can (<strong>divide <code>A</code> by <code>sum_A</code> with broadcasting</strong>)
+to create a matrix where each row sums up to <span class="arithmatex">\(1\)</span>.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="n">A</span> <span class="o">/</span> <span class="n">sum_A</span>
+</code></pre></div>
+<p>If we want to calculate [<strong>the cumulative sum of elements of <code>A</code> along some axis</strong>],
+say <code>axis=0</code> (row by row), we can call the <code>cumsum</code> function.
+By design, this function does not reduce the input tensor along any axis.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="dot-products">Dot Products<a class="headerlink" href="#dot-products" title="Permanent link">⚓︎</a></h2>
+<p>So far, we have only performed elementwise operations, sums, and averages.
+And if this was all we could do, linear algebra
+would not deserve its own section.
+Fortunately, this is where things get more interesting.
+One of the most fundamental operations is the dot product.
+Given two vectors <span class="arithmatex">\(\mathbf{x}, \mathbf{y} \in \mathbb{R}^d\)</span>,
+their <em>dot product</em> <span class="arithmatex">\(\mathbf{x}^\top \mathbf{y}\)</span> (also known as <em>inner product</em>, <span class="arithmatex">\(\langle \mathbf{x}, \mathbf{y}  \rangle\)</span>)
+is a sum over the products of the elements at the same position:
+<span class="arithmatex">\(\mathbf{x}^\top \mathbf{y} = \sum_{i=1}^{d} x_i y_i\)</span>.</p>
+<p>[~~The <em>dot product</em> of two vectors is a sum over the products of the elements at the same position~~]</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<p>Equivalently, (<strong>we can calculate the dot product of two vectors
+by performing an elementwise multiplication followed by a sum:</strong>)</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<p>Dot products are useful in a wide range of contexts.
+For example, given some set of values,
+denoted by a vector <span class="arithmatex">\(\mathbf{x}  \in \mathbb{R}^n\)</span>,
+and a set of weights, denoted by <span class="arithmatex">\(\mathbf{w} \in \mathbb{R}^n\)</span>,
+the weighted sum of the values in <span class="arithmatex">\(\mathbf{x}\)</span>
+according to the weights <span class="arithmatex">\(\mathbf{w}\)</span>
+could be expressed as the dot product <span class="arithmatex">\(\mathbf{x}^\top \mathbf{w}\)</span>.
+When the weights are nonnegative
+and sum to <span class="arithmatex">\(1\)</span>, i.e., <span class="arithmatex">\(\left(\sum_{i=1}^{n} {w_i} = 1\right)\)</span>,
+the dot product expresses a <em>weighted average</em>.
+After normalizing two vectors to have unit length,
+the dot products express the cosine of the angle between them.
+Later in this section, we will formally introduce this notion of <em>length</em>.</p>
+<h2 id="matrix-vector-products">Matrix--Vector Products<a class="headerlink" href="#matrix-vector-products" title="Permanent link">⚓︎</a></h2>
+<p>Now that we know how to calculate dot products,
+we can begin to understand the <em>product</em>
+between an <span class="arithmatex">\(m \times n\)</span> matrix <span class="arithmatex">\(\mathbf{A}\)</span>
+and an <span class="arithmatex">\(n\)</span>-dimensional vector <span class="arithmatex">\(\mathbf{x}\)</span>.
+To start off, we visualize our matrix
+in terms of its row vectors</p>
+<div class="arithmatex">\[\mathbf{A}=
+\begin{bmatrix}
+\mathbf{a}^\top_{1} \\
+\mathbf{a}^\top_{2} \\
+\vdots \\
+\mathbf{a}^\top_m \\
+\end{bmatrix},\]</div>
+<p>where each <span class="arithmatex">\(\mathbf{a}^\top_{i} \in \mathbb{R}^n\)</span>
+is a row vector representing the <span class="arithmatex">\(i^\textrm{th}\)</span> row
+of the matrix <span class="arithmatex">\(\mathbf{A}\)</span>.</p>
+<p>[<strong>The matrix--vector product <span class="arithmatex">\(\mathbf{A}\mathbf{x}\)</span>
+is simply a column vector of length <span class="arithmatex">\(m\)</span>,
+whose <span class="arithmatex">\(i^\textrm{th}\)</span> element is the dot product
+<span class="arithmatex">\(\mathbf{a}^\top_i \mathbf{x}\)</span>:</strong>]</p>
+<div class="arithmatex">\[
+\mathbf{A}\mathbf{x}
+= \begin{bmatrix}
+\mathbf{a}^\top_{1} \\
+\mathbf{a}^\top_{2} \\
+\vdots \\
+\mathbf{a}^\top_m \\
+\end{bmatrix}\mathbf{x}
+= \begin{bmatrix}
+ \mathbf{a}^\top_{1} \mathbf{x}  \\
+ \mathbf{a}^\top_{2} \mathbf{x} \\
+\vdots\\
+ \mathbf{a}^\top_{m} \mathbf{x}\\
+\end{bmatrix}.
+\]</div>
+<p>We can think of multiplication with a matrix
+<span class="arithmatex">\(\mathbf{A}\in \mathbb{R}^{m \times n}\)</span>
+as a transformation that projects vectors
+from <span class="arithmatex">\(\mathbb{R}^{n}\)</span> to <span class="arithmatex">\(\mathbb{R}^{m}\)</span>.
+These transformations are remarkably useful.
+For example, we can represent rotations
+as multiplications by certain square matrices.
+Matrix--vector products also describe
+the key calculation involved in computing
+the outputs of each layer in a neural network
+given the outputs from the previous layer.</p>
+<p>:begin_tab:<code>mxnet</code>
+To express a matrix--vector product in code,
+we use the same <code>dot</code> function.
+The operation is inferred
+based on the type of the arguments.
+Note that the column dimension of <code>A</code>
+(its length along axis 1)
+must be the same as the dimension of <code>x</code> (its length).
+:end_tab:</p>
+<p>:begin_tab:<code>pytorch</code>
+To express a matrix--vector product in code,
+we use the <code>mv</code> function.
+Note that the column dimension of <code>A</code>
+(its length along axis 1)
+must be the same as the dimension of <code>x</code> (its length).
+Python has a convenience operator <code>@</code>
+that can execute both matrix--vector
+and matrix--matrix products
+(depending on its arguments).
+Thus we can write <code>A@x</code>.
+:end_tab:</p>
+<p>:begin_tab:<code>tensorflow</code>
+To express a matrix--vector product in code,
+we use the <code>matvec</code> function.
+Note that the column dimension of <code>A</code>
+(its length along axis 1)
+must be the same as the dimension of <code>x</code> (its length).
+:end_tab:</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">A</span><span class="nd">@x</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matvec</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="matrix-matrix-multiplication">Matrix--Matrix Multiplication<a class="headerlink" href="#matrix-matrix-multiplication" title="Permanent link">⚓︎</a></h2>
+<p>Once you have gotten the hang of dot products and matrix--vector products,
+then <em>matrix--matrix multiplication</em> should be straightforward.</p>
+<p>Say that we have two matrices
+<span class="arithmatex">\(\mathbf{A} \in \mathbb{R}^{n \times k}\)</span>
+and <span class="arithmatex">\(\mathbf{B} \in \mathbb{R}^{k \times m}\)</span>:</p>
+<div class="arithmatex">\[\mathbf{A}=\begin{bmatrix}
+ a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1k} \\
+ a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2k} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+ a_{n1} &amp; a_{n2} &amp; \cdots &amp; a_{nk} \\
+\end{bmatrix},\quad
+\mathbf{B}=\begin{bmatrix}
+ b_{11} &amp; b_{12} &amp; \cdots &amp; b_{1m} \\
+ b_{21} &amp; b_{22} &amp; \cdots &amp; b_{2m} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+ b_{k1} &amp; b_{k2} &amp; \cdots &amp; b_{km} \\
+\end{bmatrix}.\]</div>
+<p>Let <span class="arithmatex">\(\mathbf{a}^\top_{i} \in \mathbb{R}^k\)</span> denote
+the row vector representing the <span class="arithmatex">\(i^\textrm{th}\)</span> row
+of the matrix <span class="arithmatex">\(\mathbf{A}\)</span>
+and let <span class="arithmatex">\(\mathbf{b}_{j} \in \mathbb{R}^k\)</span> denote
+the column vector from the <span class="arithmatex">\(j^\textrm{th}\)</span> column
+of the matrix <span class="arithmatex">\(\mathbf{B}\)</span>:</p>
+<div class="arithmatex">\[\mathbf{A}=
+\begin{bmatrix}
+\mathbf{a}^\top_{1} \\
+\mathbf{a}^\top_{2} \\
+\vdots \\
+\mathbf{a}^\top_n \\
+\end{bmatrix},
+\quad \mathbf{B}=\begin{bmatrix}
+ \mathbf{b}_{1} &amp; \mathbf{b}_{2} &amp; \cdots &amp; \mathbf{b}_{m} \\
+\end{bmatrix}.
+\]</div>
+<p>To form the matrix product <span class="arithmatex">\(\mathbf{C} \in \mathbb{R}^{n \times m}\)</span>,
+we simply compute each element <span class="arithmatex">\(c_{ij}\)</span>
+as the dot product between
+the <span class="arithmatex">\(i^{\textrm{th}}\)</span> row of <span class="arithmatex">\(\mathbf{A}\)</span>
+and the <span class="arithmatex">\(j^{\textrm{th}}\)</span> column of <span class="arithmatex">\(\mathbf{B}\)</span>,
+i.e., <span class="arithmatex">\(\mathbf{a}^\top_i \mathbf{b}_j\)</span>:</p>
+<div class="arithmatex">\[\mathbf{C} = \mathbf{AB} = \begin{bmatrix}
+\mathbf{a}^\top_{1} \\
+\mathbf{a}^\top_{2} \\
+\vdots \\
+\mathbf{a}^\top_n \\
+\end{bmatrix}
+\begin{bmatrix}
+ \mathbf{b}_{1} &amp; \mathbf{b}_{2} &amp; \cdots &amp; \mathbf{b}_{m} \\
+\end{bmatrix}
+= \begin{bmatrix}
+\mathbf{a}^\top_{1} \mathbf{b}_1 &amp; \mathbf{a}^\top_{1}\mathbf{b}_2&amp; \cdots &amp; \mathbf{a}^\top_{1} \mathbf{b}_m \\
+ \mathbf{a}^\top_{2}\mathbf{b}_1 &amp; \mathbf{a}^\top_{2} \mathbf{b}_2 &amp; \cdots &amp; \mathbf{a}^\top_{2} \mathbf{b}_m \\
+ \vdots &amp; \vdots &amp; \ddots &amp;\vdots\\
+\mathbf{a}^\top_{n} \mathbf{b}_1 &amp; \mathbf{a}^\top_{n}\mathbf{b}_2&amp; \cdots&amp; \mathbf{a}^\top_{n} \mathbf{b}_m
+\end{bmatrix}.
+\]</div>
+<p>[<strong>We can think of the matrix--matrix multiplication <span class="arithmatex">\(\mathbf{AB}\)</span>
+as performing <span class="arithmatex">\(m\)</span> matrix--vector products
+or <span class="arithmatex">\(m \times n\)</span> dot products
+and stitching the results together
+to form an <span class="arithmatex">\(n \times m\)</span> matrix.</strong>]
+In the following snippet,
+we perform matrix multiplication on <code>A</code> and <code>B</code>.
+Here, <code>A</code> is a matrix with two rows and three columns,
+and <code>B</code> is a matrix with three rows and four columns.
+After multiplication, we obtain a matrix with two rows and four columns.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">A</span><span class="nd">@B</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">jnp</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+</code></pre></div>
+<p>The term <em>matrix--matrix multiplication</em> is
+often simplified to <em>matrix multiplication</em>,
+and should not be confused with the Hadamard product.</p>
+<h2 id="norms">Norms<a class="headerlink" href="#norms" title="Permanent link">⚓︎</a></h2>
+<p>:label:<code>subsec_lin-algebra-norms</code></p>
+<p>Some of the most useful operators in linear algebra are <em>norms</em>.
+Informally, the norm of a vector tells us how <em>big</em> it is.
+For instance, the <span class="arithmatex">\(\ell_2\)</span> norm measures
+the (Euclidean) length of a vector.
+Here, we are employing a notion of <em>size</em> that concerns the magnitude of a vector's components
+(not its dimensionality).</p>
+<p>A norm is a function <span class="arithmatex">\(\| \cdot \|\)</span> that maps a vector
+to a scalar and satisfies the following three properties:</p>
+<ol>
+<li>Given any vector <span class="arithmatex">\(\mathbf{x}\)</span>, if we scale (all elements of) the vector
+   by a scalar <span class="arithmatex">\(\alpha \in \mathbb{R}\)</span>, its norm scales accordingly:
+   <span class="arithmatex">\(<span class="arithmatex">\(\|\alpha \mathbf{x}\| = |\alpha| \|\mathbf{x}\|.\)</span>\)</span></li>
+<li>For any vectors <span class="arithmatex">\(\mathbf{x}\)</span> and <span class="arithmatex">\(\mathbf{y}\)</span>:
+   norms satisfy the triangle inequality:
+   <span class="arithmatex">\(<span class="arithmatex">\(\|\mathbf{x} + \mathbf{y}\| \leq \|\mathbf{x}\| + \|\mathbf{y}\|.\)</span>\)</span></li>
+<li>The norm of a vector is nonnegative and it only vanishes if the vector is zero:
+   <span class="arithmatex">\(<span class="arithmatex">\(\|\mathbf{x}\| &gt; 0 \textrm{ for all } \mathbf{x} \neq 0.\)</span>\)</span></li>
+</ol>
+<p>Many functions are valid norms and different norms
+encode different notions of size.
+The Euclidean norm that we all learned in elementary school geometry
+when calculating the hypotenuse of a right triangle
+is the square root of the sum of squares of a vector's elements.
+Formally, this is called [<strong>the <span class="arithmatex">\(\ell_2\)</span> <em>norm</em></strong>] and expressed as</p>
+<p>(<strong><span class="arithmatex">(<span class="arithmatex">\(\|\mathbf{x}\|_2 = \sqrt{\sum_{i=1}^n x_i^2}.\)</span>\)</span></strong>)</p>
+<p>The method <code>norm</code> calculates the <span class="arithmatex">\(\ell_2\)</span> norm.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">])</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">])</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">])</span>
+<span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</code></pre></div>
+<p>[<strong>The <span class="arithmatex">\(\ell_1\)</span> norm</strong>] is also common
+and the associated measure is called the Manhattan distance.
+By definition, the <span class="arithmatex">\(\ell_1\)</span> norm sums
+the absolute values of a vector's elements:</p>
+<p>(<strong><span class="arithmatex">(<span class="arithmatex">\(\|\mathbf{x}\|_1 = \sum_{i=1}^n \left|x_i \right|.\)</span>\)</span></strong>)</p>
+<p>Compared to the <span class="arithmatex">\(\ell_2\)</span> norm, it is less sensitive to outliers.
+To compute the <span class="arithmatex">\(\ell_1\)</span> norm,
+we compose the absolute value
+with the sum operation.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># same as jnp.abs(u).sum()</span>
+</code></pre></div>
+<p>Both the <span class="arithmatex">\(\ell_2\)</span> and <span class="arithmatex">\(\ell_1\)</span> norms are special cases
+of the more general <span class="arithmatex">\(\ell_p\)</span> <em>norms</em>:</p>
+<div class="arithmatex">\[\|\mathbf{x}\|_p = \left(\sum_{i=1}^n \left|x_i \right|^p \right)^{1/p}.\]</div>
+<p>In the case of matrices, matters are more complicated.
+After all, matrices can be viewed both as collections of individual entries
+<em>and</em> as objects that operate on vectors and transform them into other vectors.
+For instance, we can ask by how much longer
+the matrix--vector product <span class="arithmatex">\(\mathbf{X} \mathbf{v}\)</span>
+could be relative to <span class="arithmatex">\(\mathbf{v}\)</span>.
+This line of thought leads to what is called the <em>spectral</em> norm.
+For now, we introduce [<strong>the <em>Frobenius norm</em>,
+which is much easier to compute</strong>] and defined as
+the square root of the sum of the squares
+of a matrix's elements:</p>
+<p>[<strong><span class="arithmatex">(<span class="arithmatex">\(\|\mathbf{X}\|_\textrm{F} = \sqrt{\sum_{i=1}^m \sum_{j=1}^n x_{ij}^2}.\)</span>\)</span></strong>]</p>
+<p>The Frobenius norm behaves as if it were
+an <span class="arithmatex">\(\ell_2\)</span> norm of a matrix-shaped vector.
+Invoking the following function will calculate
+the Frobenius norm of a matrix.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
+</code></pre></div>
+<p>While we do not want to get too far ahead of ourselves,
+we already can plant some intuition about why these concepts are useful.
+In deep learning, we are often trying to solve optimization problems:
+<em>maximize</em> the probability assigned to observed data;
+<em>maximize</em> the revenue associated with a recommender model;
+<em>minimize</em> the distance between predictions
+and the ground truth observations;
+<em>minimize</em> the distance between representations
+of photos of the same person
+while <em>maximizing</em> the distance between representations
+of photos of different people.
+These distances, which constitute
+the objectives of deep learning algorithms,
+are often expressed as norms.</p>
+<h2 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link">⚓︎</a></h2>
+<p>In this section, we have reviewed all the linear algebra
+that you will need to understand
+a significant chunk of modern deep learning.
+There is a lot more to linear algebra, though,
+and much of it is useful for machine learning.
+For example, matrices can be decomposed into factors,
+and these decompositions can reveal
+low-dimensional structure in real-world datasets.
+There are entire subfields of machine learning
+that focus on using matrix decompositions
+and their generalizations to high-order tensors
+to discover structure in datasets
+and solve prediction problems.
+But this book focuses on deep learning.
+And we believe you will be more inclined
+to learn more mathematics
+once you have gotten your hands dirty
+applying machine learning to real datasets.
+So while we reserve the right
+to introduce more mathematics later on,
+we wrap up this section here.</p>
+<p>If you are eager to learn more linear algebra,
+there are many excellent books and online resources.
+For a more advanced crash course, consider checking out
+:citet:<code>Strang.1993</code>, :citet:<code>Kolter.2008</code>, and :citet:<code>Petersen.Pedersen.ea.2008</code>.</p>
+<p>To recap:</p>
+<ul>
+<li>Scalars, vectors, matrices, and tensors are
+  the basic mathematical objects used in linear algebra
+  and have zero, one, two, and an arbitrary number of axes, respectively.</li>
+<li>Tensors can be sliced or reduced along specified axes
+  via indexing, or operations such as <code>sum</code> and <code>mean</code>, respectively.</li>
+<li>Elementwise products are called Hadamard products.
+  By contrast, dot products, matrix--vector products, and matrix--matrix products
+  are not elementwise operations and in general return objects
+  having shapes that are different from the the operands.</li>
+<li>Compared to Hadamard products, matrix--matrix products
+  take considerably longer to compute (cubic rather than quadratic time).</li>
+<li>Norms capture various notions of the magnitude of a vector (or matrix),
+  and are commonly applied to the difference of two vectors
+  to measure their distance apart.</li>
+<li>Common vector norms include the <span class="arithmatex">\(\ell_1\)</span> and <span class="arithmatex">\(\ell_2\)</span> norms,
+   and common matrix norms include the <em>spectral</em> and <em>Frobenius</em> norms.</li>
+</ul>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>Prove that the transpose of the transpose of a matrix is the matrix itself: <span class="arithmatex">\((\mathbf{A}^\top)^\top = \mathbf{A}\)</span>.</li>
+<li>Given two matrices <span class="arithmatex">\(\mathbf{A}\)</span> and <span class="arithmatex">\(\mathbf{B}\)</span>, show that sum and transposition commute: <span class="arithmatex">\(\mathbf{A}^\top + \mathbf{B}^\top = (\mathbf{A} + \mathbf{B})^\top\)</span>.</li>
+<li>Given any square matrix <span class="arithmatex">\(\mathbf{A}\)</span>, is <span class="arithmatex">\(\mathbf{A} + \mathbf{A}^\top\)</span> always symmetric? Can you prove the result by using only the results of the previous two exercises?</li>
+<li>We defined the tensor <code>X</code> of shape (2, 3, 4) in this section. What is the output of <code>len(X)</code>? Write your answer without implementing any code, then check your answer using code.</li>
+<li>For a tensor <code>X</code> of arbitrary shape, does <code>len(X)</code> always correspond to the length of a certain axis of <code>X</code>? What is that axis?</li>
+<li>Run <code>A / A.sum(axis=1)</code> and see what happens. Can you analyze the results?</li>
+<li>When traveling between two points in downtown Manhattan, what is the distance that you need to cover in terms of the coordinates, i.e., in terms of avenues and streets? Can you travel diagonally?</li>
+<li>Consider a tensor of shape (2, 3, 4). What are the shapes of the summation outputs along axes 0, 1, and 2?</li>
+<li>Feed a tensor with three or more axes to the <code>linalg.norm</code> function and observe its output. What does this function compute for tensors of arbitrary shape?</li>
+<li>Consider three large matrices, say <span class="arithmatex">\(\mathbf{A} \in \mathbb{R}^{2^{10} \times 2^{16}}\)</span>, <span class="arithmatex">\(\mathbf{B} \in \mathbb{R}^{2^{16} \times 2^{5}}\)</span> and <span class="arithmatex">\(\mathbf{C} \in \mathbb{R}^{2^{5} \times 2^{14}}\)</span>, initialized with Gaussian random variables. You want to compute the product <span class="arithmatex">\(\mathbf{A} \mathbf{B} \mathbf{C}\)</span>. Is there any difference in memory footprint and speed, depending on whether you compute <span class="arithmatex">\((\mathbf{A} \mathbf{B}) \mathbf{C}\)</span> or <span class="arithmatex">\(\mathbf{A} (\mathbf{B} \mathbf{C})\)</span>? Why?</li>
+<li>Consider three large matrices, say <span class="arithmatex">\(\mathbf{A} \in \mathbb{R}^{2^{10} \times 2^{16}}\)</span>, <span class="arithmatex">\(\mathbf{B} \in \mathbb{R}^{2^{16} \times 2^{5}}\)</span> and <span class="arithmatex">\(\mathbf{C} \in \mathbb{R}^{2^{5} \times 2^{16}}\)</span>. Is there any difference in speed depending on whether you compute <span class="arithmatex">\(\mathbf{A} \mathbf{B}\)</span> or <span class="arithmatex">\(\mathbf{A} \mathbf{C}^\top\)</span>? Why? What changes if you initialize <span class="arithmatex">\(\mathbf{C} = \mathbf{B}^\top\)</span> without cloning memory? Why?</li>
+<li>Consider three matrices, say <span class="arithmatex">\(\mathbf{A}, \mathbf{B}, \mathbf{C} \in \mathbb{R}^{100 \times 200}\)</span>. Construct a tensor with three axes by stacking <span class="arithmatex">\([\mathbf{A}, \mathbf{B}, \mathbf{C}]\)</span>. What is the dimensionality? Slice out the second coordinate of the third axis to recover <span class="arithmatex">\(\mathbf{B}\)</span>. Check that your answer is correct.</li>
+</ol>
+<p>:begin_tab:<code>mxnet</code>
+<a href="https://discuss.d2l.ai/t/30">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>pytorch</code>
+<a href="https://discuss.d2l.ai/t/31">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>tensorflow</code>
+<a href="https://discuss.d2l.ai/t/196">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>jax</code>
+<a href="https://discuss.d2l.ai/t/17968">Discussions</a>
+:end_tab:</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../calculus/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Calculus">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Calculus
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../lookup-api/" class="md-footer__link md-footer__link--next" aria-label="下一页: Lookup api">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Lookup api
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Ean Yang
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/YQisme" target="_blank" rel="noopener" title="github主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://space.bilibili.com/244185393?spm_id_from=333.788.0.0" target="_blank" rel="noopener" title="b站主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M488.6 104.1c16.7 18.1 24.4 39.7 23.3 65.7v202.4c-.4 26.4-9.2 48.1-26.5 65.1-17.2 17-39.1 25.9-65.5 26.7H92.02c-26.45-.8-48.21-9.8-65.28-27.2C9.682 419.4.767 396.5 0 368.2V169.8c.767-26 9.682-47.6 26.74-65.7C43.81 87.75 65.57 78.77 92.02 78h29.38L96.05 52.19c-5.75-5.73-8.63-13-8.63-21.79 0-8.8 2.88-16.06 8.63-21.797C101.8 2.868 109.1 0 117.9 0s16.1 2.868 21.9 8.603L213.1 78h88l74.5-69.397C381.7 2.868 389.2 0 398 0c8.8 0 16.1 2.868 21.9 8.603 5.7 5.737 8.6 12.997 8.6 21.797 0 8.79-2.9 16.06-8.6 21.79L394.6 78h29.3c26.4.77 48 9.75 64.7 26.1zm-38.8 69.7c-.4-9.6-3.7-17.4-10.7-23.5-5.2-6.1-14-9.4-22.7-9.8H96.05c-9.59.4-17.45 3.7-23.58 9.8-6.14 6.1-9.4 13.9-9.78 23.5v194.4c0 9.2 3.26 17 9.78 23.5s14.38 9.8 23.58 9.8H416.4c9.2 0 17-3.3 23.3-9.8 6.3-6.5 9.7-14.3 10.1-23.5V173.8zm-264.3 42.7c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.2 6.3-14 9.5-23.6 9.5-9.6 0-17.5-3.2-23.6-9.5-6.1-6.3-9.4-14-9.8-23.2v-33.3c.4-9.1 3.8-16.9 10.1-23.2 6.3-6.3 13.2-9.6 23.3-10 9.2.4 17 3.7 23.3 10zm191.5 0c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.1 6.3-14 9.5-23.6 9.5-9.6 0-17.4-3.2-23.6-9.5-7-6.3-9.4-14-9.7-23.2v-33.3c.3-9.1 3.7-16.9 10-23.2 6.3-6.3 14.1-9.6 23.3-10 9.2.4 17 3.7 23.3 10z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://eanyang7.com" target="_blank" rel="noopener" title="个人主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm40 304v128c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9l-28.6 47.6c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352h-16z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.prune", "navigation.top", "toc.follow", "header.autohide", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.6c14ae12.min.js"></script>
+      
+    
+  </body>
+</html>

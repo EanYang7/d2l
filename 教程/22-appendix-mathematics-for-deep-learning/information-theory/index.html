@@ -1,0 +1,3472 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《动手学深度学习》">
+      
+      
+        <meta name="author" content="Ean Yang">
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/d2l/%E6%95%99%E7%A8%8B/22-appendix-mathematics-for-deep-learning/information-theory/">
+      
+      
+        <link rel="prev" href="../geometry-linear-algebraic-ops/">
+      
+      
+        <link rel="next" href="../integral-calculus/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.jpg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.12">
+    
+    
+      
+        <title>Information Theory - 动手学深度学习 Dive into Deep Learning#</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#information-theory" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-header__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            动手学深度学习 Dive into Deep Learning#
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Information Theory
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-tabs__link">
+          
+  
+  练习
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-nav__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    动手学深度学习 Dive into Deep Learning#
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    教程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-Introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    安装
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Notation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../02-preliminaries/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    02 preliminaries
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../03-linear-regression/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    03 linear regression
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../04-linear-classification/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    04 linear classification
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../05-multilayer-perceptrons/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    05 multilayer perceptrons
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../06-builders-guide/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    06 builders guide
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../07-convolutional-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    07 convolutional modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../08-convolutional-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    08 convolutional neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../09-recurrent-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    09 recurrent neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../10-recurrent-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    10 recurrent modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../11-attention-mechanisms-and-transformers/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    11 attention mechanisms and transformers
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../12-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    12 optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../13-computational-performance/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    13 computational performance
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../14-computer-vision/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    14 computer vision
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../15-natural-language-processing-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    15 natural language processing pretraining
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../16-natural-language-processing-applications/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    16 natural language processing applications
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../17-reinforcement-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    17 reinforcement learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../18-gaussian-processes/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    18 gaussian processes
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../19-hyperparameter-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    19 hyperparameter optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../20-generative-adversarial-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    20 generative adversarial networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../21-recommender-systems/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    21 recommender systems
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_25" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_25" id="__nav_2_25_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    22 appendix mathematics for deep learning
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_25_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_25">
+            <span class="md-nav__icon md-icon"></span>
+            22 appendix mathematics for deep learning
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Appendix: Mathematics for Deep Learning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../distributions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Distributions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eigendecomposition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Eigendecompositions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../geometry-linear-algebraic-ops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Geometry and Linear Algebraic Operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Information Theory
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Information Theory
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Information
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Information">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#self-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Self-information
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entropy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entropy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivating-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Motivating Entropy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpretations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interpretations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties-of-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties of Entropy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mutual-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mutual Information
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mutual Information">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#joint-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Joint Entropy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conditional-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditional Entropy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutual-information_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mutual Information
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties-of-mutual-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties of Mutual Information
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointwise-mutual-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pointwise Mutual Information
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#applications-of-mutual-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Applications of Mutual Information
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kullbackleibler-divergence" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kullback–Leibler Divergence
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kullback–Leibler Divergence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definition_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kl-divergence-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      KL Divergence Properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Entropy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cross-Entropy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formal-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formal Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-entropy-as-an-objective-function-of-multi-class-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Entropy as An Objective Function of Multi-class Classification
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integral-calculus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Integral Calculus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../maximum-likelihood/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maximum Likelihood
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multivariable-calculus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Multivariable Calculus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../naive-bayes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Naive Bayes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../random-variables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Random Variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../single-variable-calculus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Single Variable Calculus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../statistics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Statistics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../23-appendix-tools-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    23 appendix tools for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../contrib/fasttext-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Contrib
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    练习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            练习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    动手学深度学习习题解答
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch02
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch03/ch03/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch03
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch04/ch04/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch04
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch05/ch05/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch05
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch06/ch06/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch06
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch07/ch07/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch07
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch08/ch08/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch08
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch09/ch09/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch09
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch10/ch10/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch10
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch11/ch11/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch11
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch12/ch12/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch12
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch13/ch13/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch13
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch14/ch14/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch14
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch15/ch15/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch15
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/notebooks/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Information
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Information">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#self-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Self-information
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entropy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entropy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivating-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Motivating Entropy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpretations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interpretations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties-of-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties of Entropy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mutual-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mutual Information
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mutual Information">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#joint-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Joint Entropy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conditional-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditional Entropy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutual-information_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mutual Information
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties-of-mutual-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties of Mutual Information
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointwise-mutual-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pointwise Mutual Information
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#applications-of-mutual-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      Applications of Mutual Information
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kullbackleibler-divergence" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kullback–Leibler Divergence
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kullback–Leibler Divergence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definition_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kl-divergence-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      KL Divergence Properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Entropy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cross-Entropy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formal-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formal Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-entropy-as-an-objective-function-of-multi-class-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Entropy as An Objective Function of Multi-class Classification
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/22-appendix-mathematics-for-deep-learning/information-theory.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/22-appendix-mathematics-for-deep-learning/information-theory.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<h1 id="information-theory">Information Theory<a class="headerlink" href="#information-theory" title="Permanent link">⚓︎</a></h1>
+<p>:label:<code>sec_information_theory</code></p>
+<p>The universe is overflowing with information. Information provides a common language across disciplinary rifts: from Shakespeare's Sonnet to researchers' paper on Cornell ArXiv, from Van Gogh's printing Starry Night to Beethoven's music Symphony No. 5, from the first programming language Plankalkül to the state-of-the-art machine learning algorithms. Everything must follow the rules of information theory, no matter the format. With information theory, we can measure and compare how much information is present in different signals. In this section, we will investigate the fundamental concepts of information theory and applications of information theory in machine learning.</p>
+<p>Before we get started, let's outline the relationship between machine learning and information theory. Machine learning aims to extract interesting signals from data and make critical predictions.  On the other hand, information theory studies encoding, decoding, transmitting, and manipulating information. As a result, information theory provides fundamental language for discussing the information processing in machine learned systems. For example, many machine learning applications use the cross-entropy loss as described in :numref:<code>sec_softmax</code>.  This loss can be directly derived from information theoretic considerations.</p>
+<h2 id="information">Information<a class="headerlink" href="#information" title="Permanent link">⚓︎</a></h2>
+<p>Let's start with the "soul" of information theory: information. <em>Information</em> can be encoded in anything with a particular sequence of one or more encoding formats. Suppose that we task ourselves with trying to define a notion of information.  What could be our starting point?</p>
+<p>Consider the following thought experiment.  We have a friend with a deck of cards.  They will shuffle the deck, flip over some cards, and tell us statements about the cards.  We will try to assess the information content of each statement.</p>
+<p>First, they flip over a card and tell us, "I see a card."  This provides us with no information at all.  We were already certain that this was the case so we hope the information should be zero.</p>
+<p>Next, they flip over a card and say, "I see a heart."  This provides us some information, but in reality there are only <span class="arithmatex">\(4\)</span> different suits that were possible, each equally likely, so we are not surprised by this outcome.  We hope that whatever the measure of information, this event should have low information content.</p>
+<p>Next, they flip over a card and say, "This is the <span class="arithmatex">\(3\)</span> of spades."  This is more information.  Indeed there were <span class="arithmatex">\(52\)</span> equally likely possible outcomes, and our friend told us which one it was.  This should be a medium amount of information.</p>
+<p>Let's take this to the logical extreme.  Suppose that finally they flip over every card from the deck and read off the entire sequence of the shuffled deck.  There are <span class="arithmatex">\(52!\)</span> different orders to the deck, again all equally likely, so we need a lot of information to know which one it is.</p>
+<p>Any notion of information we develop must conform to this intuition.  Indeed, in the next sections we will learn how to compute that these events have <span class="arithmatex">\(0\textrm{ bits}\)</span>, <span class="arithmatex">\(2\textrm{ bits}\)</span>, <span class="arithmatex">\(~5.7\textrm{ bits}\)</span>, and <span class="arithmatex">\(~225.6\textrm{ bits}\)</span> of information respectively.</p>
+<p>If we read through these thought experiments, we see a natural idea.  As a starting point, rather than caring about the knowledge, we may build off the idea that information represents the degree of surprise or the abstract possibility of the event. For example, if we want to describe an unusual event, we need a lot information. For a common event, we may not need much information.</p>
+<p>In 1948, Claude E. Shannon published <em>A Mathematical Theory of Communication</em> :cite:<code>Shannon.1948</code> establishing the theory of information.  In his article, Shannon introduced the concept of information entropy for the first time. We will begin our journey here.</p>
+<h3 id="self-information">Self-information<a class="headerlink" href="#self-information" title="Permanent link">⚓︎</a></h3>
+<p>Since information embodies the abstract possibility of an event, how do we map the possibility to the number of bits? Shannon introduced the terminology <em>bit</em> as the unit of information, which was originally created by John Tukey. So what is a "bit" and why do we use it to measure information? Historically, an antique transmitter can only send or receive two types of code: <span class="arithmatex">\(0\)</span> and <span class="arithmatex">\(1\)</span>.  Indeed, binary encoding is still in common use on all modern digital computers. In this way, any information is encoded by a series of <span class="arithmatex">\(0\)</span> and <span class="arithmatex">\(1\)</span>. And hence, a series of binary digits of length <span class="arithmatex">\(n\)</span> contains <span class="arithmatex">\(n\)</span> bits of information.</p>
+<p>Now, suppose that for any series of codes, each <span class="arithmatex">\(0\)</span> or <span class="arithmatex">\(1\)</span> occurs with a probability of <span class="arithmatex">\(\frac{1}{2}\)</span>. Hence, an event <span class="arithmatex">\(X\)</span> with a series of codes of length <span class="arithmatex">\(n\)</span>, occurs with a probability of <span class="arithmatex">\(\frac{1}{2^n}\)</span>. At the same time, as we mentioned before, this series contains <span class="arithmatex">\(n\)</span> bits of information. So, can we generalize to a mathematical function which can transfer the probability <span class="arithmatex">\(p\)</span> to the number of bits? Shannon gave the answer by defining <em>self-information</em></p>
+<div class="arithmatex">\[I(X) = - \log_2 (p),\]</div>
+<p>as the <em>bits</em> of information we have received for this event <span class="arithmatex">\(X\)</span>. Note that we will always use base-2 logarithms in this section. For the sake of simplicity, the rest of this section will omit the subscript 2 in the logarithm notation, i.e., <span class="arithmatex">\(\log(.)\)</span> always refers to <span class="arithmatex">\(\log_2(.)\)</span>. For example, the code "0010" has a self-information</p>
+<div class="arithmatex">\[I(\textrm{"0010"}) = - \log (p(\textrm{"0010"})) = - \log \left( \frac{1}{2^4} \right) = 4 \textrm{ bits}.\]</div>
+<p>We can calculate self information as shown below. Before that, let's first import all the necessary packages in this section.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">mxnet.metric</span> <span class="kn">import</span> <span class="n">NegativeLogLikelihood</span>
+<span class="kn">from</span> <span class="nn">mxnet.ndarray</span> <span class="kn">import</span> <span class="n">nansum</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="k">def</span> <span class="nf">self_information</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+<span class="n">self_information</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">64</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">NLLLoss</span>
+
+<span class="k">def</span> <span class="nf">nansum</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="c1"># Define nansum, as pytorch does not offer it inbuilt.</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">self_information</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+<span class="n">self_information</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">64</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+<span class="k">def</span> <span class="nf">log2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">nansum</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">is_nan</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">self_information</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">log2</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+<span class="n">self_information</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">64</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="entropy">Entropy<a class="headerlink" href="#entropy" title="Permanent link">⚓︎</a></h2>
+<p>As self-information only measures the information of a single discrete event, we need a more generalized measure for any random variable of either discrete or continuous distribution.</p>
+<h3 id="motivating-entropy">Motivating Entropy<a class="headerlink" href="#motivating-entropy" title="Permanent link">⚓︎</a></h3>
+<p>Let's try to get specific about what we want.  This will be an informal statement of what are known as the <em>axioms of Shannon entropy</em>.  It will turn out that the following collection of common-sense statements force us to a unique definition of information.  A formal version of these axioms, along with several others may be found in :citet:<code>Csiszar.2008</code>.</p>
+<ol>
+<li>The information we gain by observing a random variable does not depend on what we call the elements, or the presence of additional elements which have probability zero.</li>
+<li>The information we gain by observing two random variables is no more than the sum of the information we gain by observing them separately.  If they are independent, then it is exactly the sum.</li>
+<li>The information gained when observing (nearly) certain events is (nearly) zero.</li>
+</ol>
+<p>While proving this fact is beyond the scope of our text, it is important to know that this uniquely determines the form that entropy must take.  The only ambiguity that these allow is in the choice of fundamental units, which is most often normalized by making the choice we saw before that the information provided by a single fair coin flip is one bit.</p>
+<h3 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">⚓︎</a></h3>
+<p>For any random variable <span class="arithmatex">\(X\)</span> that follows a probability distribution <span class="arithmatex">\(P\)</span> with a probability density function (p.d.f.) or a probability mass function (p.m.f.) <span class="arithmatex">\(p(x)\)</span>, we measure the expected amount of information through <em>entropy</em> (or <em>Shannon entropy</em>)</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(H(X) = - E_{x \sim P} [\log p(x)].\)</span>\)</span>
+:eqlabel:<code>eq_ent_def</code></p>
+<p>To be specific, if <span class="arithmatex">\(X\)</span> is discrete, <span class="arithmatex">\(<span class="arithmatex">\(H(X) = - \sum_i p_i \log p_i \textrm{, where } p_i = P(X_i).\)</span>\)</span></p>
+<p>Otherwise, if <span class="arithmatex">\(X\)</span> is continuous, we also refer entropy as <em>differential entropy</em></p>
+<div class="arithmatex">\[H(X) = - \int_x p(x) \log p(x) \; dx.\]</div>
+<p>We can define entropy as below.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">entropy</span><span class="o">.</span><span class="n">as_nd_ndarray</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">entropy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">entropy</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">entropy</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">nansum</span><span class="p">(</span><span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+<span class="n">entropy</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]))</span>
+</code></pre></div>
+<h3 id="interpretations">Interpretations<a class="headerlink" href="#interpretations" title="Permanent link">⚓︎</a></h3>
+<p>You may be curious: in the entropy definition :eqref:<code>eq_ent_def</code>, why do we use an expectation of a negative logarithm? Here are some intuitions.</p>
+<p>First, why do we use a <em>logarithm</em> function <span class="arithmatex">\(\log\)</span>? Suppose that <span class="arithmatex">\(p(x) = f_1(x) f_2(x) \ldots, f_n(x)\)</span>, where each component function <span class="arithmatex">\(f_i(x)\)</span> is independent from each other. This means that each <span class="arithmatex">\(f_i(x)\)</span> contributes independently to the total information obtained from <span class="arithmatex">\(p(x)\)</span>. As discussed above, we want the entropy formula to be additive over independent random variables. Luckily, <span class="arithmatex">\(\log\)</span> can naturally turn a product of probability distributions to a summation of the individual terms.</p>
+<p>Next, why do we use a <em>negative</em> <span class="arithmatex">\(\log\)</span>? Intuitively, more frequent events should contain less information than less common events, since we often gain more information from an unusual case than from an ordinary one. However, <span class="arithmatex">\(\log\)</span> is monotonically increasing with the probabilities, and indeed negative for all values in <span class="arithmatex">\([0, 1]\)</span>.  We need to construct a monotonically decreasing relationship between the probability of events and their entropy, which will ideally be always positive (for nothing we observe should force us to forget what we have known). Hence, we add a negative sign in front of <span class="arithmatex">\(\log\)</span> function.</p>
+<p>Last, where does the <em>expectation</em> function come from? Consider a random variable <span class="arithmatex">\(X\)</span>. We can interpret the self-information (<span class="arithmatex">\(-\log(p)\)</span>) as the amount of <em>surprise</em> we have at seeing a particular outcome.  Indeed, as the probability approaches zero, the surprise becomes infinite.  Similarly, we can interpret the entropy as the average amount of surprise from observing <span class="arithmatex">\(X\)</span>. For example, imagine that a slot machine system emits statistical independently symbols <span class="arithmatex">\({s_1, \ldots, s_k}\)</span> with probabilities <span class="arithmatex">\({p_1, \ldots, p_k}\)</span> respectively. Then the entropy of this system equals to the average self-information from observing each output, i.e.,</p>
+<div class="arithmatex">\[H(S) = \sum_i {p_i \cdot I(s_i)} = - \sum_i {p_i \cdot \log p_i}.\]</div>
+<h3 id="properties-of-entropy">Properties of Entropy<a class="headerlink" href="#properties-of-entropy" title="Permanent link">⚓︎</a></h3>
+<p>By the above examples and interpretations, we can derive the following properties of entropy :eqref:<code>eq_ent_def</code>. Here, we refer to <span class="arithmatex">\(X\)</span> as an event and <span class="arithmatex">\(P\)</span> as the probability distribution of <span class="arithmatex">\(X\)</span>.</p>
+<ul>
+<li>
+<p><span class="arithmatex">\(H(X) \geq 0\)</span> for all discrete <span class="arithmatex">\(X\)</span> (entropy can be negative for continuous <span class="arithmatex">\(X\)</span>).</p>
+</li>
+<li>
+<p>If <span class="arithmatex">\(X \sim P\)</span> with a p.d.f. or a p.m.f. <span class="arithmatex">\(p(x)\)</span>, and we try to estimate <span class="arithmatex">\(P\)</span> by a new probability distribution <span class="arithmatex">\(Q\)</span> with a p.d.f. or a p.m.f. <span class="arithmatex">\(q(x)\)</span>, then <span class="arithmatex">\(<span class="arithmatex">\(H(X) = - E_{x \sim P} [\log p(x)] \leq  - E_{x \sim P} [\log q(x)], \textrm{ with equality if and only if } P = Q.\)</span>\)</span>  Alternatively, <span class="arithmatex">\(H(X)\)</span> gives a lower bound of the average number of bits needed to encode symbols drawn from <span class="arithmatex">\(P\)</span>.</p>
+</li>
+<li>
+<p>If <span class="arithmatex">\(X \sim P\)</span>, then <span class="arithmatex">\(x\)</span> conveys the maximum amount of information if it spreads evenly among all possible outcomes. Specifically, if the probability distribution <span class="arithmatex">\(P\)</span> is discrete with <span class="arithmatex">\(k\)</span>-class <span class="arithmatex">\(\{p_1, \ldots, p_k \}\)</span>, then <span class="arithmatex">\(<span class="arithmatex">\(H(X) \leq \log(k), \textrm{ with equality if and only if } p_i = \frac{1}{k}, \forall i.\)</span>\)</span> If <span class="arithmatex">\(P\)</span> is a continuous random variable, then the story becomes much more complicated.  However, if we additionally impose that <span class="arithmatex">\(P\)</span> is supported on a finite interval (with all values between <span class="arithmatex">\(0\)</span> and <span class="arithmatex">\(1\)</span>), then <span class="arithmatex">\(P\)</span> has the highest entropy if it is the uniform distribution on that interval.</p>
+</li>
+</ul>
+<h2 id="mutual-information">Mutual Information<a class="headerlink" href="#mutual-information" title="Permanent link">⚓︎</a></h2>
+<p>Previously we defined entropy of a single random variable <span class="arithmatex">\(X\)</span>, how about the entropy of a pair random variables <span class="arithmatex">\((X, Y)\)</span>?  We can think of these techniques as trying to answer the following type of question, "What information is contained in <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> together compared to each separately?  Is there redundant information, or is it all unique?"</p>
+<p>For the following discussion, we always use <span class="arithmatex">\((X, Y)\)</span> as a pair of random variables that follows a joint probability distribution <span class="arithmatex">\(P\)</span> with a p.d.f. or a p.m.f. <span class="arithmatex">\(p_{X, Y}(x, y)\)</span>, while <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> follow probability distribution <span class="arithmatex">\(p_X(x)\)</span> and <span class="arithmatex">\(p_Y(y)\)</span>, respectively.</p>
+<h3 id="joint-entropy">Joint Entropy<a class="headerlink" href="#joint-entropy" title="Permanent link">⚓︎</a></h3>
+<p>Similar to entropy of a single random variable :eqref:<code>eq_ent_def</code>, we define the <em>joint entropy</em> <span class="arithmatex">\(H(X, Y)\)</span> of a pair random variables <span class="arithmatex">\((X, Y)\)</span> as</p>
+<p>$$H(X, Y) = -E_{(x, y) \sim P} [\log p_{X, Y}(x, y)]. $$
+:eqlabel:<code>eq_joint_ent_def</code></p>
+<p>Precisely, on the one hand, if <span class="arithmatex">\((X, Y)\)</span> is a pair of discrete random variables, then</p>
+<div class="arithmatex">\[H(X, Y) = - \sum_{x} \sum_{y} p_{X, Y}(x, y) \log p_{X, Y}(x, y).\]</div>
+<p>On the other hand, if <span class="arithmatex">\((X, Y)\)</span> is a pair of continuous random variables, then we define the <em>differential joint entropy</em> as</p>
+<div class="arithmatex">\[H(X, Y) = - \int_{x, y} p_{X, Y}(x, y) \ \log p_{X, Y}(x, y) \;dx \;dy.\]</div>
+<p>We can think of :eqref:<code>eq_joint_ent_def</code> as telling us the total randomness in the pair of random variables.  As a pair of extremes, if <span class="arithmatex">\(X = Y\)</span> are two identical random variables, then the information in the pair is exactly the information in one and we have <span class="arithmatex">\(H(X, Y) = H(X) = H(Y)\)</span>.  On the other extreme, if <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> are independent then <span class="arithmatex">\(H(X, Y) = H(X) + H(Y)\)</span>.  Indeed we will always have that the information contained in a pair of random variables is no smaller than the entropy of either random variable and no more than the sum of both.</p>
+<div class="arithmatex">\[
+H(X), H(Y) \le H(X, Y) \le H(X) + H(Y).
+\]</div>
+<p>Let's implement joint entropy from scratch.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="k">def</span> <span class="nf">joint_entropy</span><span class="p">(</span><span class="n">p_xy</span><span class="p">):</span>
+    <span class="n">joint_ent</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_xy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p_xy</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">joint_ent</span><span class="o">.</span><span class="n">as_nd_ndarray</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">joint_entropy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="k">def</span> <span class="nf">joint_entropy</span><span class="p">(</span><span class="n">p_xy</span><span class="p">):</span>
+    <span class="n">joint_ent</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_xy</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p_xy</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">joint_ent</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">joint_entropy</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="k">def</span> <span class="nf">joint_entropy</span><span class="p">(</span><span class="n">p_xy</span><span class="p">):</span>
+    <span class="n">joint_ent</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_xy</span> <span class="o">*</span> <span class="n">log2</span><span class="p">(</span><span class="n">p_xy</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">joint_ent</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">joint_entropy</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]))</span>
+</code></pre></div>
+<p>Notice that this is the same <em>code</em> as before, but now we interpret it differently as working on the joint distribution of the two random variables.</p>
+<h3 id="conditional-entropy">Conditional Entropy<a class="headerlink" href="#conditional-entropy" title="Permanent link">⚓︎</a></h3>
+<p>The joint entropy defined above the amount of information contained in a pair of random variables.  This is useful, but oftentimes it is not what we care about.  Consider the setting of machine learning.  Let's take <span class="arithmatex">\(X\)</span> to be the random variable (or vector of random variables) that describes the pixel values of an image, and <span class="arithmatex">\(Y\)</span> to be the random variable which is the class label.  <span class="arithmatex">\(X\)</span> should contain substantial information---a natural image is a complex thing.  However, the information contained in <span class="arithmatex">\(Y\)</span> once the image has been show should be low.  Indeed, the image of a digit should already contain the information about what digit it is unless the digit is illegible.  Thus, to continue to extend our vocabulary of information theory, we need to be able to reason about the information content in a random variable conditional on another.</p>
+<p>In the probability theory, we saw the definition of the <em>conditional probability</em> to measure the relationship between variables. We now want to analogously define the <em>conditional entropy</em> <span class="arithmatex">\(H(Y \mid X)\)</span>.  We can write this as</p>
+<p>$$ H(Y \mid X) = - E_{(x, y) \sim P} [\log p(y \mid x)],$$
+:eqlabel:<code>eq_cond_ent_def</code></p>
+<p>where <span class="arithmatex">\(p(y \mid x) = \frac{p_{X, Y}(x, y)}{p_X(x)}\)</span> is the conditional probability. Specifically, if <span class="arithmatex">\((X, Y)\)</span> is a pair of discrete random variables, then</p>
+<div class="arithmatex">\[H(Y \mid X) = - \sum_{x} \sum_{y} p(x, y) \log p(y \mid x).\]</div>
+<p>If <span class="arithmatex">\((X, Y)\)</span> is a pair of continuous random variables, then the <em>differential conditional entropy</em> is similarly defined as</p>
+<div class="arithmatex">\[H(Y \mid X) = - \int_x \int_y p(x, y) \ \log p(y \mid x) \;dx \;dy.\]</div>
+<p>It is now natural to ask, how does the <em>conditional entropy</em> <span class="arithmatex">\(H(Y \mid X)\)</span> relate to the entropy <span class="arithmatex">\(H(X)\)</span> and the joint entropy <span class="arithmatex">\(H(X, Y)\)</span>?  Using the definitions above, we can express this cleanly:</p>
+<div class="arithmatex">\[H(Y \mid X) = H(X, Y) - H(X).\]</div>
+<p>This has an intuitive interpretation: the information in <span class="arithmatex">\(Y\)</span> given <span class="arithmatex">\(X\)</span> (<span class="arithmatex">\(H(Y \mid X)\)</span>) is the same as the information in both <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> together (<span class="arithmatex">\(H(X, Y)\)</span>) minus the information already contained in <span class="arithmatex">\(X\)</span>.  This gives us the information in <span class="arithmatex">\(Y\)</span> which is not also represented in <span class="arithmatex">\(X\)</span>.</p>
+<p>Now, let's implement conditional entropy :eqref:<code>eq_cond_ent_def</code> from scratch.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="k">def</span> <span class="nf">conditional_entropy</span><span class="p">(</span><span class="n">p_xy</span><span class="p">,</span> <span class="n">p_x</span><span class="p">):</span>
+    <span class="n">p_y_given_x</span> <span class="o">=</span> <span class="n">p_xy</span><span class="o">/</span><span class="n">p_x</span>
+    <span class="n">cond_ent</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_xy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p_y_given_x</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">cond_ent</span><span class="o">.</span><span class="n">as_nd_ndarray</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">conditional_entropy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="k">def</span> <span class="nf">conditional_entropy</span><span class="p">(</span><span class="n">p_xy</span><span class="p">,</span> <span class="n">p_x</span><span class="p">):</span>
+    <span class="n">p_y_given_x</span> <span class="o">=</span> <span class="n">p_xy</span><span class="o">/</span><span class="n">p_x</span>
+    <span class="n">cond_ent</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_xy</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p_y_given_x</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">cond_ent</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">conditional_entropy</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]),</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="k">def</span> <span class="nf">conditional_entropy</span><span class="p">(</span><span class="n">p_xy</span><span class="p">,</span> <span class="n">p_x</span><span class="p">):</span>
+    <span class="n">p_y_given_x</span> <span class="o">=</span> <span class="n">p_xy</span><span class="o">/</span><span class="n">p_x</span>
+    <span class="n">cond_ent</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_xy</span> <span class="o">*</span> <span class="n">log2</span><span class="p">(</span><span class="n">p_y_given_x</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">cond_ent</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">conditional_entropy</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]),</span>
+                    <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]))</span>
+</code></pre></div>
+<h3 id="mutual-information_1">Mutual Information<a class="headerlink" href="#mutual-information_1" title="Permanent link">⚓︎</a></h3>
+<p>Given the previous setting of random variables <span class="arithmatex">\((X, Y)\)</span>, you may wonder: "Now that we know how much information is contained in <span class="arithmatex">\(Y\)</span> but not in <span class="arithmatex">\(X\)</span>, can we similarly ask how much information is shared between <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span>?" The answer will be the <em>mutual information</em> of <span class="arithmatex">\((X, Y)\)</span>, which we will write as <span class="arithmatex">\(I(X, Y)\)</span>.</p>
+<p>Rather than diving straight into the formal definition, let's practice our intuition by first trying to derive an expression for the mutual information entirely based on terms we have constructed before.  We wish to find the information shared between two random variables.  One way we could try to do this is to start with all the information contained in both <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> together, and then we take off the parts that are not shared.  The information contained in both <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> together is written as <span class="arithmatex">\(H(X, Y)\)</span>.  We want to subtract from this the information contained in <span class="arithmatex">\(X\)</span> but not in <span class="arithmatex">\(Y\)</span>, and the information contained in <span class="arithmatex">\(Y\)</span> but not in <span class="arithmatex">\(X\)</span>.  As we saw in the previous section, this is given by <span class="arithmatex">\(H(X \mid Y)\)</span> and <span class="arithmatex">\(H(Y \mid X)\)</span> respectively.  Thus, we have that the mutual information should be</p>
+<div class="arithmatex">\[
+I(X, Y) = H(X, Y) - H(Y \mid X) - H(X \mid Y).
+\]</div>
+<p>Indeed, this is a valid definition for the mutual information.  If we expand out the definitions of these terms and combine them, a little algebra shows that this is the same as</p>
+<p>$$I(X, Y) = E_{x} E_{y} \left{ p_{X, Y}(x, y) \log\frac{p_{X, Y}(x, y)}{p_X(x) p_Y(y)} \right}. $$
+:eqlabel:<code>eq_mut_ent_def</code></p>
+<p>We can summarize all of these relationships in image :numref:<code>fig_mutual_information</code>.  It is an excellent test of intuition to see why the following statements are all also equivalent to <span class="arithmatex">\(I(X, Y)\)</span>.</p>
+<ul>
+<li><span class="arithmatex">\(H(X) - H(X \mid Y)\)</span></li>
+<li><span class="arithmatex">\(H(Y) - H(Y \mid X)\)</span></li>
+<li><span class="arithmatex">\(H(X) + H(Y) - H(X, Y)\)</span></li>
+</ul>
+<p><img alt="Mutual information's relationship with joint entropy and conditional entropy." src="../../img/mutual-information.svg" />
+:label:<code>fig_mutual_information</code></p>
+<p>In many ways we can think of the mutual information :eqref:<code>eq_mut_ent_def</code> as principled extension of correlation coefficient we saw in :numref:<code>sec_random_variables</code>.  This allows us to ask not only for linear relationships between variables, but for the maximum information shared between the two random variables of any kind.</p>
+<p>Now, let's implement mutual information from scratch.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="n">p_xy</span><span class="p">,</span> <span class="n">p_x</span><span class="p">,</span> <span class="n">p_y</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p_xy</span> <span class="o">/</span> <span class="p">(</span><span class="n">p_x</span> <span class="o">*</span> <span class="n">p_y</span><span class="p">)</span>
+    <span class="n">mutual</span> <span class="o">=</span> <span class="n">p_xy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">mutual</span><span class="o">.</span><span class="n">as_nd_ndarray</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">mutual_information</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="n">p_xy</span><span class="p">,</span> <span class="n">p_x</span><span class="p">,</span> <span class="n">p_y</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p_xy</span> <span class="o">/</span> <span class="p">(</span><span class="n">p_x</span> <span class="o">*</span> <span class="n">p_y</span><span class="p">)</span>
+    <span class="n">mutual</span> <span class="o">=</span> <span class="n">p_xy</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">mutual</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">mutual_information</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]),</span>
+                   <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="n">p_xy</span><span class="p">,</span> <span class="n">p_x</span><span class="p">,</span> <span class="n">p_y</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p_xy</span> <span class="o">/</span> <span class="p">(</span><span class="n">p_x</span> <span class="o">*</span> <span class="n">p_y</span><span class="p">)</span>
+    <span class="n">mutual</span> <span class="o">=</span> <span class="n">p_xy</span> <span class="o">*</span> <span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="c1"># Operator `nansum` will sum up the non-nan number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">mutual</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">mutual_information</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]),</span>
+                   <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]))</span>
+</code></pre></div>
+<h3 id="properties-of-mutual-information">Properties of Mutual Information<a class="headerlink" href="#properties-of-mutual-information" title="Permanent link">⚓︎</a></h3>
+<p>Rather than memorizing the definition of mutual information :eqref:<code>eq_mut_ent_def</code>, you only need to keep in mind its notable properties:</p>
+<ul>
+<li>Mutual information is symmetric, i.e., <span class="arithmatex">\(I(X, Y) = I(Y, X)\)</span>.</li>
+<li>Mutual information is non-negative, i.e., <span class="arithmatex">\(I(X, Y) \geq 0\)</span>.</li>
+<li><span class="arithmatex">\(I(X, Y) = 0\)</span> if and only if <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> are independent. For example, if <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> are independent, then knowing <span class="arithmatex">\(Y\)</span> does not give any information about <span class="arithmatex">\(X\)</span> and vice versa, so their mutual information is zero.</li>
+<li>Alternatively, if <span class="arithmatex">\(X\)</span> is an invertible function of <span class="arithmatex">\(Y\)</span>, then <span class="arithmatex">\(Y\)</span> and <span class="arithmatex">\(X\)</span> share all information and <span class="arithmatex">\(<span class="arithmatex">\(I(X, Y) = H(Y) = H(X).\)</span>\)</span></li>
+</ul>
+<h3 id="pointwise-mutual-information">Pointwise Mutual Information<a class="headerlink" href="#pointwise-mutual-information" title="Permanent link">⚓︎</a></h3>
+<p>When we worked with entropy at the beginning of this chapter, we were able to provide an interpretation of <span class="arithmatex">\(-\log(p_X(x))\)</span> as how <em>surprised</em> we were with the particular outcome.  We may give a similar interpretation to the logarithmic term in the mutual information, which is often referred to as the <em>pointwise mutual information</em>:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\textrm{pmi}(x, y) = \log\frac{p_{X, Y}(x, y)}{p_X(x) p_Y(y)}.\)</span>\)</span>
+:eqlabel:<code>eq_pmi_def</code></p>
+<p>We can think of :eqref:<code>eq_pmi_def</code> as measuring how much more or less likely the specific combination of outcomes <span class="arithmatex">\(x\)</span> and <span class="arithmatex">\(y\)</span> are compared to what we would expect for independent random outcomes.  If it is large and positive, then these two specific outcomes occur much more frequently than they would compared to random chance (<em>note</em>: the denominator is <span class="arithmatex">\(p_X(x) p_Y(y)\)</span> which is the probability of the two outcomes were independent), whereas if it is large and negative it represents the two outcomes happening far less than we would expect by random chance.</p>
+<p>This allows us to interpret the mutual information :eqref:<code>eq_mut_ent_def</code> as the average amount that we were surprised to see two outcomes occurring together compared to what we would expect if they were independent.</p>
+<h3 id="applications-of-mutual-information">Applications of Mutual Information<a class="headerlink" href="#applications-of-mutual-information" title="Permanent link">⚓︎</a></h3>
+<p>Mutual information may be a little abstract in it pure definition, so how does it related to machine learning? In natural language processing, one of the most difficult problems is the <em>ambiguity resolution</em>, or the issue of the meaning of a word being unclear from context. For example, recently a headline in the news reported that "Amazon is on fire". You may wonder whether the company Amazon has a building on fire, or the Amazon rain forest is on fire.</p>
+<p>In this case, mutual information can help us resolve this ambiguity. We first find the group of words that each has a relatively large mutual information with the company Amazon, such as e-commerce, technology, and online. Second, we find another group of words that each has a relatively large mutual information with the Amazon rain forest, such as rain, forest, and tropical. When we need to disambiguate "Amazon", we can compare which group has more occurrence in the context of the word Amazon.  In this case the article would go on to describe the forest, and make the context clear.</p>
+<h2 id="kullbackleibler-divergence">Kullback–Leibler Divergence<a class="headerlink" href="#kullbackleibler-divergence" title="Permanent link">⚓︎</a></h2>
+<p>As what we have discussed in :numref:<code>sec_linear-algebra</code>, we can use norms to measure distance between two points in space of any dimensionality.  We would like to be able to do a similar task with probability distributions.  There are many ways to go about this, but information theory provides one of the nicest.  We now explore the <em>Kullback–Leibler (KL) divergence</em>, which provides a way to measure if two distributions are close together or not.</p>
+<h3 id="definition_1">Definition<a class="headerlink" href="#definition_1" title="Permanent link">⚓︎</a></h3>
+<p>Given a random variable <span class="arithmatex">\(X\)</span> that follows the probability distribution <span class="arithmatex">\(P\)</span> with a p.d.f. or a p.m.f. <span class="arithmatex">\(p(x)\)</span>, and we estimate <span class="arithmatex">\(P\)</span> by another probability distribution <span class="arithmatex">\(Q\)</span> with a p.d.f. or a p.m.f. <span class="arithmatex">\(q(x)\)</span>. Then the <em>Kullback–Leibler (KL) divergence</em> (or <em>relative entropy</em>) between <span class="arithmatex">\(P\)</span> and <span class="arithmatex">\(Q\)</span> is</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(D_{\textrm{KL}}(P\|Q) = E_{x \sim P} \left[ \log \frac{p(x)}{q(x)} \right].\)</span>\)</span>
+:eqlabel:<code>eq_kl_def</code></p>
+<p>As with the pointwise mutual information :eqref:<code>eq_pmi_def</code>, we can again provide an interpretation of the logarithmic term:  <span class="arithmatex">\(-\log \frac{q(x)}{p(x)} = -\log(q(x)) - (-\log(p(x)))\)</span> will be large and positive if we see <span class="arithmatex">\(x\)</span> far more often under <span class="arithmatex">\(P\)</span> than we would expect for <span class="arithmatex">\(Q\)</span>, and large and negative if we see the outcome far less than expected.  In this way, we can interpret it as our <em>relative</em> surprise at observing the outcome compared to how surprised we would be observing it from our reference distribution.</p>
+<p>Let's implement the KL divergence from Scratch.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="k">def</span> <span class="nf">kl_divergence</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+    <span class="n">kl</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="n">q</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">kl</span><span class="o">.</span><span class="n">as_nd_ndarray</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="k">def</span> <span class="nf">kl_divergence</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+    <span class="n">kl</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="n">q</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">kl</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="k">def</span> <span class="nf">kl_divergence</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+    <span class="n">kl</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">log2</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="n">q</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nansum</span><span class="p">(</span><span class="n">kl</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="kl-divergence-properties">KL Divergence Properties<a class="headerlink" href="#kl-divergence-properties" title="Permanent link">⚓︎</a></h3>
+<p>Let's take a look at some properties of the KL divergence :eqref:<code>eq_kl_def</code>.</p>
+<ul>
+<li>KL divergence is non-symmetric, i.e., there are <span class="arithmatex">\(P,Q\)</span> such that <span class="arithmatex">\(<span class="arithmatex">\(D_{\textrm{KL}}(P\|Q) \neq D_{\textrm{KL}}(Q\|P).\)</span>\)</span></li>
+<li>KL divergence is non-negative, i.e., <span class="arithmatex">\(<span class="arithmatex">\(D_{\textrm{KL}}(P\|Q) \geq 0.\)</span>\)</span> Note that the equality holds only when <span class="arithmatex">\(P = Q\)</span>.</li>
+<li>If there exists an <span class="arithmatex">\(x\)</span> such that <span class="arithmatex">\(p(x) &gt; 0\)</span> and <span class="arithmatex">\(q(x) = 0\)</span>, then <span class="arithmatex">\(D_{\textrm{KL}}(P\|Q) = \infty\)</span>.</li>
+<li>There is a close relationship between KL divergence and mutual information. Besides the relationship shown in :numref:<code>fig_mutual_information</code>, <span class="arithmatex">\(I(X, Y)\)</span> is also numerically equivalent with the following terms:<ol>
+<li><span class="arithmatex">\(D_{\textrm{KL}}(P(X, Y)  \ \| \ P(X)P(Y))\)</span>;</li>
+<li><span class="arithmatex">\(E_Y \{ D_{\textrm{KL}}(P(X \mid Y) \ \| \ P(X)) \}\)</span>;</li>
+<li><span class="arithmatex">\(E_X \{ D_{\textrm{KL}}(P(Y \mid X) \ \| \ P(Y)) \}\)</span>.</li>
+</ol>
+</li>
+</ul>
+<p>For the first term, we interpret mutual information as the KL divergence between <span class="arithmatex">\(P(X, Y)\)</span> and the product of <span class="arithmatex">\(P(X)\)</span> and <span class="arithmatex">\(P(Y)\)</span>, and thus is a measure of how different the joint distribution is from the distribution if they were independent. For the second term, mutual information tells us the average reduction in uncertainty about <span class="arithmatex">\(Y\)</span> that results from learning the value of the <span class="arithmatex">\(X\)</span>'s distribution. Similarly to the third term.</p>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h3>
+<p>Let's go through a toy example to see the non-symmetry explicitly.</p>
+<p>First, let's generate and sort three tensors of length <span class="arithmatex">\(10,000\)</span>: an objective tensor <span class="arithmatex">\(p\)</span> which follows a normal distribution <span class="arithmatex">\(N(0, 1)\)</span>, and two candidate tensors <span class="arithmatex">\(q_1\)</span> and <span class="arithmatex">\(q_2\)</span> which follow normal distributions <span class="arithmatex">\(N(-1, 1)\)</span> and <span class="arithmatex">\(N(1, 1)\)</span> respectively.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">nd_len</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nd_len</span><span class="p">,</span> <span class="p">))</span>
+<span class="n">q1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nd_len</span><span class="p">,</span> <span class="p">))</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nd_len</span><span class="p">,</span> <span class="p">))</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()))</span>
+<span class="n">q1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">q1</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()))</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">q2</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()))</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">tensor_len</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">tensor_len</span><span class="p">,</span> <span class="p">))</span>
+<span class="n">q1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">tensor_len</span><span class="p">,</span> <span class="p">))</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">tensor_len</span><span class="p">,</span> <span class="p">))</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">q1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">q1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">q2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="n">tensor_len</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">((</span><span class="n">tensor_len</span><span class="p">,</span> <span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">q1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">((</span><span class="n">tensor_len</span><span class="p">,</span> <span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">((</span><span class="n">tensor_len</span><span class="p">,</span> <span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">q1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">q1</span><span class="p">)</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span>
+</code></pre></div>
+<p>Since <span class="arithmatex">\(q_1\)</span> and <span class="arithmatex">\(q_2\)</span> are symmetric with respect to the y-axis (i.e., <span class="arithmatex">\(x=0\)</span>), we expect a similar value of KL divergence between <span class="arithmatex">\(D_{\textrm{KL}}(p\|q_1)\)</span> and <span class="arithmatex">\(D_{\textrm{KL}}(p\|q_2)\)</span>. As you can see below, there is only a less than 3% off between <span class="arithmatex">\(D_{\textrm{KL}}(p\|q_1)\)</span> and <span class="arithmatex">\(D_{\textrm{KL}}(p\|q_2)\)</span>.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab all</span>
+<span class="n">kl_pq1</span> <span class="o">=</span> <span class="n">kl_divergence</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q1</span><span class="p">)</span>
+<span class="n">kl_pq2</span> <span class="o">=</span> <span class="n">kl_divergence</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
+<span class="n">similar_percentage</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">kl_pq1</span> <span class="o">-</span> <span class="n">kl_pq2</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">kl_pq1</span> <span class="o">+</span> <span class="n">kl_pq2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="n">kl_pq1</span><span class="p">,</span> <span class="n">kl_pq2</span><span class="p">,</span> <span class="n">similar_percentage</span>
+</code></pre></div>
+<p>In contrast, you may find that <span class="arithmatex">\(D_{\textrm{KL}}(q_2 \|p)\)</span> and <span class="arithmatex">\(D_{\textrm{KL}}(p \| q_2)\)</span> are off a lot, with around 40% off as shown below.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab all</span>
+<span class="n">kl_q2p</span> <span class="o">=</span> <span class="n">kl_divergence</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="n">differ_percentage</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">kl_q2p</span> <span class="o">-</span> <span class="n">kl_pq2</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">kl_q2p</span> <span class="o">+</span> <span class="n">kl_pq2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="n">kl_q2p</span><span class="p">,</span> <span class="n">differ_percentage</span>
+</code></pre></div>
+<h2 id="cross-entropy">Cross-Entropy<a class="headerlink" href="#cross-entropy" title="Permanent link">⚓︎</a></h2>
+<p>If you are curious about applications of information theory in deep learning, here is a quick example. We define the true distribution <span class="arithmatex">\(P\)</span> with probability distribution <span class="arithmatex">\(p(x)\)</span>, and the estimated distribution <span class="arithmatex">\(Q\)</span> with probability distribution <span class="arithmatex">\(q(x)\)</span>, and we will use them in the rest of this section.</p>
+<p>Say we need to solve a binary classification problem based on given <span class="arithmatex">\(n\)</span> data examples {<span class="arithmatex">\(x_1, \ldots, x_n\)</span>}. Assume that we encode <span class="arithmatex">\(1\)</span> and <span class="arithmatex">\(0\)</span> as the positive and negative class label <span class="arithmatex">\(y_i\)</span> respectively, and our neural network is parametrized by <span class="arithmatex">\(\theta\)</span>. If we aim to find a best <span class="arithmatex">\(\theta\)</span> so that <span class="arithmatex">\(\hat{y}_i= p_{\theta}(y_i \mid x_i)\)</span>, it is natural to apply the maximum log-likelihood approach as was seen in :numref:<code>sec_maximum_likelihood</code>. To be specific, for true labels <span class="arithmatex">\(y_i\)</span> and predictions <span class="arithmatex">\(\hat{y}_i= p_{\theta}(y_i \mid x_i)\)</span>, the probability to be classified as positive is <span class="arithmatex">\(\pi_i= p_{\theta}(y_i = 1 \mid x_i)\)</span>. Hence, the log-likelihood function would be</p>
+<div class="arithmatex">\[
+\begin{aligned}
+l(\theta) &amp;= \log L(\theta) \\
+  &amp;= \log \prod_{i=1}^n \pi_i^{y_i} (1 - \pi_i)^{1 - y_i} \\
+  &amp;= \sum_{i=1}^n y_i \log(\pi_i) + (1 - y_i) \log (1 - \pi_i). \\
+\end{aligned}
+\]</div>
+<p>Maximizing the log-likelihood function <span class="arithmatex">\(l(\theta)\)</span> is identical to minimizing <span class="arithmatex">\(- l(\theta)\)</span>, and hence we can find the best <span class="arithmatex">\(\theta\)</span> from here. To generalize the above loss to any distributions, we also called <span class="arithmatex">\(-l(\theta)\)</span> the <em>cross-entropy loss</em> <span class="arithmatex">\(\textrm{CE}(y, \hat{y})\)</span>, where <span class="arithmatex">\(y\)</span> follows the true distribution <span class="arithmatex">\(P\)</span> and <span class="arithmatex">\(\hat{y}\)</span> follows the estimated distribution <span class="arithmatex">\(Q\)</span>.</p>
+<p>This was all derived by working from the maximum likelihood point of view.  However, if we look closely we can see that terms like <span class="arithmatex">\(\log(\pi_i)\)</span> have entered into our computation which is a solid indication that we can understand the expression from an information theoretic point of view.</p>
+<h3 id="formal-definition">Formal Definition<a class="headerlink" href="#formal-definition" title="Permanent link">⚓︎</a></h3>
+<p>Like KL divergence, for a random variable <span class="arithmatex">\(X\)</span>, we can also measure the divergence between the estimating distribution <span class="arithmatex">\(Q\)</span> and the true distribution <span class="arithmatex">\(P\)</span> via <em>cross-entropy</em>,</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\textrm{CE}(P, Q) = - E_{x \sim P} [\log(q(x))].\)</span>\)</span>
+:eqlabel:<code>eq_ce_def</code></p>
+<p>By using properties of entropy discussed above, we can also interpret it as the summation of the entropy <span class="arithmatex">\(H(P)\)</span> and the KL divergence between <span class="arithmatex">\(P\)</span> and <span class="arithmatex">\(Q\)</span>, i.e.,</p>
+<div class="arithmatex">\[\textrm{CE} (P, Q) = H(P) + D_{\textrm{KL}}(P\|Q).\]</div>
+<p>We can implement the cross-entropy loss as below.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="k">def</span> <span class="nf">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">ce</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_hat</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_hat</span><span class="p">)),</span> <span class="n">y</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ce</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="k">def</span> <span class="nf">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">ce</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_hat</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_hat</span><span class="p">)),</span> <span class="n">y</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ce</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="k">def</span> <span class="nf">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1"># `tf.gather_nd` is used to select specific indices of a tensor.</span>
+    <span class="n">ce</span> <span class="o">=</span> <span class="o">-</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">gather_nd</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_hat</span><span class="p">)),</span> <span class="n">y</span><span class="p">)]))</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">ce</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</code></pre></div>
+<p>Now define two tensors for the labels and predictions, and calculate the cross-entropy loss of them.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+
+<span class="n">cross_entropy</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+
+<span class="n">cross_entropy</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+
+<span class="n">cross_entropy</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">⚓︎</a></h3>
+<p>As alluded in the beginning of this section, cross-entropy :eqref:<code>eq_ce_def</code> can be used to define a loss function in the optimization problem. It turns out that the following are equivalent:</p>
+<ol>
+<li>Maximizing predictive probability of <span class="arithmatex">\(Q\)</span> for distribution <span class="arithmatex">\(P\)</span>, (i.e., <span class="arithmatex">\(E_{x
+\sim P} [\log (q(x))]\)</span>);</li>
+<li>Minimizing cross-entropy <span class="arithmatex">\(\textrm{CE} (P, Q)\)</span>;</li>
+<li>Minimizing the KL divergence <span class="arithmatex">\(D_{\textrm{KL}}(P\|Q)\)</span>.</li>
+</ol>
+<p>The definition of cross-entropy indirectly proves the equivalent relationship between objective 2 and objective 3, as long as the entropy of true data <span class="arithmatex">\(H(P)\)</span> is constant.</p>
+<h3 id="cross-entropy-as-an-objective-function-of-multi-class-classification">Cross-Entropy as An Objective Function of Multi-class Classification<a class="headerlink" href="#cross-entropy-as-an-objective-function-of-multi-class-classification" title="Permanent link">⚓︎</a></h3>
+<p>If we dive deep into the classification objective function with cross-entropy loss <span class="arithmatex">\(\textrm{CE}\)</span>, we will find minimizing <span class="arithmatex">\(\textrm{CE}\)</span> is equivalent to maximizing the log-likelihood function <span class="arithmatex">\(L\)</span>.</p>
+<p>To begin with, suppose that we are given a dataset with <span class="arithmatex">\(n\)</span> examples, and it can be classified into <span class="arithmatex">\(k\)</span>-classes. For each data example <span class="arithmatex">\(i\)</span>, we represent any <span class="arithmatex">\(k\)</span>-class label <span class="arithmatex">\(\mathbf{y}_i = (y_{i1}, \ldots, y_{ik})\)</span> by <em>one-hot encoding</em>. To be specific, if the  example <span class="arithmatex">\(i\)</span> belongs to class <span class="arithmatex">\(j\)</span>, then we set the <span class="arithmatex">\(j\)</span>-th entry to <span class="arithmatex">\(1\)</span>, and all other components to <span class="arithmatex">\(0\)</span>, i.e.,</p>
+<div class="arithmatex">\[ y_{ij} = \begin{cases}1 &amp; j \in J; \\ 0 &amp;\textrm{otherwise.}\end{cases}\]</div>
+<p>For instance, if a multi-class classification problem contains three classes <span class="arithmatex">\(A\)</span>, <span class="arithmatex">\(B\)</span>, and <span class="arithmatex">\(C\)</span>, then the labels <span class="arithmatex">\(\mathbf{y}_i\)</span> can be encoded in {<span class="arithmatex">\(A: (1, 0, 0); B: (0, 1, 0); C: (0, 0, 1)\)</span>}.</p>
+<p>Assume that our neural network is parametrized by <span class="arithmatex">\(\theta\)</span>. For true label vectors <span class="arithmatex">\(\mathbf{y}_i\)</span> and predictions <span class="arithmatex">\(<span class="arithmatex">\(\hat{\mathbf{y}}_i= p_{\theta}(\mathbf{y}_i \mid \mathbf{x}_i) = \sum_{j=1}^k y_{ij} p_{\theta} (y_{ij}  \mid  \mathbf{x}_i).\)</span>\)</span></p>
+<p>Hence, the <em>cross-entropy loss</em> would be</p>
+<div class="arithmatex">\[
+\textrm{CE}(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{i=1}^n \mathbf{y}_i \log \hat{\mathbf{y}}_i
+ = - \sum_{i=1}^n \sum_{j=1}^k y_{ij} \log{p_{\theta} (y_{ij}  \mid  \mathbf{x}_i)}.\\
+\]</div>
+<p>On the other side, we can also approach the problem through maximum likelihood estimation. To begin with, let's quickly introduce a <span class="arithmatex">\(k\)</span>-class multinoulli distribution. It is an extension of the Bernoulli distribution from binary class to multi-class. If a random variable <span class="arithmatex">\(\mathbf{z} = (z_{1}, \ldots, z_{k})\)</span> follows a <span class="arithmatex">\(k\)</span>-class <em>multinoulli distribution</em> with probabilities <span class="arithmatex">\(\mathbf{p} =\)</span> (<span class="arithmatex">\(p_{1}, \ldots, p_{k}\)</span>), i.e., <span class="arithmatex">\(<span class="arithmatex">\(p(\mathbf{z}) = p(z_1, \ldots, z_k) = \textrm{Multi} (p_1, \ldots, p_k), \textrm{ where } \sum_{i=1}^k p_i = 1,\)</span>\)</span> then the joint probability mass function(p.m.f.) of <span class="arithmatex">\(\mathbf{z}\)</span> is
+<span class="arithmatex">\(<span class="arithmatex">\(\mathbf{p}^\mathbf{z} = \prod_{j=1}^k p_{j}^{z_{j}}.\)</span>\)</span></p>
+<p>It can be seen that the label of each data example, <span class="arithmatex">\(\mathbf{y}_i\)</span>, is following a <span class="arithmatex">\(k\)</span>-class multinoulli distribution with probabilities <span class="arithmatex">\(\boldsymbol{\pi} =\)</span> (<span class="arithmatex">\(\pi_{1}, \ldots, \pi_{k}\)</span>). Therefore, the joint p.m.f. of each data example <span class="arithmatex">\(\mathbf{y}_i\)</span> is  <span class="arithmatex">\(\mathbf{\pi}^{\mathbf{y}_i} = \prod_{j=1}^k \pi_{j}^{y_{ij}}.\)</span>
+Hence, the log-likelihood function would be</p>
+<div class="arithmatex">\[
+\begin{aligned}
+l(\theta)
+ = \log L(\theta)
+ = \log \prod_{i=1}^n \boldsymbol{\pi}^{\mathbf{y}_i}
+ = \log \prod_{i=1}^n \prod_{j=1}^k \pi_{j}^{y_{ij}}
+ = \sum_{i=1}^n \sum_{j=1}^k y_{ij} \log{\pi_{j}}.\\
+\end{aligned}
+\]</div>
+<p>Since in maximum likelihood estimation, we maximizing the objective function <span class="arithmatex">\(l(\theta)\)</span> by having <span class="arithmatex">\(\pi_{j} = p_{\theta} (y_{ij}  \mid  \mathbf{x}_i)\)</span>. Therefore, for any multi-class classification, maximizing the above log-likelihood function <span class="arithmatex">\(l(\theta)\)</span> is equivalent to minimizing the CE loss <span class="arithmatex">\(\textrm{CE}(y, \hat{y})\)</span>.</p>
+<p>To test the above proof, let's apply the built-in measure <code>NegativeLogLikelihood</code>. Using the same <code>labels</code> and <code>preds</code> as in the earlier example, we will get the same numerical loss as the previous example up to the 5 decimal place.</p>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab mxnet</span>
+<span class="n">nll_loss</span> <span class="o">=</span> <span class="n">NegativeLogLikelihood</span><span class="p">()</span>
+<span class="n">nll_loss</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">as_nd_ndarray</span><span class="p">(),</span> <span class="n">preds</span><span class="o">.</span><span class="n">as_nd_ndarray</span><span class="p">())</span>
+<span class="n">nll_loss</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab pytorch</span>
+<span class="c1"># Implementation of cross-entropy loss in PyTorch combines `nn.LogSoftmax()`</span>
+<span class="c1"># and `nn.NLLLoss()`</span>
+<span class="n">nll_loss</span> <span class="o">=</span> <span class="n">NLLLoss</span><span class="p">()</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">nll_loss</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">preds</span><span class="p">),</span> <span class="n">labels</span><span class="p">)</span>
+<span class="n">loss</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="c1">#@tab tensorflow</span>
+<span class="k">def</span> <span class="nf">nll_loss</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1"># Convert labels to one-hot vectors.</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span> <span class="n">y_hat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># We will not calculate negative log-likelihood from the definition.</span>
+    <span class="c1"># Rather, we will follow a circular argument. Because NLL is same as</span>
+    <span class="c1"># `cross_entropy`, if we calculate cross_entropy that would give us NLL</span>
+    <span class="n">cross_entropy</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">CategoricalCrossentropy</span><span class="p">(</span>
+        <span class="n">from_logits</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">reduction</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">Reduction</span><span class="o">.</span><span class="n">NONE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">))</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+<span class="n">loss</span> <span class="o">=</span> <span class="n">nll_loss</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">preds</span><span class="p">),</span> <span class="n">labels</span><span class="p">)</span>
+<span class="n">loss</span>
+</code></pre></div>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li>Information theory is a field of study about encoding, decoding, transmitting, and manipulating information.</li>
+<li>Entropy is the unit to measure how much information is presented in different signals.</li>
+<li>KL divergence can also measure the divergence between two distributions.</li>
+<li>Cross-entropy can be viewed as an objective function of multi-class classification. Minimizing cross-entropy loss is equivalent to maximizing the log-likelihood function.</li>
+</ul>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>Verify that the card examples from the first section indeed have the claimed entropy.</li>
+<li>Show that the KL divergence <span class="arithmatex">\(D(p\|q)\)</span> is nonnegative for all distributions <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(q\)</span>. Hint: use Jensen's inequality, i.e., use the fact that <span class="arithmatex">\(-\log x\)</span> is a convex function.</li>
+<li>Let's compute the entropy from a few data sources:<ul>
+<li>Assume that you are watching the output generated by a monkey at a typewriter. The monkey presses any of the <span class="arithmatex">\(44\)</span> keys of the typewriter at random (you can assume that it has not discovered any special keys or the shift key yet). How many bits of randomness per character do you observe?</li>
+<li>Being unhappy with the monkey, you replaced it by a drunk typesetter. It is able to generate words, albeit not coherently. Instead, it picks a random word out of a vocabulary of <span class="arithmatex">\(2,000\)</span> words. Let's assume that the average length of a word is <span class="arithmatex">\(4.5\)</span> letters in English. How many bits of randomness per character do you observe now?</li>
+<li>Still being unhappy with the result, you replace the typesetter by a high quality language model. The language model can currently obtain a perplexity as low as <span class="arithmatex">\(15\)</span> points per word. The character <em>perplexity</em> of a language model is defined as the inverse of the geometric mean of a set of probabilities, each probability is corresponding to a character in the word. To be specific, if the length of a given word is <span class="arithmatex">\(l\)</span>, then  <span class="arithmatex">\(\textrm{PPL}(\textrm{word}) = \left[\prod_i p(\textrm{character}_i)\right]^{ -\frac{1}{l}} = \exp \left[ - \frac{1}{l} \sum_i{\log p(\textrm{character}_i)} \right].\)</span>  Assume that the test word has 4.5 letters, how many bits of randomness per character do you observe now?</li>
+</ul>
+</li>
+<li>Explain intuitively why <span class="arithmatex">\(I(X, Y) = H(X) - H(X \mid Y)\)</span>.  Then, show this is true by expressing both sides as an expectation with respect to the joint distribution.</li>
+<li>What is the KL Divergence between the two Gaussian distributions <span class="arithmatex">\(\mathcal{N}(\mu_1, \sigma_1^2)\)</span> and <span class="arithmatex">\(\mathcal{N}(\mu_2, \sigma_2^2)\)</span>?</li>
+</ol>
+<p>:begin_tab:<code>mxnet</code>
+<a href="https://discuss.d2l.ai/t/420">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>pytorch</code>
+<a href="https://discuss.d2l.ai/t/1104">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>tensorflow</code>
+<a href="https://discuss.d2l.ai/t/1105">Discussions</a>
+:end_tab:</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../geometry-linear-algebraic-ops/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Geometry and Linear Algebraic Operations">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Geometry and Linear Algebraic Operations
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../integral-calculus/" class="md-footer__link md-footer__link--next" aria-label="下一页: Integral Calculus">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Integral Calculus
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Ean Yang
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/YQisme" target="_blank" rel="noopener" title="github主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://space.bilibili.com/244185393?spm_id_from=333.788.0.0" target="_blank" rel="noopener" title="b站主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M488.6 104.1c16.7 18.1 24.4 39.7 23.3 65.7v202.4c-.4 26.4-9.2 48.1-26.5 65.1-17.2 17-39.1 25.9-65.5 26.7H92.02c-26.45-.8-48.21-9.8-65.28-27.2C9.682 419.4.767 396.5 0 368.2V169.8c.767-26 9.682-47.6 26.74-65.7C43.81 87.75 65.57 78.77 92.02 78h29.38L96.05 52.19c-5.75-5.73-8.63-13-8.63-21.79 0-8.8 2.88-16.06 8.63-21.797C101.8 2.868 109.1 0 117.9 0s16.1 2.868 21.9 8.603L213.1 78h88l74.5-69.397C381.7 2.868 389.2 0 398 0c8.8 0 16.1 2.868 21.9 8.603 5.7 5.737 8.6 12.997 8.6 21.797 0 8.79-2.9 16.06-8.6 21.79L394.6 78h29.3c26.4.77 48 9.75 64.7 26.1zm-38.8 69.7c-.4-9.6-3.7-17.4-10.7-23.5-5.2-6.1-14-9.4-22.7-9.8H96.05c-9.59.4-17.45 3.7-23.58 9.8-6.14 6.1-9.4 13.9-9.78 23.5v194.4c0 9.2 3.26 17 9.78 23.5s14.38 9.8 23.58 9.8H416.4c9.2 0 17-3.3 23.3-9.8 6.3-6.5 9.7-14.3 10.1-23.5V173.8zm-264.3 42.7c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.2 6.3-14 9.5-23.6 9.5-9.6 0-17.5-3.2-23.6-9.5-6.1-6.3-9.4-14-9.8-23.2v-33.3c.4-9.1 3.8-16.9 10.1-23.2 6.3-6.3 13.2-9.6 23.3-10 9.2.4 17 3.7 23.3 10zm191.5 0c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.1 6.3-14 9.5-23.6 9.5-9.6 0-17.4-3.2-23.6-9.5-7-6.3-9.4-14-9.7-23.2v-33.3c.3-9.1 3.7-16.9 10-23.2 6.3-6.3 14.1-9.6 23.3-10 9.2.4 17 3.7 23.3 10z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://eanyang7.com" target="_blank" rel="noopener" title="个人主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm40 304v128c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9l-28.6 47.6c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352h-16z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.prune", "navigation.top", "toc.follow", "header.autohide", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.6c14ae12.min.js"></script>
+      
+    
+  </body>
+</html>

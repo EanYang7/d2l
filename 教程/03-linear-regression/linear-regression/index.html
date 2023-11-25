@@ -1,0 +1,3272 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《动手学深度学习》">
+      
+      
+        <meta name="author" content="Ean Yang">
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/d2l/%E6%95%99%E7%A8%8B/03-linear-regression/linear-regression/">
+      
+      
+        <link rel="prev" href="../linear-regression-scratch/">
+      
+      
+        <link rel="next" href="../oo-design/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.jpg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.12">
+    
+    
+      
+        <title>Linear regression - 动手学深度学习 Dive into Deep Learning#</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#linear-regression" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-header__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            动手学深度学习 Dive into Deep Learning#
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Linear regression
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-tabs__link">
+          
+  
+  练习
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-nav__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    动手学深度学习 Dive into Deep Learning#
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    教程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-Introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    安装
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Notation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../02-preliminaries/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    02 preliminaries
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    03 linear regression
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            03 linear regression
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linear Neural Networks for Regression
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generalization/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generalization
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear-regression-concise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linear regression concise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear-regression-scratch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linear regression scratch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Linear regression
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Linear regression
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loss-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loss Function
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analytic-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Analytic Solution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minibatch-stochastic-gradient-descent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minibatch Stochastic Gradient Descent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Predictions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vectorization-for-speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vectorization for Speed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-normal-distribution-and-squared-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Normal Distribution and Squared Loss
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linear-regression-as-a-neural-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linear Regression as a Neural Network
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Linear Regression as a Neural Network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#biology" class="md-nav__link">
+    <span class="md-ellipsis">
+      Biology
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../oo-design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Oo design
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthetic-regression-data/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Synthetic regression data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../weight-decay/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Weight decay
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../04-linear-classification/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    04 linear classification
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../05-multilayer-perceptrons/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    05 multilayer perceptrons
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../06-builders-guide/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    06 builders guide
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../07-convolutional-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    07 convolutional modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../08-convolutional-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    08 convolutional neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../09-recurrent-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    09 recurrent neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../10-recurrent-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    10 recurrent modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../11-attention-mechanisms-and-transformers/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    11 attention mechanisms and transformers
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../12-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    12 optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../13-computational-performance/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    13 computational performance
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../14-computer-vision/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    14 computer vision
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../15-natural-language-processing-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    15 natural language processing pretraining
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../16-natural-language-processing-applications/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    16 natural language processing applications
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../17-reinforcement-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    17 reinforcement learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../18-gaussian-processes/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    18 gaussian processes
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../19-hyperparameter-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    19 hyperparameter optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../20-generative-adversarial-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    20 generative adversarial networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../21-recommender-systems/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    21 recommender systems
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../22-appendix-mathematics-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    22 appendix mathematics for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../23-appendix-tools-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    23 appendix tools for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../contrib/fasttext-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Contrib
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    练习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            练习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    动手学深度学习习题解答
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch02
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch03/ch03/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch03
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch04/ch04/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch04
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch05/ch05/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch05
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch06/ch06/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch06
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch07/ch07/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch07
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch08/ch08/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch08
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch09/ch09/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch09
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch10/ch10/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch10
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch11/ch11/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch11
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch12/ch12/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch12
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch13/ch13/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch13
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch14/ch14/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch14
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch15/ch15/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch15
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/notebooks/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loss-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loss Function
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analytic-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Analytic Solution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minibatch-stochastic-gradient-descent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minibatch Stochastic Gradient Descent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Predictions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vectorization-for-speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vectorization for Speed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-normal-distribution-and-squared-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Normal Distribution and Squared Loss
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linear-regression-as-a-neural-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linear Regression as a Neural Network
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Linear Regression as a Neural Network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#biology" class="md-nav__link">
+    <span class="md-ellipsis">
+      Biology
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/03-linear-regression/linear-regression.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/03-linear-regression/linear-regression.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<div class="input highlight"><pre><span></span><code><span class="o">%</span><span class="n">load_ext</span> <span class="n">d2lbook</span><span class="o">.</span><span class="n">tab</span>
+<span class="n">tab</span><span class="o">.</span><span class="n">interact_select</span><span class="p">([</span><span class="s1">&#39;mxnet&#39;</span><span class="p">,</span> <span class="s1">&#39;pytorch&#39;</span><span class="p">,</span> <span class="s1">&#39;tensorflow&#39;</span><span class="p">,</span> <span class="s1">&#39;jax&#39;</span><span class="p">])</span>
+</code></pre></div>
+<h1 id="linear-regression">Linear Regression<a class="headerlink" href="#linear-regression" title="Permanent link">⚓︎</a></h1>
+<p>:label:<code>sec_linear_regression</code></p>
+<p><em>Regression</em> problems pop up whenever we want to predict a numerical value.
+Common examples include predicting prices (of homes, stocks, etc.),
+predicting the length of stay (for patients in the hospital),
+forecasting demand (for retail sales), among numerous others.
+Not every prediction problem is one of classical regression.
+Later on, we will introduce classification problems,
+where the goal is to predict membership among a set of categories.</p>
+<p>As a running example, suppose that we wish
+to estimate the prices of houses (in dollars)
+based on their area (in square feet) and age (in years).
+To develop a model for predicting house prices,
+we need to get our hands on data,
+including the sales price, area, and age for each home.
+In the terminology of machine learning,
+the dataset is called a <em>training dataset</em> or <em>training set</em>,
+and each row (containing the data corresponding to one sale)
+is called an <em>example</em> (or <em>data point</em>, <em>instance</em>, <em>sample</em>).
+The thing we are trying to predict (price)
+is called a <em>label</em> (or <em>target</em>).
+The variables (age and area)
+upon which the predictions are based
+are called <em>features</em> (or <em>covariates</em>).</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">torch</span> <span class="k">as</span> <span class="n">d2l</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">d2l</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">jax</span> <span class="k">as</span> <span class="n">d2l</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">time</span>
+</code></pre></div>
+<h2 id="basics">Basics<a class="headerlink" href="#basics" title="Permanent link">⚓︎</a></h2>
+<p><em>Linear regression</em> is both the simplest
+and most popular among the standard tools
+for tackling regression problems.
+Dating back to the dawn of the 19th century :cite:<code>Legendre.1805,Gauss.1809</code>,
+linear regression flows from a few simple assumptions.
+First, we assume that the relationship
+between features <span class="arithmatex">\(\mathbf{x}\)</span> and target <span class="arithmatex">\(y\)</span>
+is approximately linear,
+i.e., that the conditional mean <span class="arithmatex">\(E[Y \mid X=\mathbf{x}]\)</span>
+can be expressed as a weighted sum
+of the features <span class="arithmatex">\(\mathbf{x}\)</span>.
+This setup allows that the target value
+may still deviate from its expected value
+on account of observation noise.
+Next, we can impose the assumption that any such noise
+is well behaved, following a Gaussian distribution.
+Typically, we will use <span class="arithmatex">\(n\)</span> to denote
+the number of examples in our dataset.
+We use superscripts to enumerate samples and targets,
+and subscripts to index coordinates.
+More concretely,
+<span class="arithmatex">\(\mathbf{x}^{(i)}\)</span> denotes the <span class="arithmatex">\(i^{\textrm{th}}\)</span> sample
+and <span class="arithmatex">\(x_j^{(i)}\)</span> denotes its <span class="arithmatex">\(j^{\textrm{th}}\)</span> coordinate.</p>
+<h3 id="model">Model<a class="headerlink" href="#model" title="Permanent link">⚓︎</a></h3>
+<p>:label:<code>subsec_linear_model</code></p>
+<p>At the heart of every solution is a model
+that describes how features can be transformed
+into an estimate of the target.
+The assumption of linearity means that
+the expected value of the target (price) can be expressed
+as a weighted sum of the features (area and age):</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\textrm{price} = w_{\textrm{area}} \cdot \textrm{area} + w_{\textrm{age}} \cdot \textrm{age} + b.\)</span>\)</span>
+:eqlabel:<code>eq_price-area</code></p>
+<p>Here <span class="arithmatex">\(w_{\textrm{area}}\)</span> and <span class="arithmatex">\(w_{\textrm{age}}\)</span>
+are called <em>weights</em>, and <span class="arithmatex">\(b\)</span> is called a <em>bias</em>
+(or <em>offset</em> or <em>intercept</em>).
+The weights determine the influence of each feature on our prediction.
+The bias determines the value of the estimate when all features are zero.
+Even though we will never see any newly-built homes with precisely zero area,
+we still need the bias because it allows us
+to express all linear functions of our features
+(rather than restricting us to lines that pass through the origin).
+Strictly speaking, :eqref:<code>eq_price-area</code> is an <em>affine transformation</em> of input features, which is characterized by a <em>linear transformation</em> of features via a weighted sum, combined with a <em>translation</em> via the added bias.
+Given a dataset, our goal is to choose
+the weights <span class="arithmatex">\(\mathbf{w}\)</span> and the bias <span class="arithmatex">\(b\)</span>
+that, on average, make our model's predictions
+fit the true prices observed in the data as closely as possible.</p>
+<p>In disciplines where it is common to focus
+on datasets with just a few features,
+explicitly expressing models long-form,
+as in :eqref:<code>eq_price-area</code>, is common.
+In machine learning, we usually work
+with high-dimensional datasets,
+where it is more convenient to employ
+compact linear algebra notation.
+When our inputs consist of <span class="arithmatex">\(d\)</span> features,
+we can assign each an index (between <span class="arithmatex">\(1\)</span> and <span class="arithmatex">\(d\)</span>)
+and express our prediction <span class="arithmatex">\(\hat{y}\)</span>
+(in general the "hat" symbol denotes an estimate) as</p>
+<div class="arithmatex">\[\hat{y} = w_1  x_1 + \cdots + w_d  x_d + b.\]</div>
+<p>Collecting all features into a vector <span class="arithmatex">\(\mathbf{x} \in \mathbb{R}^d\)</span>
+and all weights into a vector <span class="arithmatex">\(\mathbf{w} \in \mathbb{R}^d\)</span>,
+we can express our model compactly via the dot product
+between <span class="arithmatex">\(\mathbf{w}\)</span> and <span class="arithmatex">\(\mathbf{x}\)</span>:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\hat{y} = \mathbf{w}^\top \mathbf{x} + b.\)</span>\)</span>
+:eqlabel:<code>eq_linreg-y</code></p>
+<p>In :eqref:<code>eq_linreg-y</code>, the vector <span class="arithmatex">\(\mathbf{x}\)</span>
+corresponds to the features of a single example.
+We will often find it convenient
+to refer to features of our entire dataset of <span class="arithmatex">\(n\)</span> examples
+via the <em>design matrix</em> <span class="arithmatex">\(\mathbf{X} \in \mathbb{R}^{n \times d}\)</span>.
+Here, <span class="arithmatex">\(\mathbf{X}\)</span> contains one row for every example
+and one column for every feature.
+For a collection of features <span class="arithmatex">\(\mathbf{X}\)</span>,
+the predictions <span class="arithmatex">\(\hat{\mathbf{y}} \in \mathbb{R}^n\)</span>
+can be expressed via the matrix--vector product:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\({\hat{\mathbf{y}}} = \mathbf{X} \mathbf{w} + b,\)</span>\)</span>
+:eqlabel:<code>eq_linreg-y-vec</code></p>
+<p>where broadcasting (:numref:<code>subsec_broadcasting</code>) is applied during the summation.
+Given features of a training dataset <span class="arithmatex">\(\mathbf{X}\)</span>
+and corresponding (known) labels <span class="arithmatex">\(\mathbf{y}\)</span>,
+the goal of linear regression is to find
+the weight vector <span class="arithmatex">\(\mathbf{w}\)</span> and the bias term <span class="arithmatex">\(b\)</span>
+such that, given features of a new data example
+sampled from the same distribution as <span class="arithmatex">\(\mathbf{X}\)</span>,
+the new example's label will (in expectation)
+be predicted with the smallest error.</p>
+<p>Even if we believe that the best model for
+predicting <span class="arithmatex">\(y\)</span> given <span class="arithmatex">\(\mathbf{x}\)</span> is linear,
+we would not expect to find a real-world dataset of <span class="arithmatex">\(n\)</span> examples where
+<span class="arithmatex">\(y^{(i)}\)</span> exactly equals <span class="arithmatex">\(\mathbf{w}^\top \mathbf{x}^{(i)}+b\)</span>
+for all <span class="arithmatex">\(1 \leq i \leq n\)</span>.
+For example, whatever instruments we use to observe
+the features <span class="arithmatex">\(\mathbf{X}\)</span> and labels <span class="arithmatex">\(\mathbf{y}\)</span>, there might be a small amount of measurement error.
+Thus, even when we are confident
+that the underlying relationship is linear,
+we will incorporate a noise term to account for such errors.</p>
+<p>Before we can go about searching for the best <em>parameters</em>
+(or <em>model parameters</em>) <span class="arithmatex">\(\mathbf{w}\)</span> and <span class="arithmatex">\(b\)</span>,
+we will need two more things:
+(i) a measure of the quality of some given model;
+and (ii) a procedure for updating the model to improve its quality.</p>
+<h3 id="loss-function">Loss Function<a class="headerlink" href="#loss-function" title="Permanent link">⚓︎</a></h3>
+<p>:label:<code>subsec_linear-regression-loss-function</code></p>
+<p>Naturally, fitting our model to the data requires
+that we agree on some measure of <em>fitness</em>
+(or, equivalently, of <em>unfitness</em>).
+<em>Loss functions</em> quantify the distance
+between the <em>real</em> and <em>predicted</em> values of the target.
+The loss will usually be a nonnegative number
+where smaller values are better
+and perfect predictions incur a loss of 0.
+For regression problems, the most common loss function is the squared error.
+When our prediction for an example <span class="arithmatex">\(i\)</span> is <span class="arithmatex">\(\hat{y}^{(i)}\)</span>
+and the corresponding true label is <span class="arithmatex">\(y^{(i)}\)</span>,
+the <em>squared error</em> is given by:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(l^{(i)}(\mathbf{w}, b) = \frac{1}{2} \left(\hat{y}^{(i)} - y^{(i)}\right)^2.\)</span>\)</span>
+:eqlabel:<code>eq_mse</code></p>
+<p>The constant <span class="arithmatex">\(\frac{1}{2}\)</span> makes no real difference
+but proves to be notationally convenient,
+since it cancels out when we take the derivative of the loss.
+Because the training dataset is given to us,
+and thus is out of our control,
+the empirical error is only a function of the model parameters.
+In :numref:<code>fig_fit_linreg</code>, we visualize the fit of a linear regression model
+in a problem with one-dimensional inputs.</p>
+<p><img alt="Fitting a linear regression model to one-dimensional data." src="../../img/fit-linreg.svg" />
+:label:<code>fig_fit_linreg</code></p>
+<p>Note that large differences between
+estimates <span class="arithmatex">\(\hat{y}^{(i)}\)</span> and targets <span class="arithmatex">\(y^{(i)}\)</span>
+lead to even larger contributions to the loss,
+due to its quadratic form
+(this quadraticity can be a double-edge sword; while it encourages the model to avoid large errors
+it can also lead to excessive sensitivity to anomalous data).
+To measure the quality of a model on the entire dataset of <span class="arithmatex">\(n\)</span> examples,
+we simply average (or equivalently, sum)
+the losses on the training set:</p>
+<div class="arithmatex">\[L(\mathbf{w}, b) =\frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) =\frac{1}{n} \sum_{i=1}^n \frac{1}{2}\left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)^2.\]</div>
+<p>When training the model, we seek parameters (<span class="arithmatex">\(\mathbf{w}^*, b^*\)</span>)
+that minimize the total loss across all training examples:</p>
+<div class="arithmatex">\[\mathbf{w}^*, b^* = \operatorname*{argmin}_{\mathbf{w}, b}\  L(\mathbf{w}, b).\]</div>
+<h3 id="analytic-solution">Analytic Solution<a class="headerlink" href="#analytic-solution" title="Permanent link">⚓︎</a></h3>
+<p>Unlike most of the models that we will cover,
+linear regression presents us with
+a surprisingly easy optimization problem.
+In particular, we can find the optimal parameters
+(as assessed on the training data)
+analytically by applying a simple formula as follows.
+First, we can subsume the bias <span class="arithmatex">\(b\)</span> into the parameter <span class="arithmatex">\(\mathbf{w}\)</span>
+by appending a column to the design matrix consisting of all 1s.
+Then our prediction problem is to minimize <span class="arithmatex">\(\|\mathbf{y} - \mathbf{X}\mathbf{w}\|^2\)</span>.
+As long as the design matrix <span class="arithmatex">\(\mathbf{X}\)</span> has full rank
+(no feature is linearly dependent on the others),
+then there will be just one critical point on the loss surface
+and it corresponds to the minimum of the loss over the entire domain.
+Taking the derivative of the loss with respect to <span class="arithmatex">\(\mathbf{w}\)</span>
+and setting it equal to zero yields:</p>
+<div class="arithmatex">\[\begin{aligned}
+    \partial_{\mathbf{w}} \|\mathbf{y} - \mathbf{X}\mathbf{w}\|^2 =
+    2 \mathbf{X}^\top (\mathbf{X} \mathbf{w} - \mathbf{y}) = 0
+    \textrm{ and hence }
+    \mathbf{X}^\top \mathbf{y} = \mathbf{X}^\top \mathbf{X} \mathbf{w}.
+\end{aligned}\]</div>
+<p>Solving for <span class="arithmatex">\(\mathbf{w}\)</span> provides us with the optimal solution
+for the optimization problem.
+Note that this solution </p>
+<div class="arithmatex">\[\mathbf{w}^* = (\mathbf X^\top \mathbf X)^{-1}\mathbf X^\top \mathbf{y}\]</div>
+<p>will only be unique
+when the matrix <span class="arithmatex">\(\mathbf X^\top \mathbf X\)</span> is invertible,
+i.e., when the columns of the design matrix
+are linearly independent :cite:<code>Golub.Van-Loan.1996</code>.</p>
+<p>While simple problems like linear regression
+may admit analytic solutions,
+you should not get used to such good fortune.
+Although analytic solutions allow for nice mathematical analysis,
+the requirement of an analytic solution is so restrictive
+that it would exclude almost all exciting aspects of deep learning.</p>
+<h3 id="minibatch-stochastic-gradient-descent">Minibatch Stochastic Gradient Descent<a class="headerlink" href="#minibatch-stochastic-gradient-descent" title="Permanent link">⚓︎</a></h3>
+<p>Fortunately, even in cases where we cannot solve the models analytically,
+we can still often train models effectively in practice.
+Moreover, for many tasks, those hard-to-optimize models
+turn out to be so much better that figuring out how to train them
+ends up being well worth the trouble.</p>
+<p>The key technique for optimizing nearly every deep learning model,
+and which we will call upon throughout this book,
+consists of iteratively reducing the error
+by updating the parameters in the direction
+that incrementally lowers the loss function.
+This algorithm is called <em>gradient descent</em>.</p>
+<p>The most naive application of gradient descent
+consists of taking the derivative of the loss function,
+which is an average of the losses computed
+on every single example in the dataset.
+In practice, this can be extremely slow:
+we must pass over the entire dataset before making a single update,
+even if the update steps might be very powerful :cite:<code>Liu.Nocedal.1989</code>.
+Even worse, if there is a lot of redundancy in the training data,
+the benefit of a full update is limited.</p>
+<p>The other extreme is to consider only a single example at a time and to take
+update steps based on one observation at a time.
+The resulting algorithm, <em>stochastic gradient descent</em> (SGD)
+can be an effective strategy :cite:<code>Bottou.2010</code>, even for large datasets.
+Unfortunately, SGD has drawbacks, both computational and statistical.
+One problem arises from the fact that processors are a lot faster
+multiplying and adding numbers than they are
+at moving data from main memory to processor cache.
+It is up to an order of magnitude more efficient to
+perform a matrix--vector multiplication
+than a corresponding number of vector--vector operations.
+This means that it can take a lot longer to process
+one sample at a time compared to a full batch.
+A second problem is that some of the layers,
+such as batch normalization (to be described in :numref:<code>sec_batch_norm</code>),
+only work well when we have access
+to more than one observation at a time.</p>
+<p>The solution to both problems is to pick an intermediate strategy:
+rather than taking a full batch or only a single sample at a time,
+we take a <em>minibatch</em> of observations :cite:<code>Li.Zhang.Chen.ea.2014</code>.
+The specific choice of the size of the said minibatch depends on many factors,
+such as the amount of memory, the number of accelerators,
+the choice of layers, and the total dataset size.
+Despite all that, a number between 32 and 256,
+preferably a multiple of a large power of <span class="arithmatex">\(2\)</span>, is a good start.
+This leads us to <em>minibatch stochastic gradient descent</em>.</p>
+<p>In its most basic form, in each iteration <span class="arithmatex">\(t\)</span>,
+we first randomly sample a minibatch <span class="arithmatex">\(\mathcal{B}_t\)</span>
+consisting of a fixed number <span class="arithmatex">\(|\mathcal{B}|\)</span> of training examples.
+We then compute the derivative (gradient) of the average loss
+on the minibatch with respect to the model parameters.
+Finally, we multiply the gradient
+by a predetermined small positive value <span class="arithmatex">\(\eta\)</span>,
+called the <em>learning rate</em>,
+and subtract the resulting term from the current parameter values.
+We can express the update as follows:</p>
+<div class="arithmatex">\[(\mathbf{w},b) \leftarrow (\mathbf{w},b) - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}_t} \partial_{(\mathbf{w},b)} l^{(i)}(\mathbf{w},b).\]</div>
+<p>In summary, minibatch SGD proceeds as follows:
+(i) initialize the values of the model parameters, typically at random;
+(ii) iteratively sample random minibatches from the data,
+updating the parameters in the direction of the negative gradient.
+For quadratic losses and affine transformations,
+this has a closed-form expansion:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\begin{aligned} \mathbf{w} &amp; \leftarrow \mathbf{w} - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}_t} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w}, b) &amp;&amp; = \mathbf{w} - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}_t} \mathbf{x}^{(i)} \left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)\\ b &amp;\leftarrow b -  \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}_t} \partial_b l^{(i)}(\mathbf{w}, b) &amp;&amp;  = b - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}_t} \left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right). \end{aligned}\)</span>\)</span>
+:eqlabel:<code>eq_linreg_batch_update</code></p>
+<p>Since we pick a minibatch <span class="arithmatex">\(\mathcal{B}\)</span>
+we need to normalize by its size <span class="arithmatex">\(|\mathcal{B}|\)</span>.
+Frequently minibatch size and learning rate are user-defined.
+Such tunable parameters that are not updated
+in the training loop are called <em>hyperparameters</em>.
+They can be tuned automatically by a number of techniques, such as Bayesian optimization
+:cite:<code>Frazier.2018</code>. In the end, the quality of the solution is
+typically assessed on a separate <em>validation dataset</em> (or <em>validation set</em>).</p>
+<p>After training for some predetermined number of iterations
+(or until some other stopping criterion is met),
+we record the estimated model parameters,
+denoted <span class="arithmatex">\(\hat{\mathbf{w}}, \hat{b}\)</span>.
+Note that even if our function is truly linear and noiseless,
+these parameters will not be the exact minimizers of the loss, nor even deterministic.
+Although the algorithm converges slowly towards the minimizers
+it typically will not find them exactly in a finite number of steps.
+Moreover, the minibatches <span class="arithmatex">\(\mathcal{B}\)</span>
+used for updating the parameters are chosen at random.
+This breaks determinism.</p>
+<p>Linear regression happens to be a learning problem
+with a global minimum
+(whenever <span class="arithmatex">\(\mathbf{X}\)</span> is full rank, or equivalently,
+whenever <span class="arithmatex">\(\mathbf{X}^\top \mathbf{X}\)</span> is invertible).
+However, the loss surfaces for deep networks contain many saddle points and minima.
+Fortunately, we typically do not care about finding
+an exact set of parameters but merely any set of parameters
+that leads to accurate predictions (and thus low loss).
+In practice, deep learning practitioners
+seldom struggle to find parameters
+that minimize the loss <em>on training sets</em>
+:cite:<code>Izmailov.Podoprikhin.Garipov.ea.2018,Frankle.Carbin.2018</code>.
+The more formidable task is to find parameters
+that lead to accurate predictions on previously unseen data,
+a challenge called <em>generalization</em>.
+We return to these topics throughout the book.</p>
+<h3 id="predictions">Predictions<a class="headerlink" href="#predictions" title="Permanent link">⚓︎</a></h3>
+<p>Given the model <span class="arithmatex">\(\hat{\mathbf{w}}^\top \mathbf{x} + \hat{b}\)</span>,
+we can now make <em>predictions</em> for a new example,
+e.g., predicting the sales price of a previously unseen house
+given its area <span class="arithmatex">\(x_1\)</span> and age <span class="arithmatex">\(x_2\)</span>.
+Deep learning practitioners have taken to calling the prediction phase <em>inference</em>
+but this is a bit of a misnomer---<em>inference</em> refers broadly
+to any conclusion reached on the basis of evidence,
+including both the values of the parameters
+and the likely label for an unseen instance.
+If anything, in the statistics literature
+<em>inference</em> more often denotes parameter inference
+and this overloading of terminology creates unnecessary confusion
+when deep learning practitioners talk to statisticians.
+In the following we will stick to <em>prediction</em> whenever possible.</p>
+<h2 id="vectorization-for-speed">Vectorization for Speed<a class="headerlink" href="#vectorization-for-speed" title="Permanent link">⚓︎</a></h2>
+<p>When training our models, we typically want to process
+whole minibatches of examples simultaneously.
+Doing this efficiently requires that (<strong>we</strong>) (~~should~~)
+(<strong>vectorize the calculations and leverage
+fast linear algebra libraries
+rather than writing costly for-loops in Python.</strong>)</p>
+<p>To see why this matters so much,
+let's (<strong>consider two methods for adding vectors.</strong>)
+To start, we instantiate two 10,000-dimensional vectors
+containing all 1s.
+In the first method, we loop over the vectors with a Python for-loop.
+In the second, we rely on a single call to <code>+</code>.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</code></pre></div>
+<p>Now we can benchmark the workloads.
+First, [<strong>we add them, one coordinate at a time,
+using a for-loop.</strong>]</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">pytorch</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1"> sec&#39;</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">d2l</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1"> sec&#39;</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="c1"># JAX arrays are immutable, meaning that once created their contents</span>
+<span class="c1"># cannot be changed. For updating individual elements, JAX provides</span>
+<span class="c1"># an indexed update syntax that returns an updated copy</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1"> sec&#39;</span>
+</code></pre></div>
+<p>(<strong>Alternatively, we rely on the reloaded <code>+</code> operator to compute the elementwise sum.</strong>)</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1"> sec&#39;</span>
+</code></pre></div>
+<p>The second method is dramatically faster than the first.
+Vectorizing code often yields order-of-magnitude speedups.
+Moreover, we push more of the mathematics to the library
+so we do not have to write as many calculations ourselves,
+reducing the potential for errors and increasing portability of the code.</p>
+<h2 id="the-normal-distribution-and-squared-loss">The Normal Distribution and Squared Loss<a class="headerlink" href="#the-normal-distribution-and-squared-loss" title="Permanent link">⚓︎</a></h2>
+<p>:label:<code>subsec_normal_distribution_and_squared_loss</code></p>
+<p>So far we have given a fairly functional motivation
+of the squared loss objective:
+the optimal parameters return the conditional expectation <span class="arithmatex">\(E[Y\mid X]\)</span>
+whenever the underlying pattern is truly linear,
+and the loss assigns large penalties for outliers.
+We can also provide a more formal motivation
+for the squared loss objective
+by making probabilistic assumptions
+about the distribution of noise.</p>
+<p>Linear regression was invented at the turn of the 19th century.
+While it has long been debated whether Gauss or Legendre
+first thought up the idea,
+it was Gauss who also discovered the normal distribution
+(also called the <em>Gaussian</em>).
+It turns out that the normal distribution
+and linear regression with squared loss
+share a deeper connection than common parentage.</p>
+<p>To begin, recall that a normal distribution
+with mean <span class="arithmatex">\(\mu\)</span> and variance <span class="arithmatex">\(\sigma^2\)</span> (standard deviation <span class="arithmatex">\(\sigma\)</span>)
+is given as</p>
+<div class="arithmatex">\[p(x) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\frac{1}{2 \sigma^2} (x - \mu)^2\right).\]</div>
+<p>Below [<strong>we define a function to compute the normal distribution</strong>].</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="k">def</span> <span class="nf">normal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tab</span><span class="o">.</span><span class="n">selected</span><span class="p">(</span><span class="s1">&#39;jax&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">p</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tab</span><span class="o">.</span><span class="n">selected</span><span class="p">(</span><span class="s1">&#39;pytorch&#39;</span><span class="p">,</span> <span class="s1">&#39;mxnet&#39;</span><span class="p">,</span> <span class="s1">&#39;tensorflow&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+<p>We can now (<strong>visualize the normal distributions</strong>).</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="c1"># Use NumPy again for visualization</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+
+<span class="c1"># Mean and standard deviation pairs</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="p">[</span><span class="n">normal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="ow">in</span> <span class="n">params</span><span class="p">],</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span>
+         <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;p(x)&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span>
+         <span class="n">legend</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;mean </span><span class="si">{</span><span class="n">mu</span><span class="si">}</span><span class="s1">, std </span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="ow">in</span> <span class="n">params</span><span class="p">])</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span><span class="p">,</span> <span class="n">tensorflow</span><span class="p">,</span> <span class="n">jax</span>
+<span class="k">if</span> <span class="n">tab</span><span class="o">.</span><span class="n">selected</span><span class="p">(</span><span class="s1">&#39;jax&#39;</span><span class="p">):</span>
+    <span class="c1"># Use JAX NumPy for visualization</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">tab</span><span class="o">.</span><span class="n">selected</span><span class="p">(</span><span class="s1">&#39;pytorch&#39;</span><span class="p">,</span> <span class="s1">&#39;mxnet&#39;</span><span class="p">,</span> <span class="s1">&#39;tensorflow&#39;</span><span class="p">):</span>
+    <span class="c1"># Use NumPy again for visualization</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+
+<span class="c1"># Mean and standard deviation pairs</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">normal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span> <span class="k">for</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="ow">in</span> <span class="n">params</span><span class="p">],</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span>
+         <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;p(x)&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span>
+         <span class="n">legend</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;mean </span><span class="si">{</span><span class="n">mu</span><span class="si">}</span><span class="s1">, std </span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="ow">in</span> <span class="n">params</span><span class="p">])</span>
+</code></pre></div>
+<p>Note that changing the mean corresponds
+to a shift along the <span class="arithmatex">\(x\)</span>-axis,
+and increasing the variance
+spreads the distribution out,
+lowering its peak.</p>
+<p>One way to motivate linear regression with squared loss
+is to assume that observations arise from noisy measurements,
+where the noise <span class="arithmatex">\(\epsilon\)</span> follows the normal distribution 
+<span class="arithmatex">\(\mathcal{N}(0, \sigma^2)\)</span>:</p>
+<div class="arithmatex">\[y = \mathbf{w}^\top \mathbf{x} + b + \epsilon \textrm{ where } \epsilon \sim \mathcal{N}(0, \sigma^2).\]</div>
+<p>Thus, we can now write out the <em>likelihood</em>
+of seeing a particular <span class="arithmatex">\(y\)</span> for a given <span class="arithmatex">\(\mathbf{x}\)</span> via</p>
+<div class="arithmatex">\[P(y \mid \mathbf{x}) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\frac{1}{2 \sigma^2} (y - \mathbf{w}^\top \mathbf{x} - b)^2\right).\]</div>
+<p>As such, the likelihood factorizes.
+According to <em>the principle of maximum likelihood</em>,
+the best values of parameters <span class="arithmatex">\(\mathbf{w}\)</span> and <span class="arithmatex">\(b\)</span> are those
+that maximize the <em>likelihood</em> of the entire dataset:</p>
+<div class="arithmatex">\[P(\mathbf y \mid \mathbf X) = \prod_{i=1}^{n} p(y^{(i)} \mid \mathbf{x}^{(i)}).\]</div>
+<p>The equality follows since all pairs <span class="arithmatex">\((\mathbf{x}^{(i)}, y^{(i)})\)</span>
+were drawn independently of each other.
+Estimators chosen according to the principle of maximum likelihood
+are called <em>maximum likelihood estimators</em>.
+While, maximizing the product of many exponential functions,
+might look difficult,
+we can simplify things significantly, without changing the objective,
+by maximizing the logarithm of the likelihood instead.
+For historical reasons, optimizations are more often expressed
+as minimization rather than maximization.
+So, without changing anything,
+we can <em>minimize</em> the <em>negative log-likelihood</em>,
+which we can express as follows:</p>
+<div class="arithmatex">\[-\log P(\mathbf y \mid \mathbf X) = \sum_{i=1}^n \frac{1}{2} \log(2 \pi \sigma^2) + \frac{1}{2 \sigma^2} \left(y^{(i)} - \mathbf{w}^\top \mathbf{x}^{(i)} - b\right)^2.\]</div>
+<p>If we assume that <span class="arithmatex">\(\sigma\)</span> is fixed,
+we can ignore the first term,
+because it does not depend on <span class="arithmatex">\(\mathbf{w}\)</span> or <span class="arithmatex">\(b\)</span>.
+The second term is identical
+to the squared error loss introduced earlier,
+except for the multiplicative constant <span class="arithmatex">\(\frac{1}{\sigma^2}\)</span>.
+Fortunately, the solution does not depend on <span class="arithmatex">\(\sigma\)</span> either.
+It follows that minimizing the mean squared error
+is equivalent to the maximum likelihood estimation
+of a linear model under the assumption of additive Gaussian noise.</p>
+<h2 id="linear-regression-as-a-neural-network">Linear Regression as a Neural Network<a class="headerlink" href="#linear-regression-as-a-neural-network" title="Permanent link">⚓︎</a></h2>
+<p>While linear models are not sufficiently rich
+to express the many complicated networks
+that we will introduce in this book,
+(artificial) neural networks are rich enough
+to subsume linear models as networks
+in which every feature is represented by an input neuron,
+all of which are connected directly to the output.</p>
+<p>:numref:<code>fig_single_neuron</code> depicts
+linear regression as a neural network.
+The diagram highlights the connectivity pattern,
+such as how each input is connected to the output,
+but not the specific values taken by the weights or biases.</p>
+<p><img alt="Linear regression is a single-layer neural network." src="../../img/singleneuron.svg" />
+:label:<code>fig_single_neuron</code></p>
+<p>The inputs are <span class="arithmatex">\(x_1, \ldots, x_d\)</span>.
+We refer to <span class="arithmatex">\(d\)</span> as the <em>number of inputs</em>
+or the <em>feature dimensionality</em> in the input layer.
+The output of the network is <span class="arithmatex">\(o_1\)</span>.
+Because we are just trying to predict
+a single numerical value,
+we have only one output neuron.
+Note that the input values are all <em>given</em>.
+There is just a single <em>computed</em> neuron.
+In summary, we can think of linear regression
+as a single-layer fully connected neural network.
+We will encounter networks
+with far more layers
+in later chapters.</p>
+<h3 id="biology">Biology<a class="headerlink" href="#biology" title="Permanent link">⚓︎</a></h3>
+<p>Because linear regression predates computational neuroscience,
+it might seem anachronistic to describe
+linear regression in terms of neural networks.
+Nonetheless, they were a natural place to start
+when the cyberneticists and neurophysiologists
+Warren McCulloch and Walter Pitts began to develop
+models of artificial neurons.
+Consider the cartoonish picture
+of a biological neuron in :numref:<code>fig_Neuron</code>,
+consisting of <em>dendrites</em> (input terminals),
+the <em>nucleus</em> (CPU), the <em>axon</em> (output wire),
+and the <em>axon terminals</em> (output terminals),
+enabling connections to other neurons via <em>synapses</em>.</p>
+<p><img alt="The real neuron (source: &quot;Anatomy and Physiology&quot; by the US National Cancer Institute's Surveillance, Epidemiology and End Results (SEER) Program)." src="../../img/neuron.svg" />
+:label:<code>fig_Neuron</code></p>
+<p>Information <span class="arithmatex">\(x_i\)</span> arriving from other neurons
+(or environmental sensors) is received in the dendrites.
+In particular, that information is weighted
+by <em>synaptic weights</em> <span class="arithmatex">\(w_i\)</span>,
+determining the effect of the inputs,
+e.g., activation or inhibition via the product <span class="arithmatex">\(x_i w_i\)</span>.
+The weighted inputs arriving from multiple sources
+are aggregated in the nucleus
+as a weighted sum <span class="arithmatex">\(y = \sum_i x_i w_i + b\)</span>,
+possibly subject to some nonlinear postprocessing via a function <span class="arithmatex">\(\sigma(y)\)</span>.
+This information is then sent via the axon to the axon terminals,
+where it reaches its destination
+(e.g., an actuator such as a muscle)
+or it is fed into another neuron via its dendrites.</p>
+<p>Certainly, the high-level idea that many such units
+could be combined, provided they have the correct connectivity and learning algorithm,
+to produce far more interesting and complex behavior
+than any one neuron alone could express
+arises from our study of real biological neural systems.
+At the same time, most research in deep learning today
+draws inspiration from a much wider source.
+We invoke :citet:<code>Russell.Norvig.2016</code>
+who pointed out that although airplanes might have been <em>inspired</em> by birds,
+ornithology has not been the primary driver
+of aeronautics innovation for some centuries.
+Likewise, inspiration in deep learning these days
+comes in equal or greater measure
+from mathematics, linguistics, psychology,
+statistics, computer science, and many other fields.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">⚓︎</a></h2>
+<p>In this section, we introduced
+traditional linear regression,
+where the parameters of a linear function
+are chosen to minimize squared loss on the training set.
+We also motivated this choice of objective
+both via some practical considerations
+and through an interpretation
+of linear regression as maximimum likelihood estimation
+under an assumption of linearity and Gaussian noise.
+After discussing both computational considerations
+and connections to statistics,
+we showed how such linear models could be expressed
+as simple neural networks where the inputs
+are directly wired to the output(s).
+While we will soon move past linear models altogether,
+they are sufficient to introduce most of the components
+that all of our models require:
+parametric forms, differentiable objectives,
+optimization via minibatch stochastic gradient descent,
+and ultimately, evaluation on previously unseen data.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>Assume that we have some data <span class="arithmatex">\(x_1, \ldots, x_n \in \mathbb{R}\)</span>. Our goal is to find a constant <span class="arithmatex">\(b\)</span> such that <span class="arithmatex">\(\sum_i (x_i - b)^2\)</span> is minimized.<ol>
+<li>Find an analytic solution for the optimal value of <span class="arithmatex">\(b\)</span>.</li>
+<li>How does this problem and its solution relate to the normal distribution?</li>
+<li>What if we change the loss from <span class="arithmatex">\(\sum_i (x_i - b)^2\)</span> to <span class="arithmatex">\(\sum_i |x_i-b|\)</span>? Can you find the optimal solution for <span class="arithmatex">\(b\)</span>?</li>
+</ol>
+</li>
+<li>Prove that the affine functions that can be expressed by <span class="arithmatex">\(\mathbf{x}^\top \mathbf{w} + b\)</span> are equivalent to linear functions on <span class="arithmatex">\((\mathbf{x}, 1)\)</span>.</li>
+<li>Assume that you want to find quadratic functions of <span class="arithmatex">\(\mathbf{x}\)</span>, i.e., <span class="arithmatex">\(f(\mathbf{x}) = b + \sum_i w_i x_i + \sum_{j \leq i} w_{ij} x_{i} x_{j}\)</span>. How would you formulate this in a deep network?</li>
+<li>Recall that one of the conditions for the linear regression problem to be solvable was that the design matrix <span class="arithmatex">\(\mathbf{X}^\top \mathbf{X}\)</span> has full rank.<ol>
+<li>What happens if this is not the case?</li>
+<li>How could you fix it? What happens if you add a small amount of coordinate-wise independent Gaussian noise to all entries of <span class="arithmatex">\(\mathbf{X}\)</span>?</li>
+<li>What is the expected value of the design matrix <span class="arithmatex">\(\mathbf{X}^\top \mathbf{X}\)</span> in this case?</li>
+<li>What happens with stochastic gradient descent when <span class="arithmatex">\(\mathbf{X}^\top \mathbf{X}\)</span> does not have full rank?</li>
+</ol>
+</li>
+<li>Assume that the noise model governing the additive noise <span class="arithmatex">\(\epsilon\)</span> is the exponential distribution. That is, <span class="arithmatex">\(p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)\)</span>.<ol>
+<li>Write out the negative log-likelihood of the data under the model <span class="arithmatex">\(-\log P(\mathbf y \mid \mathbf X)\)</span>.</li>
+<li>Can you find a closed form solution?</li>
+<li>Suggest a minibatch stochastic gradient descent algorithm to solve this problem. What could possibly go wrong (hint: what happens near the stationary point as we keep on updating the parameters)? Can you fix this?</li>
+</ol>
+</li>
+<li>Assume that we want to design a neural network with two layers by composing two linear layers. That is, the output of the first layer becomes the input of the second layer. Why would such a naive composition not work?</li>
+<li>What happens if you want to use regression for realistic price estimation of houses or stock prices?<ol>
+<li>Show that the additive Gaussian noise assumption is not appropriate. Hint: can we have negative prices? What about fluctuations?</li>
+<li>Why would regression to the logarithm of the price be much better, i.e., <span class="arithmatex">\(y = \log \textrm{price}\)</span>?</li>
+<li>What do you need to worry about when dealing with pennystock, i.e., stock with very low prices? Hint: can you trade at all possible prices? Why is this a bigger problem for cheap stock? For more information review the celebrated Black--Scholes model for option pricing :cite:<code>Black.Scholes.1973</code>.</li>
+</ol>
+</li>
+<li>Suppose we want to use regression to estimate the <em>number</em> of apples sold in a grocery store.<ol>
+<li>What are the problems with a Gaussian additive noise model? Hint: you are selling apples, not oil.</li>
+<li>The <a href="https://en.wikipedia.org/wiki/Poisson_distribution">Poisson distribution</a> captures distributions over counts. It is given by <span class="arithmatex">\(p(k \mid \lambda) = \lambda^k e^{-\lambda}/k!\)</span>. Here <span class="arithmatex">\(\lambda\)</span> is the rate function and <span class="arithmatex">\(k\)</span> is the number of events you see. Prove that <span class="arithmatex">\(\lambda\)</span> is the expected value of counts <span class="arithmatex">\(k\)</span>.</li>
+<li>Design a loss function associated with the Poisson distribution.</li>
+<li>Design a loss function for estimating <span class="arithmatex">\(\log \lambda\)</span> instead.</li>
+</ol>
+</li>
+</ol>
+<p>:begin_tab:<code>mxnet</code>
+<a href="https://discuss.d2l.ai/t/40">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>pytorch</code>
+<a href="https://discuss.d2l.ai/t/258">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>tensorflow</code>
+<a href="https://discuss.d2l.ai/t/259">Discussions</a>
+:end_tab:</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../linear-regression-scratch/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Linear regression scratch">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Linear regression scratch
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../oo-design/" class="md-footer__link md-footer__link--next" aria-label="下一页: Oo design">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Oo design
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Ean Yang
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/YQisme" target="_blank" rel="noopener" title="github主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://space.bilibili.com/244185393?spm_id_from=333.788.0.0" target="_blank" rel="noopener" title="b站主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M488.6 104.1c16.7 18.1 24.4 39.7 23.3 65.7v202.4c-.4 26.4-9.2 48.1-26.5 65.1-17.2 17-39.1 25.9-65.5 26.7H92.02c-26.45-.8-48.21-9.8-65.28-27.2C9.682 419.4.767 396.5 0 368.2V169.8c.767-26 9.682-47.6 26.74-65.7C43.81 87.75 65.57 78.77 92.02 78h29.38L96.05 52.19c-5.75-5.73-8.63-13-8.63-21.79 0-8.8 2.88-16.06 8.63-21.797C101.8 2.868 109.1 0 117.9 0s16.1 2.868 21.9 8.603L213.1 78h88l74.5-69.397C381.7 2.868 389.2 0 398 0c8.8 0 16.1 2.868 21.9 8.603 5.7 5.737 8.6 12.997 8.6 21.797 0 8.79-2.9 16.06-8.6 21.79L394.6 78h29.3c26.4.77 48 9.75 64.7 26.1zm-38.8 69.7c-.4-9.6-3.7-17.4-10.7-23.5-5.2-6.1-14-9.4-22.7-9.8H96.05c-9.59.4-17.45 3.7-23.58 9.8-6.14 6.1-9.4 13.9-9.78 23.5v194.4c0 9.2 3.26 17 9.78 23.5s14.38 9.8 23.58 9.8H416.4c9.2 0 17-3.3 23.3-9.8 6.3-6.5 9.7-14.3 10.1-23.5V173.8zm-264.3 42.7c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.2 6.3-14 9.5-23.6 9.5-9.6 0-17.5-3.2-23.6-9.5-6.1-6.3-9.4-14-9.8-23.2v-33.3c.4-9.1 3.8-16.9 10.1-23.2 6.3-6.3 13.2-9.6 23.3-10 9.2.4 17 3.7 23.3 10zm191.5 0c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.1 6.3-14 9.5-23.6 9.5-9.6 0-17.4-3.2-23.6-9.5-7-6.3-9.4-14-9.7-23.2v-33.3c.3-9.1 3.7-16.9 10-23.2 6.3-6.3 14.1-9.6 23.3-10 9.2.4 17 3.7 23.3 10z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://eanyang7.com" target="_blank" rel="noopener" title="个人主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm40 304v128c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9l-28.6 47.6c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352h-16z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.prune", "navigation.top", "toc.follow", "header.autohide", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.6c14ae12.min.js"></script>
+      
+    
+  </body>
+</html>

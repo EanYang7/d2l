@@ -1,0 +1,3527 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《动手学深度学习》">
+      
+      
+        <meta name="author" content="Ean Yang">
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/d2l/%E6%95%99%E7%A8%8B/02-preliminaries/probability/">
+      
+      
+        <link rel="prev" href="../pandas/">
+      
+      
+        <link rel="next" href="../../03-linear-regression/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.jpg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.12">
+    
+    
+      
+        <title>Probability - 动手学深度学习 Dive into Deep Learning#</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#probability-and-statistics" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-header__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            动手学深度学习 Dive into Deep Learning#
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Probability
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-tabs__link">
+          
+  
+  练习
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-nav__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    动手学深度学习 Dive into Deep Learning#
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    教程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-Introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    安装
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Notation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    02 preliminaries
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            02 preliminaries
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preliminaries
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../autograd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Autograd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../calculus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Calculus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear-algebra/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linear algebra
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lookup-api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lookup api
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ndarray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ndarray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pandas
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Probability
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Probability
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-simple-example-tossing-coins" class="md-nav__link">
+    <span class="md-ellipsis">
+      A Simple Example: Tossing Coins
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-more-formal-treatment" class="md-nav__link">
+    <span class="md-ellipsis">
+      A More Formal Treatment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#random-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Random Variables
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiple-random-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple Random Variables
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#an-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      An Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expectations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Expectations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Discussion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../03-linear-regression/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    03 linear regression
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../04-linear-classification/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    04 linear classification
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../05-multilayer-perceptrons/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    05 multilayer perceptrons
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../06-builders-guide/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    06 builders guide
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../07-convolutional-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    07 convolutional modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../08-convolutional-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    08 convolutional neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../09-recurrent-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    09 recurrent neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../10-recurrent-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    10 recurrent modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../11-attention-mechanisms-and-transformers/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    11 attention mechanisms and transformers
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../12-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    12 optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../13-computational-performance/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    13 computational performance
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../14-computer-vision/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    14 computer vision
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../15-natural-language-processing-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    15 natural language processing pretraining
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../16-natural-language-processing-applications/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    16 natural language processing applications
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../17-reinforcement-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    17 reinforcement learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../18-gaussian-processes/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    18 gaussian processes
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../19-hyperparameter-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    19 hyperparameter optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../20-generative-adversarial-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    20 generative adversarial networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../21-recommender-systems/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    21 recommender systems
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../22-appendix-mathematics-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    22 appendix mathematics for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../23-appendix-tools-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    23 appendix tools for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../contrib/fasttext-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Contrib
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    练习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            练习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    动手学深度学习习题解答
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch02
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch03/ch03/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch03
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch04/ch04/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch04
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch05/ch05/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch05
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch06/ch06/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch06
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch07/ch07/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch07
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch08/ch08/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch08
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch09/ch09/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch09
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch10/ch10/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch10
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch11/ch11/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch11
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch12/ch12/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch12
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch13/ch13/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch13
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch14/ch14/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch14
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch15/ch15/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch15
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/notebooks/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-simple-example-tossing-coins" class="md-nav__link">
+    <span class="md-ellipsis">
+      A Simple Example: Tossing Coins
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-more-formal-treatment" class="md-nav__link">
+    <span class="md-ellipsis">
+      A More Formal Treatment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#random-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Random Variables
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiple-random-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple Random Variables
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#an-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      An Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expectations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Expectations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Discussion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/02-preliminaries/probability.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/02-preliminaries/probability.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<div class="input highlight"><pre><span></span><code><span class="o">%</span><span class="n">load_ext</span> <span class="n">d2lbook</span><span class="o">.</span><span class="n">tab</span>
+<span class="n">tab</span><span class="o">.</span><span class="n">interact_select</span><span class="p">([</span><span class="s1">&#39;mxnet&#39;</span><span class="p">,</span> <span class="s1">&#39;pytorch&#39;</span><span class="p">,</span> <span class="s1">&#39;tensorflow&#39;</span><span class="p">,</span> <span class="s1">&#39;jax&#39;</span><span class="p">])</span>
+</code></pre></div>
+<h1 id="probability-and-statistics">Probability and Statistics<a class="headerlink" href="#probability-and-statistics" title="Permanent link">⚓︎</a></h1>
+<p>:label:<code>sec_prob</code></p>
+<p>One way or another,
+machine learning is all about uncertainty.
+In supervised learning, we want to predict
+something unknown (the <em>target</em>)
+given something known (the <em>features</em>).
+Depending on our objective,
+we might attempt to predict
+the most likely value of the target.
+Or we might predict the value with the smallest
+expected distance from the target.
+And sometimes we wish not only
+to predict a specific value
+but to <em>quantify our uncertainty</em>.
+For example, given some features
+describing a patient,
+we might want to know <em>how likely</em> they are
+to suffer a heart attack in the next year.
+In unsupervised learning,
+we often care about uncertainty.
+To determine whether a set of measurements are anomalous,
+it helps to know how likely one is
+to observe values in a population of interest.
+Furthermore, in reinforcement learning,
+we wish to develop agents
+that act intelligently in various environments.
+This requires reasoning about
+how an environment might be expected to change
+and what rewards one might expect to encounter
+in response to each of the available actions.</p>
+<p><em>Probability</em> is the mathematical field
+concerned with reasoning under uncertainty.
+Given a probabilistic model of some process,
+we can reason about the likelihood of various events.
+The use of probabilities to describe
+the frequencies of repeatable events
+(like coin tosses)
+is fairly uncontroversial.
+In fact, <em>frequentist</em> scholars adhere
+to an interpretation of probability
+that applies <em>only</em> to such repeatable events.
+By contrast <em>Bayesian</em> scholars
+use the language of probability more broadly
+to formalize reasoning under uncertainty.
+Bayesian probability is characterized
+by two unique features:
+(i) assigning degrees of belief
+to non-repeatable events,
+e.g., what is the <em>probability</em>
+that a dam will collapse?;
+and (ii) subjectivity. While Bayesian
+probability provides unambiguous rules
+for how one should update their beliefs
+in light of new evidence,
+it allows for different individuals
+to start off with different <em>prior</em> beliefs.
+<em>Statistics</em> helps us to reason backwards,
+starting off with collection and organization of data
+and backing out to what inferences
+we might draw about the process
+that generated the data.
+Whenever we analyze a dataset, hunting for patterns
+that we hope might characterize a broader population,
+we are employing statistical thinking.
+Many courses, majors, theses, careers, departments,
+companies, and institutions have been devoted
+to the study of probability and statistics.
+While this section only scratches the surface,
+we will provide the foundation
+that you need to begin building models.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+<span class="kn">from</span> <span class="nn">mxnet.numpy.random</span> <span class="kn">import</span> <span class="n">multinomial</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">torch</span> <span class="k">as</span> <span class="n">d2l</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.multinomial</span> <span class="kn">import</span> <span class="n">Multinomial</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">d2l</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow_probability</span> <span class="kn">import</span> <span class="n">distributions</span> <span class="k">as</span> <span class="n">tfd</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">jax</span> <span class="k">as</span> <span class="n">d2l</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</code></pre></div>
+<h2 id="a-simple-example-tossing-coins">A Simple Example: Tossing Coins<a class="headerlink" href="#a-simple-example-tossing-coins" title="Permanent link">⚓︎</a></h2>
+<p>Imagine that we plan to toss a coin
+and want to quantify how likely
+we are to see heads (vs. tails).
+If the coin is <em>fair</em>,
+then both outcomes
+(heads and tails),
+are equally likely.
+Moreover if we plan to toss the coin <span class="arithmatex">\(n\)</span> times
+then the fraction of heads
+that we <em>expect</em> to see
+should exactly match
+the <em>expected</em> fraction of tails.
+One intuitive way to see this
+is by symmetry:
+for every possible outcome
+with <span class="arithmatex">\(n_\textrm{h}\)</span> heads and <span class="arithmatex">\(n_\textrm{t} = (n - n_\textrm{h})\)</span> tails,
+there is an equally likely outcome
+with <span class="arithmatex">\(n_\textrm{t}\)</span> heads and <span class="arithmatex">\(n_\textrm{h}\)</span> tails.
+Note that this is only possible
+if on average we expect to see
+<span class="arithmatex">\(1/2\)</span> of tosses come up heads
+and <span class="arithmatex">\(1/2\)</span> come up tails.
+Of course, if you conduct this experiment
+many times with <span class="arithmatex">\(n=1000000\)</span> tosses each,
+you might never see a trial
+where <span class="arithmatex">\(n_\textrm{h} = n_\textrm{t}\)</span> exactly.</p>
+<p>Formally, the quantity <span class="arithmatex">\(1/2\)</span> is called a <em>probability</em>
+and here it captures the certainty with which
+any given toss will come up heads.
+Probabilities assign scores between <span class="arithmatex">\(0\)</span> and <span class="arithmatex">\(1\)</span>
+to outcomes of interest, called <em>events</em>.
+Here the event of interest is <span class="arithmatex">\(\textrm{heads}\)</span>
+and we denote the corresponding probability <span class="arithmatex">\(P(\textrm{heads})\)</span>.
+A probability of <span class="arithmatex">\(1\)</span> indicates absolute certainty
+(imagine a trick coin where both sides were heads)
+and a probability of <span class="arithmatex">\(0\)</span> indicates impossibility
+(e.g., if both sides were tails).
+The frequencies <span class="arithmatex">\(n_\textrm{h}/n\)</span> and <span class="arithmatex">\(n_\textrm{t}/n\)</span> are not probabilities
+but rather <em>statistics</em>.
+Probabilities are <em>theoretical</em> quantities
+that underly the data generating process.
+Here, the probability <span class="arithmatex">\(1/2\)</span>
+is a property of the coin itself.
+By contrast, statistics are <em>empirical</em> quantities
+that are computed as functions of the observed data.
+Our interests in probabilistic and statistical quantities
+are inextricably intertwined.
+We often design special statistics called <em>estimators</em>
+that, given a dataset, produce <em>estimates</em>
+of model parameters such as probabilities.
+Moreover, when those estimators satisfy
+a nice property called <em>consistency</em>,
+our estimates will converge
+to the corresponding probability.
+In turn, these inferred probabilities
+tell about the likely statistical properties
+of data from the same population
+that we might encounter in the future.</p>
+<p>Suppose that we stumbled upon a real coin
+for which we did not know
+the true <span class="arithmatex">\(P(\textrm{heads})\)</span>.
+To investigate this quantity
+with statistical methods,
+we need to (i) collect some data;
+and (ii) design an estimator.
+Data acquisition here is easy;
+we can toss the coin many times
+and record all the outcomes.
+Formally, drawing realizations
+from some underlying random process
+is called <em>sampling</em>.
+As you might have guessed,
+one natural estimator
+is the ratio of
+the number of observed <em>heads</em>
+to the total number of tosses.</p>
+<p>Now, suppose that the coin was in fact fair,
+i.e., <span class="arithmatex">\(P(\textrm{heads}) = 0.5\)</span>.
+To simulate tosses of a fair coin,
+we can invoke any random number generator.
+There are some easy ways to draw samples
+of an event with probability <span class="arithmatex">\(0.5\)</span>.
+For example Python's <code>random.random</code>
+yields numbers in the interval <span class="arithmatex">\([0,1]\)</span>
+where the probability of lying
+in any sub-interval <span class="arithmatex">\([a, b] \subset [0,1]\)</span>
+is equal to <span class="arithmatex">\(b-a\)</span>.
+Thus we can get out <code>0</code> and <code>1</code> with probability <code>0.5</code> each
+by testing whether the returned float number is greater than <code>0.5</code>:</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="nb">all</span>
+<span class="n">num_tosses</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">heads</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_tosses</span><span class="p">)])</span>
+<span class="n">tails</span> <span class="o">=</span> <span class="n">num_tosses</span> <span class="o">-</span> <span class="n">heads</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;heads, tails: &quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">heads</span><span class="p">,</span> <span class="n">tails</span><span class="p">])</span>
+</code></pre></div>
+<p>More generally, we can simulate multiple draws
+from any variable with a finite number
+of possible outcomes
+(like the toss of a coin or roll of a die)
+by calling the multinomial function,
+setting the first argument
+to the number of draws
+and the second as a list of probabilities
+associated with each of the possible outcomes.
+To simulate ten tosses of a fair coin,
+we assign probability vector <code>[0.5, 0.5]</code>,
+interpreting index 0 as heads
+and index 1 as tails.
+The function returns a vector
+with length equal to the number
+of possible outcomes (here, 2),
+where the first component tells us
+the number of occurrences of heads
+and the second component tells us
+the number of occurrences of tails.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">fair_probs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+<span class="n">multinomial</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">fair_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="n">Multinomial</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">fair_probs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="n">tfd</span><span class="o">.</span><span class="n">Multinomial</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">fair_probs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+<span class="c1"># jax.random does not have multinomial distribution implemented</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span>
+</code></pre></div>
+<p>Each time you run this sampling process,
+you will receive a new random value
+that may differ from the previous outcome.
+Dividing by the number of tosses
+gives us the <em>frequency</em>
+of each outcome in our data.
+Note that these frequencies,
+just like the probabilities
+that they are intended
+to estimate, sum to <span class="arithmatex">\(1\)</span>.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">multinomial</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">Multinomial</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="o">/</span> <span class="mi">100</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">tfd</span><span class="o">.</span><span class="n">Multinomial</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="o">/</span> <span class="mi">100</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+</code></pre></div>
+<p>Here, even though our simulated coin is fair
+(we ourselves set the probabilities <code>[0.5, 0.5]</code>),
+the counts of heads and tails may not be identical.
+That is because we only drew a relatively small number of samples.
+If we did not implement the simulation ourselves,
+and only saw the outcome,
+how would we know if the coin were slightly unfair
+or if the possible deviation from <span class="arithmatex">\(1/2\)</span> was
+just an artifact of the small sample size?
+Let's see what happens when we simulate 10,000 tosses.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">multinomial</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">counts</span> <span class="o">/</span> <span class="mi">10000</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">Multinomial</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="n">counts</span> <span class="o">/</span> <span class="mi">10000</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Multinomial</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="n">counts</span> <span class="o">/</span> <span class="mi">10000</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">counts</span> <span class="o">/</span> <span class="mi">10000</span>
+</code></pre></div>
+<p>In general, for averages of repeated events (like coin tosses),
+as the number of repetitions grows,
+our estimates are guaranteed to converge
+to the true underlying probabilities.
+The mathematical formulation of this phenomenon
+is called the <em>law of large numbers</em>
+and the <em>central limit theorem</em>
+tells us that in many situations,
+as the sample size <span class="arithmatex">\(n\)</span> grows,
+these errors should go down
+at a rate of <span class="arithmatex">\((1/\sqrt{n})\)</span>.
+Let's get some more intuition by studying
+how our estimate evolves as we grow
+the number of tosses from 1 to 10,000.</p>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">pytorch</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">Multinomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="mi">10000</span><span class="p">,))</span>
+<span class="n">cum_counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">estimates</span> <span class="o">=</span> <span class="n">cum_counts</span> <span class="o">/</span> <span class="n">cum_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">estimates</span> <span class="o">=</span> <span class="n">estimates</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+<span class="n">d2l</span><span class="o">.</span><span class="n">set_figsize</span><span class="p">((</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">estimates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;P(coin=heads)&quot;</span><span class="p">))</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">estimates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;P(coin=tails)&quot;</span><span class="p">))</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Samples&#39;</span><span class="p">)</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Estimated probability&#39;</span><span class="p">)</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">multinomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">cum_counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">estimates</span> <span class="o">=</span> <span class="n">cum_counts</span> <span class="o">/</span> <span class="n">cum_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">tensorflow</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Multinomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">cum_counts</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">estimates</span> <span class="o">=</span> <span class="n">cum_counts</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">cum_counts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">estimates</span> <span class="o">=</span> <span class="n">estimates</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">jax</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">cum_counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">estimates</span> <span class="o">=</span> <span class="n">cum_counts</span> <span class="o">/</span> <span class="n">cum_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<div class="input highlight"><pre><span></span><code><span class="o">%%</span><span class="n">tab</span> <span class="n">mxnet</span><span class="p">,</span> <span class="n">tensorflow</span><span class="p">,</span> <span class="n">jax</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">set_figsize</span><span class="p">((</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">estimates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;P(coin=heads)&quot;</span><span class="p">))</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">estimates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;P(coin=tails)&quot;</span><span class="p">))</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Samples&#39;</span><span class="p">)</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Estimated probability&#39;</span><span class="p">)</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</code></pre></div>
+<p>Each solid curve corresponds to one of the two values of the coin
+and gives our estimated probability that the coin turns up that value
+after each group of experiments.
+The dashed black line gives the true underlying probability.
+As we get more data by conducting more experiments,
+the curves converge towards the true probability.
+You might already begin to see the shape
+of some of the more advanced questions
+that preoccupy statisticians:
+How quickly does this convergence happen?
+If we had already tested many coins
+manufactured at the same plant,
+how might we incorporate this information?</p>
+<h2 id="a-more-formal-treatment">A More Formal Treatment<a class="headerlink" href="#a-more-formal-treatment" title="Permanent link">⚓︎</a></h2>
+<p>We have already gotten pretty far: posing
+a probabilistic model,
+generating synthetic data,
+running a statistical estimator,
+empirically assessing convergence,
+and reporting error metrics (checking the deviation).
+However, to go much further,
+we will need to be more precise.</p>
+<p>When dealing with randomness,
+we denote the set of possible outcomes <span class="arithmatex">\(\mathcal{S}\)</span>
+and call it the <em>sample space</em> or <em>outcome space</em>.
+Here, each element is a distinct possible <em>outcome</em>.
+In the case of rolling a single coin,
+<span class="arithmatex">\(\mathcal{S} = \{\textrm{heads}, \textrm{tails}\}\)</span>.
+For a single die, <span class="arithmatex">\(\mathcal{S} = \{1, 2, 3, 4, 5, 6\}\)</span>.
+When flipping two coins, possible outcomes are
+<span class="arithmatex">\(\{(\textrm{heads}, \textrm{heads}), (\textrm{heads}, \textrm{tails}), (\textrm{tails}, \textrm{heads}),  (\textrm{tails}, \textrm{tails})\}\)</span>.
+<em>Events</em> are subsets of the sample space.
+For instance, the event "the first coin toss comes up heads"
+corresponds to the set <span class="arithmatex">\(\{(\textrm{heads}, \textrm{heads}), (\textrm{heads}, \textrm{tails})\}\)</span>.
+Whenever the outcome <span class="arithmatex">\(z\)</span> of a random experiment satisfies
+<span class="arithmatex">\(z \in \mathcal{A}\)</span>, then event <span class="arithmatex">\(\mathcal{A}\)</span> has occurred.
+For a single roll of a die, we could define the events
+"seeing a <span class="arithmatex">\(5\)</span>" (<span class="arithmatex">\(\mathcal{A} = \{5\}\)</span>)
+and "seeing an odd number"  (<span class="arithmatex">\(\mathcal{B} = \{1, 3, 5\}\)</span>).
+In this case, if the die came up <span class="arithmatex">\(5\)</span>,
+we would say that both <span class="arithmatex">\(\mathcal{A}\)</span> and <span class="arithmatex">\(\mathcal{B}\)</span> occurred.
+On the other hand, if <span class="arithmatex">\(z = 3\)</span>,
+then <span class="arithmatex">\(\mathcal{A}\)</span> did not occur
+but <span class="arithmatex">\(\mathcal{B}\)</span> did.</p>
+<p>A <em>probability</em> function maps events
+onto real values <span class="arithmatex">\({P: \mathcal{A} \subseteq \mathcal{S} \rightarrow [0,1]}\)</span>.
+The probability, denoted <span class="arithmatex">\(P(\mathcal{A})\)</span>, of an event <span class="arithmatex">\(\mathcal{A}\)</span>
+in the given sample space <span class="arithmatex">\(\mathcal{S}\)</span>,
+has the following properties:</p>
+<ul>
+<li>The probability of any event <span class="arithmatex">\(\mathcal{A}\)</span> is a nonnegative real number, i.e., <span class="arithmatex">\(P(\mathcal{A}) \geq 0\)</span>;</li>
+<li>The probability of the entire sample space is <span class="arithmatex">\(1\)</span>, i.e., <span class="arithmatex">\(P(\mathcal{S}) = 1\)</span>;</li>
+<li>For any countable sequence of events <span class="arithmatex">\(\mathcal{A}_1, \mathcal{A}_2, \ldots\)</span> that are <em>mutually exclusive</em> (i.e., <span class="arithmatex">\(\mathcal{A}_i \cap \mathcal{A}_j = \emptyset\)</span> for all <span class="arithmatex">\(i \neq j\)</span>), the probability that any of them happens is equal to the sum of their individual probabilities, i.e., <span class="arithmatex">\(P(\bigcup_{i=1}^{\infty} \mathcal{A}_i) = \sum_{i=1}^{\infty} P(\mathcal{A}_i)\)</span>.</li>
+</ul>
+<p>These axioms of probability theory,
+proposed by :citet:<code>Kolmogorov.1933</code>,
+can be applied to rapidly derive a number of important consequences.
+For instance, it follows immediately
+that the probability of any event <span class="arithmatex">\(\mathcal{A}\)</span>
+<em>or</em> its complement <span class="arithmatex">\(\mathcal{A}'\)</span> occurring is 1
+(because <span class="arithmatex">\(\mathcal{A} \cup \mathcal{A}' = \mathcal{S}\)</span>).
+We can also prove that <span class="arithmatex">\(P(\emptyset) = 0\)</span>
+because <span class="arithmatex">\(1 = P(\mathcal{S} \cup \mathcal{S}') = P(\mathcal{S} \cup \emptyset) = P(\mathcal{S}) + P(\emptyset) = 1 + P(\emptyset)\)</span>.
+Consequently, the probability of any event <span class="arithmatex">\(\mathcal{A}\)</span>
+<em>and</em> its complement <span class="arithmatex">\(\mathcal{A}'\)</span> occurring simultaneously
+is <span class="arithmatex">\(P(\mathcal{A} \cap \mathcal{A}') = 0\)</span>.
+Informally, this tells us that impossible events
+have zero probability of occurring.</p>
+<h2 id="random-variables">Random Variables<a class="headerlink" href="#random-variables" title="Permanent link">⚓︎</a></h2>
+<p>When we spoke about events like the roll of a die
+coming up odds or the first coin toss coming up heads,
+we were invoking the idea of a <em>random variable</em>.
+Formally, random variables are mappings
+from an underlying sample space
+to a set of (possibly many) values.
+You might wonder how a random variable
+is different from the sample space,
+since both are collections of outcomes.
+Importantly, random variables can be much coarser
+than the raw sample space.
+We can define a binary random variable like "greater than 0.5"
+even when the underlying sample space is infinite,
+e.g., points on the line segment between <span class="arithmatex">\(0\)</span> and <span class="arithmatex">\(1\)</span>.
+Additionally, multiple random variables
+can share the same underlying sample space.
+For example "whether my home alarm goes off"
+and "whether my house was burgled"
+are both binary random variables
+that share an underlying sample space.
+Consequently, knowing the value taken by one random variable
+can tell us something about the likely value of another random variable.
+Knowing that the alarm went off,
+we might suspect that the house was likely burgled.</p>
+<p>Every value taken by a random variable corresponds
+to a subset of the underlying sample space.
+Thus the occurrence where the random variable <span class="arithmatex">\(X\)</span>
+takes value <span class="arithmatex">\(v\)</span>, denoted by <span class="arithmatex">\(X=v\)</span>, is an <em>event</em>
+and <span class="arithmatex">\(P(X=v)\)</span> denotes its probability.
+Sometimes this notation can get clunky,
+and we can abuse notation when the context is clear.
+For example, we might use <span class="arithmatex">\(P(X)\)</span> to refer broadly
+to the <em>distribution</em> of <span class="arithmatex">\(X\)</span>, i.e.,
+the function that tells us the probability
+that <span class="arithmatex">\(X\)</span> takes any given value.
+Other times we write expressions
+like <span class="arithmatex">\(P(X,Y) = P(X) P(Y)\)</span>,
+as a shorthand to express a statement
+that is true for all of the values
+that the random variables <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> can take, i.e.,
+for all <span class="arithmatex">\(i,j\)</span> it holds that <span class="arithmatex">\(P(X=i \textrm{ and } Y=j) = P(X=i)P(Y=j)\)</span>.
+Other times, we abuse notation by writing
+<span class="arithmatex">\(P(v)\)</span> when the random variable is clear from the context.
+Since an event in probability theory is a set of outcomes from the sample space,
+we can specify a range of values for a random variable to take.
+For example, <span class="arithmatex">\(P(1 \leq X \leq 3)\)</span> denotes the probability of the event <span class="arithmatex">\(\{1 \leq X \leq 3\}\)</span>.</p>
+<p>Note that there is a subtle difference
+between <em>discrete</em> random variables,
+like flips of a coin or tosses of a die,
+and <em>continuous</em> ones,
+like the weight and the height of a person
+sampled at random from the population.
+In this case we seldom really care about
+someone's exact height.
+Moreover, if we took precise enough measurements,
+we would find that no two people on the planet
+have the exact same height.
+In fact, with fine enough measurements,
+you would never have the same height
+when you wake up and when you go to sleep.
+There is little point in asking about
+the exact probability that someone
+is 1.801392782910287192 meters tall.
+Instead, we typically care more about being able to say
+whether someone's height falls into a given interval,
+say between 1.79 and 1.81 meters.
+In these cases we work with probability <em>densities</em>.
+The height of exactly 1.80 meters
+has no probability, but nonzero density.
+To work out the probability assigned to an interval,
+we must take an <em>integral</em> of the density
+over that interval.</p>
+<h2 id="multiple-random-variables">Multiple Random Variables<a class="headerlink" href="#multiple-random-variables" title="Permanent link">⚓︎</a></h2>
+<p>You might have noticed that we could not even
+make it through the previous section without
+making statements involving interactions
+among multiple random variables
+(recall that <span class="arithmatex">\(P(X,Y) = P(X) P(Y)\)</span>).
+Most of machine learning
+is concerned with such relationships.
+Here, the sample space would be
+the population of interest,
+say customers who transact with a business,
+photographs on the Internet,
+or proteins known to biologists.
+Each random variable would represent
+the (unknown) value of a different attribute.
+Whenever we sample an individual from the population,
+we observe a realization of each of the random variables.
+Because the values taken by random variables
+correspond to subsets of the sample space
+that could be overlapping, partially overlapping,
+or entirely disjoint,
+knowing the value taken by one random variable
+can cause us to update our beliefs
+about which values of another random variable are likely.
+If a patient walks into a hospital
+and we observe that they
+are having trouble breathing
+and have lost their sense of smell,
+then we believe that they are more likely
+to have COVID-19 than we might
+if they had no trouble breathing
+and a perfectly ordinary sense of smell.</p>
+<p>When working with multiple random variables,
+we can construct events corresponding
+to every combination of values
+that the variables can jointly take.
+The probability function that assigns
+probabilities to each of these combinations
+(e.g. <span class="arithmatex">\(A=a\)</span> and <span class="arithmatex">\(B=b\)</span>)
+is called the <em>joint probability</em> function
+and simply returns the probability assigned
+to the intersection of the corresponding subsets
+of the sample space.
+The <em>joint probability</em> assigned to the event
+where random variables <span class="arithmatex">\(A\)</span> and <span class="arithmatex">\(B\)</span>
+take values <span class="arithmatex">\(a\)</span> and <span class="arithmatex">\(b\)</span>, respectively,
+is denoted <span class="arithmatex">\(P(A = a, B = b)\)</span>,
+where the comma indicates "and".
+Note that for any values <span class="arithmatex">\(a\)</span> and <span class="arithmatex">\(b\)</span>,
+it follows that</p>
+<div class="arithmatex">\[P(A=a, B=b) \leq P(A=a) \textrm{ and } P(A=a, B=b) \leq P(B = b),\]</div>
+<p>since for <span class="arithmatex">\(A=a\)</span> and <span class="arithmatex">\(B=b\)</span> to happen,
+<span class="arithmatex">\(A=a\)</span> has to happen <em>and</em> <span class="arithmatex">\(B=b\)</span> also has to happen.
+Interestingly, the joint probability
+tells us all that we can know about these
+random variables in a probabilistic sense,
+and can be used to derive many other
+useful quantities, including recovering the
+individual distributions <span class="arithmatex">\(P(A)\)</span> and <span class="arithmatex">\(P(B)\)</span>.
+To recover <span class="arithmatex">\(P(A=a)\)</span> we simply sum up
+<span class="arithmatex">\(P(A=a, B=v)\)</span> over all values <span class="arithmatex">\(v\)</span>
+that the random variable <span class="arithmatex">\(B\)</span> can take:
+<span class="arithmatex">\(P(A=a) = \sum_v P(A=a, B=v)\)</span>.</p>
+<p>The ratio <span class="arithmatex">\(\frac{P(A=a, B=b)}{P(A=a)} \leq 1\)</span>
+turns out to be extremely important.
+It is called the <em>conditional probability</em>,
+and is denoted via the "<span class="arithmatex">\(\mid\)</span>" symbol:</p>
+<div class="arithmatex">\[P(B=b \mid A=a) = P(A=a,B=b)/P(A=a).\]</div>
+<p>It tells us the new probability
+associated with the event <span class="arithmatex">\(B=b\)</span>,
+once we condition on the fact <span class="arithmatex">\(A=a\)</span> took place.
+We can think of this conditional probability
+as restricting attention only to the subset
+of the sample space associated with <span class="arithmatex">\(A=a\)</span>
+and then renormalizing so that
+all probabilities sum to 1.
+Conditional probabilities
+are in fact just ordinary probabilities
+and thus respect all of the axioms,
+as long as we condition all terms
+on the same event and thus
+restrict attention to the same sample space.
+For instance, for disjoint events
+<span class="arithmatex">\(\mathcal{B}\)</span> and <span class="arithmatex">\(\mathcal{B}'\)</span>, we have that
+<span class="arithmatex">\(P(\mathcal{B} \cup \mathcal{B}' \mid A = a) = P(\mathcal{B} \mid A = a) + P(\mathcal{B}' \mid A = a)\)</span>.</p>
+<p>Using the definition of conditional probabilities,
+we can derive the famous result called <em>Bayes' theorem</em>.
+By construction, we have that <span class="arithmatex">\(P(A, B) = P(B\mid A) P(A)\)</span>
+and <span class="arithmatex">\(P(A, B) = P(A\mid B) P(B)\)</span>.
+Combining both equations yields
+<span class="arithmatex">\(P(B\mid A) P(A) = P(A\mid B) P(B)\)</span> and hence</p>
+<div class="arithmatex">\[P(A \mid B) = \frac{P(B\mid A) P(A)}{P(B)}.\]</div>
+<p>This simple equation has profound implications because
+it allows us to reverse the order of conditioning.
+If we know how to estimate <span class="arithmatex">\(P(B\mid A)\)</span>, <span class="arithmatex">\(P(A)\)</span>, and <span class="arithmatex">\(P(B)\)</span>,
+then we can estimate <span class="arithmatex">\(P(A\mid B)\)</span>.
+We often find it easier to estimate one term directly
+but not the other and Bayes' theorem can come to the rescue here.
+For instance, if we know the prevalence of symptoms for a given disease,
+and the overall prevalences of the disease and symptoms, respectively,
+we can determine how likely someone is
+to have the disease based on their symptoms.
+In some cases we might not have direct access to <span class="arithmatex">\(P(B)\)</span>,
+such as the prevalence of symptoms.
+In this case a simplified version of Bayes' theorem comes in handy:</p>
+<div class="arithmatex">\[P(A \mid B) \propto P(B \mid A) P(A).\]</div>
+<p>Since we know that <span class="arithmatex">\(P(A \mid B)\)</span> must be normalized to <span class="arithmatex">\(1\)</span>, i.e., <span class="arithmatex">\(\sum_a P(A=a \mid B) = 1\)</span>,
+we can use it to compute</p>
+<div class="arithmatex">\[P(A \mid B) = \frac{P(B \mid A) P(A)}{\sum_a P(B \mid A=a) P(A = a)}.\]</div>
+<p>In Bayesian statistics, we think of an observer
+as possessing some (subjective) prior beliefs
+about the plausibility of the available hypotheses
+encoded in the <em>prior</em> <span class="arithmatex">\(P(H)\)</span>,
+and a <em>likelihood function</em> that says how likely
+one is to observe any value of the collected evidence
+for each of the hypotheses in the class <span class="arithmatex">\(P(E \mid H)\)</span>.
+Bayes' theorem is then interpreted as telling us
+how to update the initial <em>prior</em> <span class="arithmatex">\(P(H)\)</span>
+in light of the available evidence <span class="arithmatex">\(E\)</span>
+to produce <em>posterior</em> beliefs
+<span class="arithmatex">\(P(H \mid E) = \frac{P(E \mid H) P(H)}{P(E)}\)</span>.
+Informally, this can be stated as
+"posterior equals prior times likelihood, divided by the evidence".
+Now, because the evidence <span class="arithmatex">\(P(E)\)</span> is the same for all hypotheses,
+we can get away with simply normalizing over the hypotheses.</p>
+<p>Note that <span class="arithmatex">\(\sum_a P(A=a \mid B) = 1\)</span> also allows us to <em>marginalize</em> over random variables. That is, we can drop variables from a joint distribution such as <span class="arithmatex">\(P(A, B)\)</span>. After all, we have that</p>
+<div class="arithmatex">\[\sum_a P(B \mid A=a) P(A=a) = \sum_a P(B, A=a) = P(B).\]</div>
+<p>Independence is another fundamentally important concept
+that forms the backbone of
+many important ideas in statistics.
+In short, two variables are <em>independent</em>
+if conditioning on the value of <span class="arithmatex">\(A\)</span> does not
+cause any change to the probability distribution
+associated with <span class="arithmatex">\(B\)</span> and vice versa.
+More formally, independence, denoted <span class="arithmatex">\(A \perp B\)</span>,
+requires that <span class="arithmatex">\(P(A \mid B) = P(A)\)</span> and, consequently,
+that <span class="arithmatex">\(P(A,B) = P(A \mid B) P(B) = P(A) P(B)\)</span>.
+Independence is often an appropriate assumption.
+For example, if the random variable <span class="arithmatex">\(A\)</span>
+represents the outcome from tossing one fair coin
+and the random variable <span class="arithmatex">\(B\)</span>
+represents the outcome from tossing another,
+then knowing whether <span class="arithmatex">\(A\)</span> came up heads
+should not influence the probability
+of <span class="arithmatex">\(B\)</span> coming up heads.</p>
+<p>Independence is especially useful when it holds among the successive
+draws of our data from some underlying distribution
+(allowing us to make strong statistical conclusions)
+or when it holds among various variables in our data,
+allowing us to work with simpler models
+that encode this independence structure.
+On the other hand, estimating the dependencies
+among random variables is often the very aim of learning.
+We care to estimate the probability of disease given symptoms
+specifically because we believe
+that diseases and symptoms are <em>not</em> independent.</p>
+<p>Note that because conditional probabilities are proper probabilities,
+the concepts of independence and dependence also apply to them.
+Two random variables <span class="arithmatex">\(A\)</span> and <span class="arithmatex">\(B\)</span> are <em>conditionally independent</em>
+given a third variable <span class="arithmatex">\(C\)</span> if and only if <span class="arithmatex">\(P(A, B \mid C) = P(A \mid C)P(B \mid C)\)</span>.
+Interestingly, two variables can be independent in general
+but become dependent when conditioning on a third.
+This often occurs when the two random variables <span class="arithmatex">\(A\)</span> and <span class="arithmatex">\(B\)</span>
+correspond to causes of some third variable <span class="arithmatex">\(C\)</span>.
+For example, broken bones and lung cancer might be independent
+in the general population but if we condition on being in the hospital
+then we might find that broken bones are negatively correlated with lung cancer.
+That is because the broken bone <em>explains away</em> why some person is in the hospital
+and thus lowers the probability that they are hospitalized because of having lung cancer.</p>
+<p>And conversely, two dependent random variables
+can become independent upon conditioning on a third.
+This often happens when two otherwise unrelated events
+have a common cause.
+Shoe size and reading level are highly correlated
+among elementary school students,
+but this correlation disappears if we condition on age.</p>
+<h2 id="an-example">An Example<a class="headerlink" href="#an-example" title="Permanent link">⚓︎</a></h2>
+<p>:label:<code>subsec_probability_hiv_app</code></p>
+<p>Let's put our skills to the test.
+Assume that a doctor administers an HIV test to a patient.
+This test is fairly accurate and fails only with 1% probability
+if the patient is healthy but reported as diseased,
+i.e., healthy patients test positive in 1% of cases.
+Moreover, it never fails to detect HIV if the patient actually has it.
+We use <span class="arithmatex">\(D_1 \in \{0, 1\}\)</span> to indicate the diagnosis
+(<span class="arithmatex">\(0\)</span> if negative and <span class="arithmatex">\(1\)</span> if positive)
+and <span class="arithmatex">\(H \in \{0, 1\}\)</span> to denote the HIV status.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Conditional probability</th>
+<th style="text-align: right;"><span class="arithmatex">\(H=1\)</span></th>
+<th style="text-align: right;"><span class="arithmatex">\(H=0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(P(D_1 = 1 \mid H)\)</span></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(P(D_1 = 0 \mid H)\)</span></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.99</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the column sums are all 1 (but the row sums do not),
+since they are conditional probabilities.
+Let's compute the probability of the patient having HIV
+if the test comes back positive, i.e., <span class="arithmatex">\(P(H = 1 \mid D_1 = 1)\)</span>.
+Intuitively this is going to depend on how common the disease is,
+since it affects the number of false alarms.
+Assume that the population is fairly free of the disease, e.g., <span class="arithmatex">\(P(H=1) = 0.0015\)</span>.
+To apply Bayes' theorem, we need to apply marginalization
+to determine</p>
+<div class="arithmatex">\[\begin{aligned}
+P(D_1 = 1)
+=&amp; P(D_1=1, H=0) + P(D_1=1, H=1)  \\
+=&amp; P(D_1=1 \mid H=0) P(H=0) + P(D_1=1 \mid H=1) P(H=1) \\
+=&amp; 0.011485.
+\end{aligned}
+\]</div>
+<p>This leads us to</p>
+<div class="arithmatex">\[P(H = 1 \mid D_1 = 1) = \frac{P(D_1=1 \mid H=1) P(H=1)}{P(D_1=1)} = 0.1306.\]</div>
+<p>In other words, there is only a 13.06% chance
+that the patient actually has HIV,
+despite the test being pretty accurate.
+As we can see, probability can be counterintuitive.
+What should a patient do upon receiving such terrifying news?
+Likely, the patient would ask the physician
+to administer another test to get clarity.
+The second test has different characteristics
+and it is not as good as the first one.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Conditional probability</th>
+<th style="text-align: right;"><span class="arithmatex">\(H=1\)</span></th>
+<th style="text-align: right;"><span class="arithmatex">\(H=0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(P(D_2 = 1 \mid H)\)</span></td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: right;">0.03</td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(P(D_2 = 0 \mid H)\)</span></td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">0.97</td>
+</tr>
+</tbody>
+</table>
+<p>Unfortunately, the second test comes back positive, too.
+Let's calculate the requisite probabilities to invoke Bayes' theorem
+by assuming conditional independence:</p>
+<div class="arithmatex">\[\begin{aligned}
+P(D_1 = 1, D_2 = 1 \mid H = 0)
+&amp; = P(D_1 = 1 \mid H = 0) P(D_2 = 1 \mid H = 0)
+=&amp; 0.0003, \\
+P(D_1 = 1, D_2 = 1 \mid H = 1)
+&amp; = P(D_1 = 1 \mid H = 1) P(D_2 = 1 \mid H = 1)
+=&amp; 0.98.
+\end{aligned}
+\]</div>
+<p>Now we can apply marginalization to obtain the probability
+that both tests come back positive:</p>
+<div class="arithmatex">\[\begin{aligned}
+&amp;P(D_1 = 1, D_2 = 1)\\
+&amp;= P(D_1 = 1, D_2 = 1, H = 0) + P(D_1 = 1, D_2 = 1, H = 1)  \\
+&amp;= P(D_1 = 1, D_2 = 1 \mid H = 0)P(H=0) + P(D_1 = 1, D_2 = 1 \mid H = 1)P(H=1)\\
+&amp;= 0.00176955.
+\end{aligned}
+\]</div>
+<p>Finally, the probability of the patient having HIV given that both tests are positive is</p>
+<div class="arithmatex">\[P(H = 1 \mid D_1 = 1, D_2 = 1)
+= \frac{P(D_1 = 1, D_2 = 1 \mid H=1) P(H=1)}{P(D_1 = 1, D_2 = 1)}
+= 0.8307.\]</div>
+<p>That is, the second test allowed us to gain much higher confidence that not all is well.
+Despite the second test being considerably less accurate than the first one,
+it still significantly improved our estimate.
+The assumption of both tests being conditionally independent of each other
+was crucial for our ability to generate a more accurate estimate.
+Take the extreme case where we run the same test twice.
+In this situation we would expect the same outcome both times,
+hence no additional insight is gained from running the same test again.
+The astute reader might have noticed that the diagnosis behaved
+like a classifier hiding in plain sight
+where our ability to decide whether a patient is healthy
+increases as we obtain more features (test outcomes).</p>
+<h2 id="expectations">Expectations<a class="headerlink" href="#expectations" title="Permanent link">⚓︎</a></h2>
+<p>Often, making decisions requires not just looking
+at the probabilities assigned to individual events
+but composing them together into useful aggregates
+that can provide us with guidance.
+For example, when random variables take continuous scalar values,
+we often care about knowing what value to expect <em>on average</em>.
+This quantity is formally called an <em>expectation</em>.
+If we are making investments,
+the first quantity of interest
+might be the return we can expect,
+averaging over all the possible outcomes
+(and weighting by the appropriate probabilities).
+For instance, say that with 50% probability,
+an investment might fail altogether,
+with 40% probability it might provide a 2<span class="arithmatex">\(\times\)</span> return,
+and with 10% probability it might provide a 10<span class="arithmatex">\(\times\)</span> return 10<span class="arithmatex">\(\times\)</span>.
+To calculate the expected return,
+we sum over all returns, multiplying each
+by the probability that they will occur.
+This yields the expectation
+<span class="arithmatex">\(0.5 \cdot 0 + 0.4 \cdot 2 + 0.1 \cdot 10 = 1.8\)</span>.
+Hence the expected return is 1.8<span class="arithmatex">\(\times\)</span>.</p>
+<p>In general, the <em>expectation</em> (or average)
+of the random variable <span class="arithmatex">\(X\)</span> is defined as</p>
+<div class="arithmatex">\[E[X] = E_{x \sim P}[x] = \sum_{x} x P(X = x).\]</div>
+<p>Likewise, for densities we obtain <span class="arithmatex">\(E[X] = \int x \;dp(x)\)</span>.
+Sometimes we are interested in the expected value
+of some function of <span class="arithmatex">\(x\)</span>.
+We can calculate these expectations as</p>
+<div class="arithmatex">\[E_{x \sim P}[f(x)] = \sum_x f(x) P(x) \textrm{ and } E_{x \sim P}[f(x)] = \int f(x) p(x) \;dx\]</div>
+<p>for discrete probabilities and densities, respectively.
+Returning to the investment example from above,
+<span class="arithmatex">\(f\)</span> might be the <em>utility</em> (happiness)
+associated with the return.
+Behavior economists have long noted
+that people associate greater disutility
+with losing money than the utility gained
+from earning one dollar relative to their baseline.
+Moreover, the value of money tends to be sub-linear.
+Possessing 100k dollars versus zero dollars
+can make the difference between paying the rent,
+eating well, and enjoying quality healthcare
+versus suffering through homelessness.
+On the other hand, the gains due to possessing
+200k versus 100k are less dramatic.
+Reasoning like this motivates the cliché
+that "the utility of money is logarithmic".</p>
+<p>If  the utility associated with a total loss were <span class="arithmatex">\(-1\)</span>,
+and the utilities associated with returns of <span class="arithmatex">\(1\)</span>, <span class="arithmatex">\(2\)</span>, and <span class="arithmatex">\(10\)</span>
+were <span class="arithmatex">\(1\)</span>, <span class="arithmatex">\(2\)</span> and <span class="arithmatex">\(4\)</span>, respectively,
+then the expected happiness of investing
+would be <span class="arithmatex">\(0.5 \cdot (-1) + 0.4 \cdot 2 + 0.1 \cdot 4 = 0.7\)</span>
+(an expected loss of utility of 30%).
+If indeed this were your utility function,
+you might be best off keeping the money in the bank.</p>
+<p>For financial decisions,
+we might also want to measure
+how <em>risky</em> an investment is.
+Here, we care not just about the expected value
+but how much the actual values tend to <em>vary</em>
+relative to this value.
+Note that we cannot just take
+the expectation of the difference
+between the actual and expected values.
+This is because the expectation of a difference
+is the difference of the expectations,
+i.e., <span class="arithmatex">\(E[X - E[X]] = E[X] - E[E[X]] = 0\)</span>.
+However, we can look at the expectation
+of any non-negative function of this difference.
+The <em>variance</em> of a random variable is calculated by looking
+at the expected value of the <em>squared</em> differences:</p>
+<div class="arithmatex">\[\textrm{Var}[X] = E\left[(X - E[X])^2\right] = E[X^2] - E[X]^2.\]</div>
+<p>Here the equality follows by expanding
+<span class="arithmatex">\((X - E[X])^2 = X^2 - 2 X E[X] + E[X]^2\)</span>
+and taking expectations for each term.
+The square root of the variance is another
+useful quantity called the <em>standard deviation</em>.
+While this and the variance
+convey the same information (either can be calculated from the other),
+the standard deviation has the nice property
+that it is expressed in the same units
+as the original quantity represented
+by the random variable.</p>
+<p>Lastly, the variance of a function
+of a random variable
+is defined analogously as</p>
+<div class="arithmatex">\[\textrm{Var}_{x \sim P}[f(x)] = E_{x \sim P}[f^2(x)] - E_{x \sim P}[f(x)]^2.\]</div>
+<p>Returning to our investment example,
+we can now compute the variance of the investment.
+It is given by <span class="arithmatex">\(0.5 \cdot 0 + 0.4 \cdot 2^2 + 0.1 \cdot 10^2 - 1.8^2 = 8.36\)</span>.
+For all intents and purposes this is a risky investment.
+Note that by mathematical convention mean and variance
+are often referenced as <span class="arithmatex">\(\mu\)</span> and <span class="arithmatex">\(\sigma^2\)</span>.
+This is particularly the case whenever we use it
+to parametrize a Gaussian distribution.</p>
+<p>In the same way as we introduced expectations
+and variance for <em>scalar</em> random variables,
+we can do so for vector-valued ones.
+Expectations are easy, since we can apply them elementwise.
+For instance, <span class="arithmatex">\(\boldsymbol{\mu} \stackrel{\textrm{def}}{=} E_{\mathbf{x} \sim P}[\mathbf{x}]\)</span>
+has coordinates <span class="arithmatex">\(\mu_i = E_{\mathbf{x} \sim P}[x_i]\)</span>.
+<em>Covariances</em> are more complicated.
+We define them by taking expectations of the <em>outer product</em>
+of the difference between random variables and their mean:</p>
+<div class="arithmatex">\[\boldsymbol{\Sigma} \stackrel{\textrm{def}}{=} \textrm{Cov}_{\mathbf{x} \sim P}[\mathbf{x}] = E_{\mathbf{x} \sim P}\left[(\mathbf{x} - \boldsymbol{\mu}) (\mathbf{x} - \boldsymbol{\mu})^\top\right].\]</div>
+<p>This matrix <span class="arithmatex">\(\boldsymbol{\Sigma}\)</span> is referred to as the covariance matrix.
+An easy way to see its effect is to consider some vector <span class="arithmatex">\(\mathbf{v}\)</span>
+of the same size as <span class="arithmatex">\(\mathbf{x}\)</span>.
+It follows that</p>
+<div class="arithmatex">\[\mathbf{v}^\top \boldsymbol{\Sigma} \mathbf{v} = E_{\mathbf{x} \sim P}\left[\mathbf{v}^\top(\mathbf{x} - \boldsymbol{\mu}) (\mathbf{x} - \boldsymbol{\mu})^\top \mathbf{v}\right] = \textrm{Var}_{x \sim P}[\mathbf{v}^\top \mathbf{x}].\]</div>
+<p>As such, <span class="arithmatex">\(\boldsymbol{\Sigma}\)</span> allows us to compute the variance
+for any linear function of <span class="arithmatex">\(\mathbf{x}\)</span>
+by a simple matrix multiplication.
+The off-diagonal elements tell us how correlated the coordinates are:
+a value of 0 means no correlation,
+where a larger positive value
+means that they are more strongly correlated.</p>
+<h2 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link">⚓︎</a></h2>
+<p>In machine learning, there are many things to be uncertain about!
+We can be uncertain about the value of a label given an input.
+We can be uncertain about the estimated value of a parameter.
+We can even be uncertain about whether data arriving at deployment
+is even from the same distribution as the training data.</p>
+<p>By <em>aleatoric uncertainty</em>, we mean uncertainty
+that is intrinsic to the problem,
+and due to genuine randomness
+unaccounted for by the observed variables.
+By <em>epistemic uncertainty</em>, we mean uncertainty
+over a model's parameters, the sort of uncertainty
+that we can hope to reduce by collecting more data.
+We might have epistemic uncertainty
+concerning the probability
+that a coin turns up heads,
+but even once we know this probability,
+we are left with aleatoric uncertainty
+about the outcome of any future toss.
+No matter how long we watch someone tossing a fair coin,
+we will never be more or less than 50% certain
+that the next toss will come up heads.
+These terms come from mechanical modeling,
+(see e.g., :citet:<code>Der-Kiureghian.Ditlevsen.2009</code> for a review on this aspect of <a href="https://en.wikipedia.org/wiki/Uncertainty_quantification">uncertainty quantification</a>).
+It is worth noting, however, that these terms constitute a slight abuse of language.
+The term <em>epistemic</em> refers to anything concerning <em>knowledge</em>
+and thus, in the philosophical sense, all uncertainty is epistemic.</p>
+<p>We saw that sampling data from some unknown probability distribution
+can provide us with information that can be used to estimate
+the parameters of the data generating distribution.
+That said, the rate at which this is possible can be quite slow.
+In our coin tossing example (and many others)
+we can do no better than to design estimators
+that converge at a rate of <span class="arithmatex">\(1/\sqrt{n}\)</span>,
+where <span class="arithmatex">\(n\)</span> is the sample size (e.g., the number of tosses).
+This means that by going from 10 to 1000 observations (usually a very achievable task)
+we see a tenfold reduction of uncertainty,
+whereas the next 1000 observations help comparatively little,
+offering only a 1.41 times reduction.
+This is a persistent feature of machine learning:
+while there are often easy gains, it takes a very large amount of data,
+and often with it an enormous amount of computation, to make further gains.
+For an empirical review of this fact for large scale language models see :citet:<code>Revels.Lubin.Papamarkou.2016</code>.</p>
+<p>We also sharpened our language and tools for statistical modeling.
+In the process of that we learned about conditional probabilities
+and about one of the most important equations in statistics---Bayes' theorem.
+It is an effective tool for decoupling information conveyed by data
+through a likelihood term <span class="arithmatex">\(P(B \mid A)\)</span> that addresses
+how well observations <span class="arithmatex">\(B\)</span> match a choice of parameters <span class="arithmatex">\(A\)</span>,
+and a prior probability <span class="arithmatex">\(P(A)\)</span> which governs how plausible
+a particular choice of <span class="arithmatex">\(A\)</span> was in the first place.
+In particular, we saw how this rule can be applied
+to assign probabilities to diagnoses,
+based on the efficacy of the test <em>and</em>
+the prevalence of the disease itself (i.e., our prior).</p>
+<p>Lastly, we introduced a first set of nontrivial questions
+about the effect of a specific probability distribution,
+namely expectations and variances.
+While there are many more than just linear and quadratic
+expectations for a probability distribution,
+these two already provide a good deal of knowledge
+about the possible behavior of the distribution.
+For instance, <a href="https://en.wikipedia.org/wiki/Chebyshev%27s_inequality">Chebyshev's inequality</a>
+states that <span class="arithmatex">\(P(|X - \mu| \geq k \sigma) \leq 1/k^2\)</span>,
+where <span class="arithmatex">\(\mu\)</span> is the expectation, <span class="arithmatex">\(\sigma^2\)</span> is the variance of the distribution,
+and <span class="arithmatex">\(k &gt; 1\)</span> is a confidence parameter of our choosing.
+It tells us that draws from a distribution lie
+with at least 50% probability
+within a <span class="arithmatex">\([-\sqrt{2} \sigma, \sqrt{2} \sigma]\)</span>
+interval centered on the expectation.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>Give an example where observing more data can reduce the amount of uncertainty about the outcome to an arbitrarily low level.</li>
+<li>Give an example where observing more data will only reduce the amount of uncertainty up to a point and then no further. Explain why this is the case and where you expect this point to occur.</li>
+<li>We empirically demonstrated convergence to the mean for the toss of a coin. Calculate the variance of the estimate of the probability that we see a head after drawing <span class="arithmatex">\(n\)</span> samples.<ol>
+<li>How does the variance scale with the number of observations?</li>
+<li>Use Chebyshev's inequality to bound the deviation from the expectation.</li>
+<li>How does it relate to the central limit theorem?</li>
+</ol>
+</li>
+<li>Assume that we draw <span class="arithmatex">\(m\)</span> samples <span class="arithmatex">\(x_i\)</span> from a probability distribution with zero mean and unit variance. Compute the averages <span class="arithmatex">\(z_m \stackrel{\textrm{def}}{=} m^{-1} \sum_{i=1}^m x_i\)</span>. Can we apply Chebyshev's inequality for every <span class="arithmatex">\(z_m\)</span> independently? Why not?</li>
+<li>Given two events with probability <span class="arithmatex">\(P(\mathcal{A})\)</span> and <span class="arithmatex">\(P(\mathcal{B})\)</span>, compute upper and lower bounds on <span class="arithmatex">\(P(\mathcal{A} \cup \mathcal{B})\)</span> and <span class="arithmatex">\(P(\mathcal{A} \cap \mathcal{B})\)</span>. Hint: graph the situation using a <a href="https://en.wikipedia.org/wiki/Venn_diagram">Venn diagram</a>.</li>
+<li>Assume that we have a sequence of random variables, say <span class="arithmatex">\(A\)</span>, <span class="arithmatex">\(B\)</span>, and <span class="arithmatex">\(C\)</span>, where <span class="arithmatex">\(B\)</span> only depends on <span class="arithmatex">\(A\)</span>, and <span class="arithmatex">\(C\)</span> only depends on <span class="arithmatex">\(B\)</span>, can you simplify the joint probability <span class="arithmatex">\(P(A, B, C)\)</span>? Hint: this is a <a href="https://en.wikipedia.org/wiki/Markov_chain">Markov chain</a>.</li>
+<li>In :numref:<code>subsec_probability_hiv_app</code>, assume that the outcomes of the two tests are not independent. In particular assume that either test on its own has a false positive rate of 10% and a false negative rate of 1%. That is, assume that <span class="arithmatex">\(P(D =1 \mid H=0) = 0.1\)</span> and that <span class="arithmatex">\(P(D = 0 \mid H=1) = 0.01\)</span>. Moreover, assume that for <span class="arithmatex">\(H = 1\)</span> (infected) the test outcomes are conditionally independent, i.e., that <span class="arithmatex">\(P(D_1, D_2 \mid H=1) = P(D_1 \mid H=1) P(D_2 \mid H=1)\)</span> but that for healthy patients the outcomes are coupled via <span class="arithmatex">\(P(D_1 = D_2 = 1 \mid H=0) = 0.02\)</span>.<ol>
+<li>Work out the joint probability table for <span class="arithmatex">\(D_1\)</span> and <span class="arithmatex">\(D_2\)</span>, given <span class="arithmatex">\(H=0\)</span> based on the information you have so far.</li>
+<li>Derive the probability that the patient is diseased (<span class="arithmatex">\(H=1\)</span>) after one test returns positive. You can assume the same baseline probability <span class="arithmatex">\(P(H=1) = 0.0015\)</span> as before.</li>
+<li>Derive the probability that the patient is diseased (<span class="arithmatex">\(H=1\)</span>) after both tests return positive.</li>
+</ol>
+</li>
+<li>Assume that you are an asset manager for an investment bank and you have a choice of stocks <span class="arithmatex">\(s_i\)</span> to invest in. Your portfolio needs to add up to <span class="arithmatex">\(1\)</span> with weights <span class="arithmatex">\(\alpha_i\)</span> for each stock. The stocks have an average return <span class="arithmatex">\(\boldsymbol{\mu} = E_{\mathbf{s} \sim P}[\mathbf{s}]\)</span> and covariance <span class="arithmatex">\(\boldsymbol{\Sigma} = \textrm{Cov}_{\mathbf{s} \sim P}[\mathbf{s}]\)</span>.<ol>
+<li>Compute the expected return for a given portfolio <span class="arithmatex">\(\boldsymbol{\alpha}\)</span>.</li>
+<li>If you wanted to maximize the return of the portfolio, how should you choose your investment?</li>
+<li>Compute the <em>variance</em> of the portfolio.</li>
+<li>Formulate an optimization problem of maximizing the return while keeping the variance constrained to an upper bound. This is the Nobel-Prize winning <a href="https://en.wikipedia.org/wiki/Markowitz_model">Markovitz portfolio</a> :cite:<code>Mangram.2013</code>. To solve it you will need a quadratic programming solver, something way beyond the scope of this book.</li>
+</ol>
+</li>
+</ol>
+<p>:begin_tab:<code>mxnet</code>
+<a href="https://discuss.d2l.ai/t/36">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>pytorch</code>
+<a href="https://discuss.d2l.ai/t/37">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>tensorflow</code>
+<a href="https://discuss.d2l.ai/t/198">Discussions</a>
+:end_tab:</p>
+<p>:begin_tab:<code>jax</code>
+<a href="https://discuss.d2l.ai/t/17971">Discussions</a>
+:end_tab:</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../pandas/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Pandas">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Pandas
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../03-linear-regression/" class="md-footer__link md-footer__link--next" aria-label="下一页: Linear Neural Networks for Regression">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Linear Neural Networks for Regression
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Ean Yang
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/YQisme" target="_blank" rel="noopener" title="github主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://space.bilibili.com/244185393?spm_id_from=333.788.0.0" target="_blank" rel="noopener" title="b站主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M488.6 104.1c16.7 18.1 24.4 39.7 23.3 65.7v202.4c-.4 26.4-9.2 48.1-26.5 65.1-17.2 17-39.1 25.9-65.5 26.7H92.02c-26.45-.8-48.21-9.8-65.28-27.2C9.682 419.4.767 396.5 0 368.2V169.8c.767-26 9.682-47.6 26.74-65.7C43.81 87.75 65.57 78.77 92.02 78h29.38L96.05 52.19c-5.75-5.73-8.63-13-8.63-21.79 0-8.8 2.88-16.06 8.63-21.797C101.8 2.868 109.1 0 117.9 0s16.1 2.868 21.9 8.603L213.1 78h88l74.5-69.397C381.7 2.868 389.2 0 398 0c8.8 0 16.1 2.868 21.9 8.603 5.7 5.737 8.6 12.997 8.6 21.797 0 8.79-2.9 16.06-8.6 21.79L394.6 78h29.3c26.4.77 48 9.75 64.7 26.1zm-38.8 69.7c-.4-9.6-3.7-17.4-10.7-23.5-5.2-6.1-14-9.4-22.7-9.8H96.05c-9.59.4-17.45 3.7-23.58 9.8-6.14 6.1-9.4 13.9-9.78 23.5v194.4c0 9.2 3.26 17 9.78 23.5s14.38 9.8 23.58 9.8H416.4c9.2 0 17-3.3 23.3-9.8 6.3-6.5 9.7-14.3 10.1-23.5V173.8zm-264.3 42.7c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.2 6.3-14 9.5-23.6 9.5-9.6 0-17.5-3.2-23.6-9.5-6.1-6.3-9.4-14-9.8-23.2v-33.3c.4-9.1 3.8-16.9 10.1-23.2 6.3-6.3 13.2-9.6 23.3-10 9.2.4 17 3.7 23.3 10zm191.5 0c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.1 6.3-14 9.5-23.6 9.5-9.6 0-17.4-3.2-23.6-9.5-7-6.3-9.4-14-9.7-23.2v-33.3c.3-9.1 3.7-16.9 10-23.2 6.3-6.3 14.1-9.6 23.3-10 9.2.4 17 3.7 23.3 10z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://eanyang7.com" target="_blank" rel="noopener" title="个人主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm40 304v128c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9l-28.6 47.6c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352h-16z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.prune", "navigation.top", "toc.follow", "header.autohide", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.6c14ae12.min.js"></script>
+      
+    
+  </body>
+</html>

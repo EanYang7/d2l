@@ -1,0 +1,3147 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《动手学深度学习》">
+      
+      
+        <meta name="author" content="Ean Yang">
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/d2l/%E6%95%99%E7%A8%8B/04-linear-classification/softmax-regression/">
+      
+      
+        <link rel="prev" href="../softmax-regression-scratch/">
+      
+      
+        <link rel="next" href="../../05-multilayer-perceptrons/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.jpg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.12">
+    
+    
+      
+        <title>Softmax Regression - 动手学深度学习 Dive into Deep Learning#</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#softmax-regression" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-header__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            动手学深度学习 Dive into Deep Learning#
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Softmax Regression
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="deep-purple"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-tabs__link">
+          
+  
+  练习
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="动手学深度学习 Dive into Deep Learning#" class="md-nav__button md-logo" aria-label="动手学深度学习 Dive into Deep Learning#" data-md-component="logo">
+      
+  <img src="../../../assets/logo.jpg" alt="logo">
+
+    </a>
+    动手学深度学习 Dive into Deep Learning#
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/d2l" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    github仓库
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    教程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-Introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01-介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    安装
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../_Notation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../02-preliminaries/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    02 preliminaries
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../03-linear-regression/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    03 linear regression
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    04 linear classification
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            04 linear classification
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linear Neural Networks for Classification
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Classification
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../environment-and-distribution-shift/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment and Distribution Shift
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generalization-classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generalization in Classification
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../image-classification-dataset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Image classification dataset
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../softmax-regression-concise/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Softmax regression concise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../softmax-regression-scratch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Softmax regression scratch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Softmax Regression
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Softmax Regression
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classification
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Classification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linear-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linear Model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-softmax" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Softmax
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vectorization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vectorization
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loss-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loss Function
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Loss Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log-likelihood" class="md-nav__link">
+    <span class="md-ellipsis">
+      Log-Likelihood
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#softmax-and-cross-entropy-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Softmax and Cross-Entropy Loss
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#information-theory-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Information Theory Basics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Information Theory Basics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entropy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#surprisal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Surprisal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-entropy-revisited" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Entropy Revisited
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-and-discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary and Discussion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../05-multilayer-perceptrons/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    05 multilayer perceptrons
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../06-builders-guide/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    06 builders guide
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../07-convolutional-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    07 convolutional modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../08-convolutional-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    08 convolutional neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../09-recurrent-neural-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    09 recurrent neural networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../10-recurrent-modern/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    10 recurrent modern
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../11-attention-mechanisms-and-transformers/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    11 attention mechanisms and transformers
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../12-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    12 optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../13-computational-performance/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    13 computational performance
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../14-computer-vision/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    14 computer vision
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../15-natural-language-processing-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    15 natural language processing pretraining
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../16-natural-language-processing-applications/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    16 natural language processing applications
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../17-reinforcement-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    17 reinforcement learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../18-gaussian-processes/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    18 gaussian processes
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../19-hyperparameter-optimization/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    19 hyperparameter optimization
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../20-generative-adversarial-networks/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    20 generative adversarial networks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../21-recommender-systems/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    21 recommender systems
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../22-appendix-mathematics-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    22 appendix mathematics for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../23-appendix-tools-for-deep-learning/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    23 appendix tools for deep learning
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../contrib/fasttext-pretraining/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Contrib
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    练习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            练习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E7%BB%83%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    动手学深度学习习题解答
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch02
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch03/ch03/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch03
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch04/ch04/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch04
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch05/ch05/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch05
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch06/ch06/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch06
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch07/ch07/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch07
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch08/ch08/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch08
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch09/ch09/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch09
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch10/ch10/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch10
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch11/ch11/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch11
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch12/ch12/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch12
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch13/ch13/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch13
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch14/ch14/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch14
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/ch15/ch15/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Ch15
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+    
+  
+  
+    <a href="../../../%E7%BB%83%E4%B9%A0/notebooks/ch02/ch02/" class="md-nav__link">
+      
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classification
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Classification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linear-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linear Model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-softmax" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Softmax
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vectorization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vectorization
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loss-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loss Function
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Loss Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log-likelihood" class="md-nav__link">
+    <span class="md-ellipsis">
+      Log-Likelihood
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#softmax-and-cross-entropy-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Softmax and Cross-Entropy Loss
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#information-theory-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Information Theory Basics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Information Theory Basics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entropy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#surprisal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Surprisal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-entropy-revisited" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Entropy Revisited
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-and-discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary and Discussion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercises
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/04-linear-classification/softmax-regression.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/d2l/tree/main/docs/教程/04-linear-classification/softmax-regression.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<h1 id="softmax-regression">Softmax Regression<a class="headerlink" href="#softmax-regression" title="Permanent link">⚓︎</a></h1>
+<p>:label:<code>sec_softmax</code></p>
+<p>In :numref:<code>sec_linear_regression</code>, we introduced linear regression,
+working through implementations from scratch in :numref:<code>sec_linear_scratch</code>
+and again using high-level APIs of a deep learning framework
+in :numref:<code>sec_linear_concise</code> to do the heavy lifting.</p>
+<p>Regression is the hammer we reach for when
+we want to answer <em>how much?</em> or <em>how many?</em> questions.
+If you want to predict the number of dollars (price)
+at which a house will be sold,
+or the number of wins a baseball team might have,
+or the number of days that a patient
+will remain hospitalized before being discharged,
+then you are probably looking for a regression model.
+However, even within regression models,
+there are important distinctions.
+For instance, the price of a house
+will never be negative and changes might often be <em>relative</em> to its baseline price.
+As such, it might be more effective to regress
+on the logarithm of the price.
+Likewise, the number of days a patient spends in hospital
+is a <em>discrete nonnegative</em> random variable.
+As such, least mean squares might not be an ideal approach either.
+This sort of time-to-event modeling
+comes with a host of other complications that are dealt with
+in a specialized subfield called <em>survival modeling</em>.</p>
+<p>The point here is not to overwhelm you but just
+to let you know that there is a lot more to estimation
+than simply minimizing squared errors.
+And more broadly, there is a lot more to supervised learning than regression.
+In this section, we focus on <em>classification</em> problems
+where we put aside <em>how much?</em> questions
+and instead focus on <em>which category?</em> questions.</p>
+<ul>
+<li>Does this email belong in the spam folder or the inbox?</li>
+<li>Is this customer more likely to sign up
+  or not to sign up for a subscription service?</li>
+<li>Does this image depict a donkey, a dog, a cat, or a rooster?</li>
+<li>Which movie is Aston most likely to watch next?</li>
+<li>Which section of the book are you going to read next?</li>
+</ul>
+<p>Colloquially, machine learning practitioners
+overload the word <em>classification</em>
+to describe two subtly different problems:
+(i) those where we are interested only in
+hard assignments of examples to categories (classes);
+and (ii) those where we wish to make soft assignments,
+i.e., to assess the probability that each category applies.
+The distinction tends to get blurred, in part,
+because often, even when we only care about hard assignments,
+we still use models that make soft assignments.</p>
+<p>Even more, there are cases where more than one label might be true.
+For instance, a news article might simultaneously cover
+the topics of entertainment, business, and space flight,
+but not the topics of medicine or sports.
+Thus, categorizing it into one of the above categories
+on their own would not be very useful.
+This problem is commonly known as <a href="https://en.wikipedia.org/wiki/Multi-label_classification">multi-label classification</a>.
+See :citet:<code>Tsoumakas.Katakis.2007</code> for an overview
+and :citet:<code>Huang.Xu.Yu.2015</code>
+for an effective algorithm when tagging images.</p>
+<h2 id="classification">Classification<a class="headerlink" href="#classification" title="Permanent link">⚓︎</a></h2>
+<p>:label:<code>subsec_classification-problem</code></p>
+<p>To get our feet wet, let's start with
+a simple image classification problem.
+Here, each input consists of a <span class="arithmatex">\(2\times2\)</span> grayscale image.
+We can represent each pixel value with a single scalar,
+giving us four features <span class="arithmatex">\(x_1, x_2, x_3, x_4\)</span>.
+Further, let's assume that each image belongs to one
+among the categories "cat", "chicken", and "dog".</p>
+<p>Next, we have to choose how to represent the labels.
+We have two obvious choices.
+Perhaps the most natural impulse would be
+to choose <span class="arithmatex">\(y \in \{1, 2, 3\}\)</span>,
+where the integers represent
+<span class="arithmatex">\(\{\textrm{dog}, \textrm{cat}, \textrm{chicken}\}\)</span> respectively.
+This is a great way of <em>storing</em> such information on a computer.
+If the categories had some natural ordering among them,
+say if we were trying to predict
+<span class="arithmatex">\(\{\textrm{baby}, \textrm{toddler}, \textrm{adolescent}, \textrm{young adult}, \textrm{adult}, \textrm{geriatric}\}\)</span>,
+then it might even make sense to cast this as
+an <a href="https://en.wikipedia.org/wiki/Ordinal_regression">ordinal regression</a> problem
+and keep the labels in this format.
+See :citet:<code>Moon.Smola.Chang.ea.2010</code> for an overview
+of different types of ranking loss functions
+and :citet:<code>Beutel.Murray.Faloutsos.ea.2014</code> for a Bayesian approach
+that addresses responses with more than one mode.</p>
+<p>In general, classification problems do not come
+with natural orderings among the classes.
+Fortunately, statisticians long ago invented a simple way
+to represent categorical data: the <em>one-hot encoding</em>.
+A one-hot encoding is a vector
+with as many components as we have categories.
+The component corresponding to a particular instance's category is set to 1
+and all other components are set to 0.
+In our case, a label <span class="arithmatex">\(y\)</span> would be a three-dimensional vector,
+with <span class="arithmatex">\((1, 0, 0)\)</span> corresponding to "cat", <span class="arithmatex">\((0, 1, 0)\)</span> to "chicken",
+and <span class="arithmatex">\((0, 0, 1)\)</span> to "dog":</p>
+<div class="arithmatex">\[y \in \{(1, 0, 0), (0, 1, 0), (0, 0, 1)\}.\]</div>
+<h3 id="linear-model">Linear Model<a class="headerlink" href="#linear-model" title="Permanent link">⚓︎</a></h3>
+<p>In order to estimate the conditional probabilities
+associated with all the possible classes,
+we need a model with multiple outputs, one per class.
+To address classification with linear models,
+we will need as many affine functions as we have outputs.
+Strictly speaking, we only need one fewer,
+since the final category has to be the difference
+between <span class="arithmatex">\(1\)</span> and the sum of the other categories,
+but for reasons of symmetry
+we use a slightly redundant parametrization.
+Each output corresponds to its own affine function.
+In our case, since we have 4 features and 3 possible output categories,
+we need 12 scalars to represent the weights (<span class="arithmatex">\(w\)</span> with subscripts),
+and 3 scalars to represent the biases (<span class="arithmatex">\(b\)</span> with subscripts). This yields:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+o_1 &amp;= x_1 w_{11} + x_2 w_{12} + x_3 w_{13} + x_4 w_{14} + b_1,\\
+o_2 &amp;= x_1 w_{21} + x_2 w_{22} + x_3 w_{23} + x_4 w_{24} + b_2,\\
+o_3 &amp;= x_1 w_{31} + x_2 w_{32} + x_3 w_{33} + x_4 w_{34} + b_3.
+\end{aligned}
+\]</div>
+<p>The corresponding neural network diagram
+is shown in :numref:<code>fig_softmaxreg</code>.
+Just as in linear regression,
+we use a single-layer neural network.
+And since the calculation of each output, <span class="arithmatex">\(o_1, o_2\)</span>, and <span class="arithmatex">\(o_3\)</span>,
+depends on every input, <span class="arithmatex">\(x_1\)</span>, <span class="arithmatex">\(x_2\)</span>, <span class="arithmatex">\(x_3\)</span>, and <span class="arithmatex">\(x_4\)</span>,
+the output layer can also be described as a <em>fully connected layer</em>.</p>
+<p><img alt="Softmax regression is a single-layer neural network." src="../../img/softmaxreg.svg" />
+:label:<code>fig_softmaxreg</code></p>
+<p>For a more concise notation we use vectors and matrices:
+<span class="arithmatex">\(\mathbf{o} = \mathbf{W} \mathbf{x} + \mathbf{b}\)</span> is
+much better suited for mathematics and code.
+Note that we have gathered all of our weights into a <span class="arithmatex">\(3 \times 4\)</span> matrix and all biases
+<span class="arithmatex">\(\mathbf{b} \in \mathbb{R}^3\)</span> in a vector.</p>
+<h3 id="the-softmax">The Softmax<a class="headerlink" href="#the-softmax" title="Permanent link">⚓︎</a></h3>
+<p>:label:<code>subsec_softmax_operation</code></p>
+<p>Assuming a suitable loss function,
+we could try, directly, to minimize the difference
+between <span class="arithmatex">\(\mathbf{o}\)</span> and the labels <span class="arithmatex">\(\mathbf{y}\)</span>.
+While it turns out that treating classification
+as a vector-valued regression problem works surprisingly well,
+it is nonetheless unsatisfactory in the following ways:</p>
+<ul>
+<li>There is no guarantee that the outputs <span class="arithmatex">\(o_i\)</span> sum up to <span class="arithmatex">\(1\)</span> in the way we expect probabilities to behave.</li>
+<li>There is no guarantee that the outputs <span class="arithmatex">\(o_i\)</span> are even nonnegative, even if their outputs sum up to <span class="arithmatex">\(1\)</span>, or that they do not exceed <span class="arithmatex">\(1\)</span>.</li>
+</ul>
+<p>Both aspects render the estimation problem difficult to solve
+and the solution very brittle to outliers.
+For instance, if we assume that there
+is a positive linear dependency
+between the number of bedrooms and the likelihood
+that someone will buy a house,
+the probability might exceed <span class="arithmatex">\(1\)</span>
+when it comes to buying a mansion!
+As such, we need a mechanism to "squish" the outputs.</p>
+<p>There are many ways we might accomplish this goal.
+For instance, we could assume that the outputs
+<span class="arithmatex">\(\mathbf{o}\)</span> are corrupted versions of <span class="arithmatex">\(\mathbf{y}\)</span>,
+where the corruption occurs by means of adding noise <span class="arithmatex">\(\boldsymbol{\epsilon}\)</span>
+drawn from a normal distribution.
+In other words, <span class="arithmatex">\(\mathbf{y} = \mathbf{o} + \boldsymbol{\epsilon}\)</span>,
+where <span class="arithmatex">\(\epsilon_i \sim \mathcal{N}(0, \sigma^2)\)</span>.
+This is the so-called <a href="https://en.wikipedia.org/wiki/Probit_model">probit model</a>,
+first introduced by :citet:<code>Fechner.1860</code>.
+While appealing, it does not work quite as well
+nor lead to a particularly nice optimization problem,
+when compared to the softmax.</p>
+<p>Another way to accomplish this goal
+(and to ensure nonnegativity) is to use
+an exponential function <span class="arithmatex">\(P(y = i) \propto \exp o_i\)</span>.
+This does indeed satisfy the requirement
+that the conditional class probability
+increases with increasing <span class="arithmatex">\(o_i\)</span>, it is monotonic,
+and all probabilities are nonnegative.
+We can then transform these values so that they add up to <span class="arithmatex">\(1\)</span>
+by dividing each by their sum.
+This process is called <em>normalization</em>.
+Putting these two pieces together
+gives us the <em>softmax</em> function:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\hat{\mathbf{y}} = \mathrm{softmax}(\mathbf{o}) \quad \textrm{where}\quad \hat{y}_i = \frac{\exp(o_i)}{\sum_j \exp(o_j)}.\)</span>\)</span>
+:eqlabel:<code>eq_softmax_y_and_o</code></p>
+<p>Note that the largest coordinate of <span class="arithmatex">\(\mathbf{o}\)</span>
+corresponds to the most likely class according to <span class="arithmatex">\(\hat{\mathbf{y}}\)</span>.
+Moreover, because the softmax operation
+preserves the ordering among its arguments,
+we do not need to compute the softmax
+to determine which class has been assigned the highest probability. Thus,</p>
+<div class="arithmatex">\[
+\operatorname*{argmax}_j \hat y_j = \operatorname*{argmax}_j o_j.
+\]</div>
+<p>The idea of a softmax dates back to :citet:<code>Gibbs.1902</code>,
+who adapted ideas from physics.
+Dating even further back, Boltzmann,
+the father of modern statistical physics,
+used this trick to model a distribution
+over energy states in gas molecules.
+In particular, he discovered that the prevalence
+of a state of energy in a thermodynamic ensemble,
+such as the molecules in a gas,
+is proportional to <span class="arithmatex">\(\exp(-E/kT)\)</span>.
+Here, <span class="arithmatex">\(E\)</span> is the energy of a state,
+<span class="arithmatex">\(T\)</span> is the temperature, and <span class="arithmatex">\(k\)</span> is the Boltzmann constant.
+When statisticians talk about increasing or decreasing
+the "temperature" of a statistical system,
+they refer to changing <span class="arithmatex">\(T\)</span>
+in order to favor lower or higher energy states.
+Following Gibbs' idea, energy equates to error.
+Energy-based models :cite:<code>Ranzato.Boureau.Chopra.ea.2007</code>
+use this point of view when describing
+problems in deep learning.</p>
+<h3 id="vectorization">Vectorization<a class="headerlink" href="#vectorization" title="Permanent link">⚓︎</a></h3>
+<p>:label:<code>subsec_softmax_vectorization</code></p>
+<p>To improve computational efficiency,
+we vectorize calculations in minibatches of data.
+Assume that we are given a minibatch <span class="arithmatex">\(\mathbf{X} \in \mathbb{R}^{n \times d}\)</span>
+of <span class="arithmatex">\(n\)</span> examples with dimensionality (number of inputs) <span class="arithmatex">\(d\)</span>.
+Moreover, assume that we have <span class="arithmatex">\(q\)</span> categories in the output.
+Then the weights satisfy <span class="arithmatex">\(\mathbf{W} \in \mathbb{R}^{d \times q}\)</span>
+and the bias satisfies <span class="arithmatex">\(\mathbf{b} \in \mathbb{R}^{1\times q}\)</span>.</p>
+<p>$$ \begin{aligned} \mathbf{O} &amp;= \mathbf{X} \mathbf{W} + \mathbf{b}, \ \hat{\mathbf{Y}} &amp; = \mathrm{softmax}(\mathbf{O}). \end{aligned} $$
+:eqlabel:<code>eq_minibatch_softmax_reg</code></p>
+<p>This accelerates the dominant operation into
+a matrix--matrix product <span class="arithmatex">\(\mathbf{X} \mathbf{W}\)</span>.
+Moreover, since each row in <span class="arithmatex">\(\mathbf{X}\)</span> represents a data example,
+the softmax operation itself can be computed <em>rowwise</em>:
+for each row of <span class="arithmatex">\(\mathbf{O}\)</span>, exponentiate all entries
+and then normalize them by the sum.
+Note, though, that care must be taken
+to avoid exponentiating and taking logarithms of large numbers,
+since this can cause numerical overflow or underflow.
+Deep learning frameworks take care of this automatically.</p>
+<h2 id="loss-function">Loss Function<a class="headerlink" href="#loss-function" title="Permanent link">⚓︎</a></h2>
+<p>:label:<code>subsec_softmax-regression-loss-func</code></p>
+<p>Now that we have a mapping from features <span class="arithmatex">\(\mathbf{x}\)</span>
+to probabilities <span class="arithmatex">\(\mathbf{\hat{y}}\)</span>,
+we need a way to optimize the accuracy of this mapping.
+We will rely on maximum likelihood estimation,
+the very same method that we encountered
+when providing a probabilistic justification
+for the mean squared error loss in
+:numref:<code>subsec_normal_distribution_and_squared_loss</code>.</p>
+<h3 id="log-likelihood">Log-Likelihood<a class="headerlink" href="#log-likelihood" title="Permanent link">⚓︎</a></h3>
+<p>The softmax function gives us a vector <span class="arithmatex">\(\hat{\mathbf{y}}\)</span>,
+which we can interpret as the (estimated) conditional probabilities
+of each class, given any input <span class="arithmatex">\(\mathbf{x}\)</span>,
+such as <span class="arithmatex">\(\hat{y}_1\)</span> = <span class="arithmatex">\(P(y=\textrm{cat} \mid \mathbf{x})\)</span>.
+In the following we assume that for a dataset
+with features <span class="arithmatex">\(\mathbf{X}\)</span> the labels <span class="arithmatex">\(\mathbf{Y}\)</span>
+are represented using a one-hot encoding label vector.
+We can compare the estimates with reality
+by checking how probable the actual classes are
+according to our model, given the features:</p>
+<div class="arithmatex">\[
+P(\mathbf{Y} \mid \mathbf{X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)} \mid \mathbf{x}^{(i)}).
+\]</div>
+<p>We are allowed to use the factorization
+since we assume that each label is drawn independently
+from its respective distribution <span class="arithmatex">\(P(\mathbf{y}\mid\mathbf{x}^{(i)})\)</span>.
+Since maximizing the product of terms is awkward,
+we take the negative logarithm to obtain the equivalent problem
+of minimizing the negative log-likelihood:</p>
+<div class="arithmatex">\[
+-\log P(\mathbf{Y} \mid \mathbf{X}) = \sum_{i=1}^n -\log P(\mathbf{y}^{(i)} \mid \mathbf{x}^{(i)})
+= \sum_{i=1}^n l(\mathbf{y}^{(i)}, \hat{\mathbf{y}}^{(i)}),
+\]</div>
+<p>where for any pair of label <span class="arithmatex">\(\mathbf{y}\)</span>
+and model prediction <span class="arithmatex">\(\hat{\mathbf{y}}\)</span>
+over <span class="arithmatex">\(q\)</span> classes, the loss function <span class="arithmatex">\(l\)</span> is</p>
+<p>$$ l(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{j=1}^q y_j \log \hat{y}_j. $$
+:eqlabel:<code>eq_l_cross_entropy</code></p>
+<p>For reasons explained later on,
+the loss function in :eqref:<code>eq_l_cross_entropy</code>
+is commonly called the <em>cross-entropy loss</em>.
+Since <span class="arithmatex">\(\mathbf{y}\)</span> is a one-hot vector of length <span class="arithmatex">\(q\)</span>,
+the sum over all its coordinates <span class="arithmatex">\(j\)</span> vanishes for all but one term.
+Note that the loss <span class="arithmatex">\(l(\mathbf{y}, \hat{\mathbf{y}})\)</span>
+is bounded from below by <span class="arithmatex">\(0\)</span>
+whenever <span class="arithmatex">\(\hat{\mathbf{y}}\)</span> is a probability vector:
+no single entry is larger than <span class="arithmatex">\(1\)</span>,
+hence their negative logarithm cannot be lower than <span class="arithmatex">\(0\)</span>;
+<span class="arithmatex">\(l(\mathbf{y}, \hat{\mathbf{y}}) = 0\)</span> only if we predict
+the actual label with <em>certainty</em>.
+This can never happen for any finite setting of the weights
+because taking a softmax output towards <span class="arithmatex">\(1\)</span>
+requires taking the corresponding input <span class="arithmatex">\(o_i\)</span> to infinity
+(or all other outputs <span class="arithmatex">\(o_j\)</span> for <span class="arithmatex">\(j \neq i\)</span> to negative infinity).
+Even if our model could assign an output probability of <span class="arithmatex">\(0\)</span>,
+any error made when assigning such high confidence
+would incur infinite loss (<span class="arithmatex">\(-\log 0 = \infty\)</span>).</p>
+<h3 id="softmax-and-cross-entropy-loss">Softmax and Cross-Entropy Loss<a class="headerlink" href="#softmax-and-cross-entropy-loss" title="Permanent link">⚓︎</a></h3>
+<p>:label:<code>subsec_softmax_and_derivatives</code></p>
+<p>Since the softmax function
+and the corresponding cross-entropy loss are so common,
+it is worth understanding a bit better how they are computed.
+Plugging :eqref:<code>eq_softmax_y_and_o</code> into the definition of the loss
+in :eqref:<code>eq_l_cross_entropy</code>
+and using the definition of the softmax we obtain</p>
+<div class="arithmatex">\[
+\begin{aligned}
+l(\mathbf{y}, \hat{\mathbf{y}}) &amp;=  - \sum_{j=1}^q y_j \log \frac{\exp(o_j)}{\sum_{k=1}^q \exp(o_k)} \\
+&amp;= \sum_{j=1}^q y_j \log \sum_{k=1}^q \exp(o_k) - \sum_{j=1}^q y_j o_j \\
+&amp;= \log \sum_{k=1}^q \exp(o_k) - \sum_{j=1}^q y_j o_j.
+\end{aligned}
+\]</div>
+<p>To understand a bit better what is going on,
+consider the derivative with respect to any logit <span class="arithmatex">\(o_j\)</span>. We get</p>
+<div class="arithmatex">\[
+\partial_{o_j} l(\mathbf{y}, \hat{\mathbf{y}}) = \frac{\exp(o_j)}{\sum_{k=1}^q \exp(o_k)} - y_j = \mathrm{softmax}(\mathbf{o})_j - y_j.
+\]</div>
+<p>In other words, the derivative is the difference
+between the probability assigned by our model,
+as expressed by the softmax operation,
+and what actually happened, as expressed
+by elements in the one-hot label vector.
+In this sense, it is very similar
+to what we saw in regression,
+where the gradient was the difference
+between the observation <span class="arithmatex">\(y\)</span> and estimate <span class="arithmatex">\(\hat{y}\)</span>.
+This is not a coincidence.
+In any exponential family model,
+the gradients of the log-likelihood are given by precisely this term.
+This fact makes computing gradients easy in practice.</p>
+<p>Now consider the case where we observe not just a single outcome
+but an entire distribution over outcomes.
+We can use the same representation as before for the label <span class="arithmatex">\(\mathbf{y}\)</span>.
+The only difference is that rather
+than a vector containing only binary entries,
+say <span class="arithmatex">\((0, 0, 1)\)</span>, we now have a generic probability vector,
+say <span class="arithmatex">\((0.1, 0.2, 0.7)\)</span>.
+The math that we used previously to define the loss <span class="arithmatex">\(l\)</span>
+in :eqref:<code>eq_l_cross_entropy</code>
+still works well,
+just that the interpretation is slightly more general.
+It is the expected value of the loss for a distribution over labels.
+This loss is called the <em>cross-entropy loss</em> and it is
+one of the most commonly used losses for classification problems.
+We can demystify the name by introducing just the basics of information theory.
+In a nutshell, it measures the number of bits needed to encode what we see, <span class="arithmatex">\(\mathbf{y}\)</span>,
+relative to what we predict that should happen, <span class="arithmatex">\(\hat{\mathbf{y}}\)</span>.
+We provide a very basic explanation in the following. For further
+details on information theory see
+:citet:<code>Cover.Thomas.1999</code> or :citet:<code>mackay2003information</code>.</p>
+<h2 id="information-theory-basics">Information Theory Basics<a class="headerlink" href="#information-theory-basics" title="Permanent link">⚓︎</a></h2>
+<p>:label:<code>subsec_info_theory_basics</code></p>
+<p>Many deep learning papers use intuition and terms from information theory.
+To make sense of them, we need some common language.
+This is a survival guide.
+<em>Information theory</em> deals with the problem
+of encoding, decoding, transmitting,
+and manipulating information (also known as data).</p>
+<h3 id="entropy">Entropy<a class="headerlink" href="#entropy" title="Permanent link">⚓︎</a></h3>
+<p>The central idea in information theory is to quantify the
+amount of information contained in data.
+This places a  limit on our ability to compress data.
+For a distribution <span class="arithmatex">\(P\)</span> its <em>entropy</em>, <span class="arithmatex">\(H[P]\)</span>, is defined as:</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(H[P] = \sum_j - P(j) \log P(j).\)</span>\)</span>
+:eqlabel:<code>eq_softmax_reg_entropy</code></p>
+<p>One of the fundamental theorems of information theory states
+that in order to encode data drawn randomly from the distribution <span class="arithmatex">\(P\)</span>,
+we need at least <span class="arithmatex">\(H[P]\)</span> "nats" to encode it :cite:<code>Shannon.1948</code>.
+If you wonder what a "nat" is, it is the equivalent of bit
+but when using a code with base <span class="arithmatex">\(e\)</span> rather than one with base 2.
+Thus, one nat is <span class="arithmatex">\(\frac{1}{\log(2)} \approx 1.44\)</span> bit.</p>
+<h3 id="surprisal">Surprisal<a class="headerlink" href="#surprisal" title="Permanent link">⚓︎</a></h3>
+<p>You might be wondering what compression has to do with prediction.
+Imagine that we have a stream of data that we want to compress.
+If it is always easy for us to predict the next token,
+then this data is easy to compress.
+Take the extreme example where every token in the stream
+always takes the same value.
+That is a very boring data stream!
+And not only it is boring, but it is also easy to predict.
+Because the tokens are always the same,
+we do not have to transmit any information
+to communicate the contents of the stream.
+Easy to predict, easy to compress.</p>
+<p>However if we cannot perfectly predict every event,
+then we might sometimes be surprised.
+Our surprise is greater when an event is assigned lower probability.
+Claude Shannon settled on <span class="arithmatex">\(\log \frac{1}{P(j)} = -\log P(j)\)</span>
+to quantify one's <em>surprisal</em> at observing an event <span class="arithmatex">\(j\)</span>
+having assigned it a (subjective) probability <span class="arithmatex">\(P(j)\)</span>.
+The entropy defined in :eqref:<code>eq_softmax_reg_entropy</code>
+is then the <em>expected surprisal</em>
+when one assigned the correct probabilities
+that truly match the data-generating process.</p>
+<h3 id="cross-entropy-revisited">Cross-Entropy Revisited<a class="headerlink" href="#cross-entropy-revisited" title="Permanent link">⚓︎</a></h3>
+<p>So if entropy is the level of surprise experienced
+by someone who knows the true probability,
+then you might be wondering, what is cross-entropy?
+The cross-entropy <em>from</em> <span class="arithmatex">\(P\)</span> <em>to</em> <span class="arithmatex">\(Q\)</span>, denoted <span class="arithmatex">\(H(P, Q)\)</span>,
+is the expected surprisal of an observer with subjective probabilities <span class="arithmatex">\(Q\)</span>
+upon seeing data that was actually generated according to probabilities <span class="arithmatex">\(P\)</span>.
+This is given by <span class="arithmatex">\(H(P, Q) \stackrel{\textrm{def}}{=} \sum_j - P(j) \log Q(j)\)</span>.
+The lowest possible cross-entropy is achieved when <span class="arithmatex">\(P=Q\)</span>.
+In this case, the cross-entropy from <span class="arithmatex">\(P\)</span> to <span class="arithmatex">\(Q\)</span> is <span class="arithmatex">\(H(P, P)= H(P)\)</span>.</p>
+<p>In short, we can think of the cross-entropy classification objective
+in two ways: (i) as maximizing the likelihood of the observed data;
+and (ii) as minimizing our surprisal (and thus the number of bits)
+required to communicate the labels.</p>
+<h2 id="summary-and-discussion">Summary and Discussion<a class="headerlink" href="#summary-and-discussion" title="Permanent link">⚓︎</a></h2>
+<p>In this section, we encountered the first nontrivial loss function,
+allowing us to optimize over <em>discrete</em> output spaces.
+Key in its design was that we took a probabilistic approach,
+treating discrete categories as instances of draws from a probability distribution.
+As a side effect, we encountered the softmax,
+a convenient activation function that transforms
+outputs of an ordinary neural network layer
+into valid discrete probability distributions.
+We saw that the derivative of the cross-entropy loss
+when combined with softmax
+behaves very similarly
+to the derivative of squared error;
+namely by taking the difference between
+the expected behavior and its prediction.
+And, while we were only able to
+scratch the very surface of it,
+we encountered exciting connections
+to statistical physics and information theory.</p>
+<p>While this is enough to get you on your way,
+and hopefully enough to whet your appetite,
+we hardly dived deep here.
+Among other things, we skipped over computational considerations.
+Specifically, for any fully connected layer with <span class="arithmatex">\(d\)</span> inputs and <span class="arithmatex">\(q\)</span> outputs,
+the parametrization and computational cost is <span class="arithmatex">\(\mathcal{O}(dq)\)</span>,
+which can be prohibitively high in practice.
+Fortunately, this cost of transforming <span class="arithmatex">\(d\)</span> inputs into <span class="arithmatex">\(q\)</span> outputs
+can be reduced through approximation and compression.
+For instance Deep Fried Convnets :cite:<code>Yang.Moczulski.Denil.ea.2015</code>
+uses a combination of permutations,
+Fourier transforms, and scaling
+to reduce the cost from quadratic to log-linear.
+Similar techniques work for more advanced
+structural matrix approximations :cite:<code>sindhwani2015structured</code>.
+Lastly, we can use quaternion-like decompositions
+to reduce the cost to <span class="arithmatex">\(\mathcal{O}(\frac{dq}{n})\)</span>,
+again if we are willing to trade off a small amount of accuracy
+for computational and storage cost :cite:<code>Zhang.Tay.Zhang.ea.2021</code>
+based on a compression factor <span class="arithmatex">\(n\)</span>.
+This is an active area of research.
+What makes it challenging is that
+we do not necessarily strive
+for the most compact representation
+or the smallest number of floating point operations
+but rather for the solution
+that can be executed most efficiently on modern GPUs.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>We can explore the connection between exponential families and softmax in some more depth.<ol>
+<li>Compute the second derivative of the cross-entropy loss <span class="arithmatex">\(l(\mathbf{y},\hat{\mathbf{y}})\)</span> for softmax.</li>
+<li>Compute the variance of the distribution given by <span class="arithmatex">\(\mathrm{softmax}(\mathbf{o})\)</span> and show that it matches the second derivative computed above.</li>
+</ol>
+</li>
+<li>Assume that we have three classes which occur with equal probability, i.e., the probability vector is <span class="arithmatex">\((\frac{1}{3}, \frac{1}{3}, \frac{1}{3})\)</span>.<ol>
+<li>What is the problem if we try to design a binary code for it?</li>
+<li>Can you design a better code? Hint: what happens if we try to encode two independent observations? What if we encode <span class="arithmatex">\(n\)</span> observations jointly?</li>
+</ol>
+</li>
+<li>When encoding signals transmitted over a physical wire, engineers do not always use binary codes. For instance, <a href="https://en.wikipedia.org/wiki/Ternary_signal">PAM-3</a> uses three signal levels <span class="arithmatex">\(\{-1, 0, 1\}\)</span> as opposed to two levels <span class="arithmatex">\(\{0, 1\}\)</span>. How many ternary units do you need to transmit an integer in the range <span class="arithmatex">\(\{0, \ldots, 7\}\)</span>? Why might this be a better idea in terms of electronics?</li>
+<li>The <a href="https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model">Bradley--Terry model</a> uses
+a logistic model to capture preferences. For a user to choose between apples and oranges one
+assumes scores <span class="arithmatex">\(o_{\textrm{apple}}\)</span> and <span class="arithmatex">\(o_{\textrm{orange}}\)</span>. Our requirements are that larger scores should lead to a higher likelihood in choosing the associated item and that
+the item with the largest score is the most likely one to be chosen :cite:<code>Bradley.Terry.1952</code>.<ol>
+<li>Prove that softmax satisfies this requirement.</li>
+<li>What happens if you want to allow for a default option of choosing neither apples nor oranges? Hint: now the user has three choices.</li>
+</ol>
+</li>
+<li>Softmax gets its name from the following mapping: <span class="arithmatex">\(\textrm{RealSoftMax}(a, b) = \log (\exp(a) + \exp(b))\)</span>.<ol>
+<li>Prove that <span class="arithmatex">\(\textrm{RealSoftMax}(a, b) &gt; \mathrm{max}(a, b)\)</span>.</li>
+<li>How small can you make the difference between both functions? Hint: without loss of
+generality you can set <span class="arithmatex">\(b = 0\)</span> and <span class="arithmatex">\(a \geq b\)</span>.</li>
+<li>Prove that this holds for <span class="arithmatex">\(\lambda^{-1} \textrm{RealSoftMax}(\lambda a, \lambda b)\)</span>, provided that <span class="arithmatex">\(\lambda &gt; 0\)</span>.</li>
+<li>Show that for <span class="arithmatex">\(\lambda \to \infty\)</span> we have <span class="arithmatex">\(\lambda^{-1} \textrm{RealSoftMax}(\lambda a, \lambda b) \to \mathrm{max}(a, b)\)</span>.</li>
+<li>Construct an analogous softmin function.</li>
+<li>Extend this to more than two numbers.</li>
+</ol>
+</li>
+<li>The function <span class="arithmatex">\(g(\mathbf{x}) \stackrel{\textrm{def}}{=} \log \sum_i \exp x_i\)</span> is sometimes also referred to as the <a href="https://en.wikipedia.org/wiki/Partition_function_(mathematics)">log-partition function</a>.<ol>
+<li>Prove that the function is convex. Hint: to do so, use the fact that the first derivative amounts to the probabilities from the softmax function and show that the second derivative is the variance.</li>
+<li>Show that <span class="arithmatex">\(g\)</span> is translation invariant, i.e., <span class="arithmatex">\(g(\mathbf{x} + b) = g(\mathbf{x})\)</span>.</li>
+<li>What happens if some of the coordinates <span class="arithmatex">\(x_i\)</span> are very large? What happens if they're all very small?</li>
+<li>Show that if we choose <span class="arithmatex">\(b = \mathrm{max}_i x_i\)</span> we end up with a numerically stable implementation.</li>
+</ol>
+</li>
+<li>Assume that we have some probability distribution <span class="arithmatex">\(P\)</span>. Suppose we pick another distribution <span class="arithmatex">\(Q\)</span> with <span class="arithmatex">\(Q(i) \propto P(i)^\alpha\)</span> for <span class="arithmatex">\(\alpha &gt; 0\)</span>.<ol>
+<li>Which choice of <span class="arithmatex">\(\alpha\)</span> corresponds to doubling the temperature? Which choice corresponds to halving it?</li>
+<li>What happens if we let the temperature approach <span class="arithmatex">\(0\)</span>?</li>
+<li>What happens if we let the temperature approach <span class="arithmatex">\(\infty\)</span>?</li>
+</ol>
+</li>
+</ol>
+<p><a href="https://discuss.d2l.ai/t/46">Discussions</a></p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 25, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../softmax-regression-scratch/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Softmax regression scratch">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Softmax regression scratch
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../05-multilayer-perceptrons/" class="md-footer__link md-footer__link--next" aria-label="下一页: Multilayer Perceptrons">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Multilayer Perceptrons
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Ean Yang
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/YQisme" target="_blank" rel="noopener" title="github主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://space.bilibili.com/244185393?spm_id_from=333.788.0.0" target="_blank" rel="noopener" title="b站主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M488.6 104.1c16.7 18.1 24.4 39.7 23.3 65.7v202.4c-.4 26.4-9.2 48.1-26.5 65.1-17.2 17-39.1 25.9-65.5 26.7H92.02c-26.45-.8-48.21-9.8-65.28-27.2C9.682 419.4.767 396.5 0 368.2V169.8c.767-26 9.682-47.6 26.74-65.7C43.81 87.75 65.57 78.77 92.02 78h29.38L96.05 52.19c-5.75-5.73-8.63-13-8.63-21.79 0-8.8 2.88-16.06 8.63-21.797C101.8 2.868 109.1 0 117.9 0s16.1 2.868 21.9 8.603L213.1 78h88l74.5-69.397C381.7 2.868 389.2 0 398 0c8.8 0 16.1 2.868 21.9 8.603 5.7 5.737 8.6 12.997 8.6 21.797 0 8.79-2.9 16.06-8.6 21.79L394.6 78h29.3c26.4.77 48 9.75 64.7 26.1zm-38.8 69.7c-.4-9.6-3.7-17.4-10.7-23.5-5.2-6.1-14-9.4-22.7-9.8H96.05c-9.59.4-17.45 3.7-23.58 9.8-6.14 6.1-9.4 13.9-9.78 23.5v194.4c0 9.2 3.26 17 9.78 23.5s14.38 9.8 23.58 9.8H416.4c9.2 0 17-3.3 23.3-9.8 6.3-6.5 9.7-14.3 10.1-23.5V173.8zm-264.3 42.7c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.2 6.3-14 9.5-23.6 9.5-9.6 0-17.5-3.2-23.6-9.5-6.1-6.3-9.4-14-9.8-23.2v-33.3c.4-9.1 3.8-16.9 10.1-23.2 6.3-6.3 13.2-9.6 23.3-10 9.2.4 17 3.7 23.3 10zm191.5 0c6.3 6.3 9.7 14.1 10.1 23.2V273c-.4 9.2-3.7 16.9-9.8 23.2-6.1 6.3-14 9.5-23.6 9.5-9.6 0-17.4-3.2-23.6-9.5-7-6.3-9.4-14-9.7-23.2v-33.3c.3-9.1 3.7-16.9 10-23.2 6.3-6.3 14.1-9.6 23.3-10 9.2.4 17 3.7 23.3 10z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://eanyang7.com" target="_blank" rel="noopener" title="个人主页" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm40 304v128c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9l-28.6 47.6c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352h-16z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.prune", "navigation.top", "toc.follow", "header.autohide", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.6c14ae12.min.js"></script>
+      
+    
+  </body>
+</html>
