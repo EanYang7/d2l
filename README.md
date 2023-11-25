@@ -2,6 +2,7 @@
   <img src="https://raw.githubusercontent.com/d2l-ai/d2l-en/master/static/logo-with-text.png" width="350">
 </div>
 
+
 # D2L.ai: Interactive Deep Learning Book with Multi-Framework Code, Math, and Discussions
 
 [![Continuous Integration](https://github.com/d2l-ai/d2l-en/actions/workflows/ci.yml/badge.svg)](https://github.com/d2l-ai/d2l-en/actions/workflows/ci.yml)
